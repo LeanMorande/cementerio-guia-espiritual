@@ -1,0 +1,2 @@
+# Carpeta pública de audios servidos desde /sounds/
+# Coloca aquí tus MP3 (ej.: intro_angel.mp3, paso_1.mp3, paso_2.mp3, ...)
