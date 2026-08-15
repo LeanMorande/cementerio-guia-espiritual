@@ -18,7 +18,7 @@ import { CSS } from "./styles/css.js";
 const LS_KEY = "ccn-v3";
 
 export default function App() {
-  const [route, setRoute] = useState("config"); // config | welcome | select | path | fin
+  const [route, setRoute] = useState("welcome"); // welcome | config | select | path | fin
   const [cfg, setCfg] = useState(buildDefaults);
   const [ready, setReady] = useState(false);
   const [toastMsg, setToastMsg] = useState(null);
@@ -103,9 +103,13 @@ export default function App() {
     return () => { alive = false; };
   }, []);
 
-  /* QR real: #visita */
+    /* Enrutado por hash al cargar:
+       - sin hash o con #visita → la bienvenida del recorrido (el QR)
+       - con #config            → pantalla de configuración (solo desarrollador)
+     Los visitantes SIEMPRE entran directo al recorrido, nunca a la config. */
   useEffect(() => {
-    if (ready && window.location.hash === "#visita") setRoute("welcome");
+    if (!ready) return;
+    setRoute(window.location.hash === "#config" ? "config" : "welcome");
   }, [ready]);
 
   const setHash = (on) => {
