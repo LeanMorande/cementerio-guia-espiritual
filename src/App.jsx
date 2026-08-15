@@ -103,13 +103,17 @@ export default function App() {
     return () => { alive = false; };
   }, []);
 
-    /* Enrutado por hash al cargar:
+        /* Enrutado por hash:
        - sin hash o con #visita → la bienvenida del recorrido (el QR)
        - con #config            → pantalla de configuración (solo desarrollador)
-     Los visitantes SIEMPRE entran directo al recorrido, nunca a la config. */
+     Detecta el hash al cargar y también en vivo, si el usuario lo cambia. */
   useEffect(() => {
     if (!ready) return;
-    setRoute(window.location.hash === "#config" ? "config" : "welcome");
+    const applyRoute = () =>
+      setRoute(window.location.hash === "#config" ? "config" : "welcome");
+    applyRoute();
+    window.addEventListener("hashchange", applyRoute);
+    return () => window.removeEventListener("hashchange", applyRoute);
   }, [ready]);
 
   const setHash = (on) => {
