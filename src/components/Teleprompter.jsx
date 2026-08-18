@@ -1,16 +1,49 @@
-/* =====================================================================
-   COMPONENTS / Teleprompter.jsx — telepronter sincronizado.
-   ===================================================================== */
 import { useMemo, useRef, useState, useCallback, useLayoutEffect, useEffect } from "react";
 
+/* Convierte el texto en un array de líneas acotadas (word-wrap aprox.)
+   para que quepan varias por ventana y el scroll sea fluido. */
+function wrapLines(text, maxChars = 48) {
+  const words = text
+    .split(/\r?\n/)
+    .join(" ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  const lines = [];
+  let cur = "";
+  for (const w of words) {
+    if ((cur + " " + w).trim().length > maxChars && cur) {
+      lines.push(cur.trim());
+      cur = w;
+    } else {
+      cur = (cur + " " + w).trim();
+    }
+  }
+  if (cur) lines.push(cur.trim());
+  return lines.length ? lines : [""];
+}
+
+/* Estima las sílabas de un texto en español (golpes de voz). Cada secuencia
+   vocálica equivale, de forma aproximada, a una sílaba. La duración del habla
+   correlaciona mejor con sílabas que con cantidad de caracteres, lo que
+   reduce el desfase del teleprompter en audios de ritmo variable/largos. */
+export function countSyllables(text) {
+  const s = (text || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const groups = s.match(/[aeiouy]+/g);
+  return groups ? Math.max(groups.length, 1) : 1;
+}
+
+function lineWeight(line) {
+  // Peso principal por sílabas; se suma un mínimo de caracteres para que
+  // líneas muy cortas no colapsen a peso casi nulo.
+  return Math.max(2, countSyllables(line) + line.length * 0.12);
+}
+
 export default function Teleprompter({ text, audioRef, duration, hint }) {
-  const lines = useMemo(
-    () => text.split(/\r?\n/).map((s) => s.trim()).filter(Boolean),
-    [text]
-  );
+  const lines = useMemo(() => wrapLines(text || ""), [text]);
   const segs = useMemo(() => {
     if (!duration || duration <= 0 || !lines.length) return [];
-    const w = lines.map((l) => Math.max(l.length, 10));
+    const w = lines.map((l) => lineWeight(l));
     const tot = w.reduce((a, b) => a + b, 0) || 1;
     let acc = 0;
     return w.map((x) => {
@@ -92,3 +125,4 @@ export default function Teleprompter({ text, audioRef, duration, hint }) {
     </div>
   );
 }
+

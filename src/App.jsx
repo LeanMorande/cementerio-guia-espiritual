@@ -15,15 +15,17 @@ import Watermark from "./components/Watermark.jsx";
 import { Ic } from "./components/icons.jsx";
 import { CSS } from "./styles/css.js";
 
-const LS_KEY = "ccn-v3";
+const LS_KEY = "ccn-v6";
 
 export default function App() {
   const [route, setRoute] = useState("welcome"); // welcome | config | select | path | fin
   const [cfg, setCfg] = useState(buildDefaults);
   const [ready, setReady] = useState(false);
+  const [admin, setAdmin] = useState(false);
   const [toastMsg, setToastMsg] = useState(null);
-  const [introDone, setIntroDone] = useState(false);
+    const [introDone, setIntroDone] = useState(false);
   const [pathIdx, setPathIdx] = useState(0);
+  const [transition, setTransition] = useState(null); // {tipo:"select", id, titulo}
   const toastTimer = useRef(null);
 
   const audioRef = useRef(null);
@@ -45,11 +47,24 @@ export default function App() {
      para no reproducirlo dos veces (gesto + efecto). */
   const playIsFromGestureRef = useRef(false);
 
-  const toast = useCallback((msg) => {
+    const toast = useCallback((msg) => {
     setToastMsg(msg);
     if (toastTimer.current) clearTimeout(toastTimer.current);
     toastTimer.current = setTimeout(() => setToastMsg(null), 2600);
   }, []);
+
+  /* Modo administrador: se activa con la tecla 'A' estando en la
+     bienvenida (o con el clic en el botón disimulado 'A'). */
+  const toggleAdmin = useCallback(() => setAdmin((a) => !a), []);
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.key === "a" || e.key === "A") && routeRef.current === "welcome") {
+        toggleAdmin();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [toggleAdmin]);
 
   /* Fuentes por CDN */
   useEffect(() => {
@@ -87,8 +102,16 @@ export default function App() {
             };
             if (saved.opciones)
               merged.opciones = merged.opciones.map((o, i) => (saved.opciones[i] ? { ...o, ...saved.opciones[i] } : o));
-            if (saved.camino && saved.camino.length)
-              merged.camino = saved.camino.map((s) => buildDefaults().camino.find((d) => d.uid === s.uid) || s);
+                        if (saved.camino && saved.camino.length) {
+              // El contenido de "camino" se regenera con nuevos `uid` cada vez
+              // que el desarrollador modifica los pasos en defaults.js. Solo
+              // restauramos los guardados si TODOS sus uid coinciden con los
+              // defaults actuales (es decir, si el recorrido no cambió).
+              const defaultUids = new Set(buildDefaults().camino.map((d) => d.uid));
+              const caminoVálido = saved.camino.every((s) => defaultUids.has(s.uid));
+              if (caminoVálido) merged.camino = saved.camino;
+              // Si no: se mantienen los 10 pasos nuevos de defaults.js.
+            }
             if (saved.countdown) merged.countdown = saved.countdown;
           }
         }
@@ -139,28 +162,29 @@ export default function App() {
     return () => clearTimeout(t);
   }, [cfg, ready, persistNow]);
 
-  /* ---------- motor de audio ---------- */
-  const loadAudio = useCallback((src, autoplay = false) => {
-    const a = audioRef.current;
-    if (!a) return;
-    setCur(0);
-    setPlaying(false);
-    if (!src) {
-      a.removeAttribute("src");
-      a.load();
-      setDur(0);
-      return;
-    }
-    if (a.getAttribute("src") !== src) {
-      a.src = src;
-      a.load();
-    }
-    if (autoplay) {
-      unlockAudio();
-      const p = a.play();
-      if (p && p.catch) p.catch(() => toast("Toca ▶ para reproducir"));
-    }
-  }, [toast]);
+    /* ---------- motor de audio ---------- */
+    const loadAudio = useCallback((src, autoplay = false) => {
+      const a = audioRef.current;
+      if (!a) return;
+      setCur(0);
+      setPlaying(false);
+      if (!src) {
+        a.removeAttribute("src");
+        a.load();
+        setDur(0);
+        return;
+      }
+      if (a.getAttribute("src") !== src) {
+        a.dataset.retry = "0";
+        a.src = src;
+        a.load();
+      }
+      if (autoplay) {
+        unlockAudio();
+        const p = a.play();
+        if (p && p.catch) p.catch(() => toast("Toca ▶ para reproducir"));
+      }
+    }, [toast]);
 
   const togglePlay = useCallback(() => {
     const a = audioRef.current;
@@ -197,11 +221,12 @@ export default function App() {
      Si la fuente es nueva, se asigna y carga, y play() se lanza justo
      después: el navegador permite que la promesa de play() se resuelva
      cuando el archivo termine de cargar. */
-  const playUrl = useCallback((url) => {
+    const playUrl = useCallback((url) => {
     const a = audioRef.current;
     if (!a || !url) return;
     unlockAudio();
     if (a.getAttribute("src") !== url) {
+      a.dataset.retry = "0";
       a.src = url;
       a.load();
     }
@@ -259,12 +284,12 @@ export default function App() {
   /* Limpia el timer del gap si el componente se desmonta. */
   useEffect(() => () => { if (gapTimerRef.current) clearTimeout(gapTimerRef.current); }, []);
 
-  /* Preload intro en welcome / auto en select */
+    /* Auto en select (la bienvenida solo se reproduce al entrar al selector,
+     nunca antes, para que no suene en la pantalla de inicio). */
   useEffect(() => {
     if (!ready) return;
     if (route === "welcome") {
       setIntroDone(false);
-      if (cfg.bienvenida.introAudioUrl) loadAudio(cfg.bienvenida.introAudioUrl, false);
     }
     if (route === "select") {
       if (cfg.bienvenida.introAudioUrl && !introDone) loadAudio(cfg.bienvenida.introAudioUrl, true);
@@ -301,31 +326,51 @@ export default function App() {
     if (a) a.pause();
     setIntroDone(true);
   };
-  const cancelGap = () => {
+    const cancelGap = () => {
     if (gapTimerRef.current) {
       clearTimeout(gapTimerRef.current);
       gapTimerRef.current = null;
     }
+    setTransition(null);
   };
 
-  const onSelect = (id, auto) => {
+    const onSelect = (id, auto) => {
     const o = cfg.opciones.find((x) => x.id === id);
     if (!o) return;
     if (!o.habilitado) {
       toast("«" + o.titulo + "» estará disponible muy pronto");
       return;
     }
-    if (auto) toast("Elegimos por ti: " + o.titulo);
+        if (auto) toast("Elegimos por ti: " + o.titulo);
     cancelGap();
-    // El primer paso se reproduce AQUÍ, dentro del gesto de usuario (clic),
-    // para garantizar que el navegador no bloquee el autoplay.
+    // Detiene el audio en curso (p. ej. la bienvenida del selector) para que
+    // la transición de entrada al camino transcurra en silencio y el paso 1
+    // no llegue "encima" del audio anterior (cambio menos brusco).
+    stopAudio();
+    // Preparamos el paso 1. Hay un silencio de 2 s (transición) antes de
+    // que comience el audio: la reproducción se retrasa con un timer. Como
+    // el audio ya quedó desbloqueado por el gesto del usuario (la bienvenida
+    // y el clic), el navegador permite reproducir unos segundos después.
     playIsFromGestureRef.current = true;
     const first = cfg.camino[0];
-    console.log("Ruta a reproducir:", first?.audioUrl);
-    if (first && first.audioUrl) playUrl(first.audioUrl);
-    else stopAudio();
     setPathIdx(0);
     setRoute("path");
+    // Transición visual al elegir: fundido con el nombre de la opción.
+    setTransition({ tipo: "select", id: o.id, titulo: o.titulo });
+    if (first && first.audioUrl) {
+      // El audio del paso 1 arranca a los 2 s (silencio de transición).
+      const tid = window.setTimeout(() => {
+        setTransition(null);
+        gapTimerRef.current = null;
+        if (routeRef.current === "path" && pathIdxRef.current === 0) {
+          playUrl(first.audioUrl);
+        }
+      }, 2000);
+      gapTimerRef.current = tid;
+    } else {
+      window.setTimeout(() => setTransition(null), 1000);
+      stopAudio();
+    }
   };
   const exitPath = () => {
     cancelGap();
@@ -348,12 +393,12 @@ export default function App() {
   const setOpc = (i, patch) => setCfg((c) => ({ ...c, opciones: c.opciones.map((o, j) => (j === i ? { ...o, ...patch } : o)) }));
   const setSeg = (i, patch) => setCfg((c) => ({ ...c, camino: c.camino.map((s, j) => (j === i ? { ...s, ...patch } : s)) }));
   const setCountdown = (v) => setCfg((c) => ({ ...c, countdown: v }));
-  const addSeg = () =>
+    const addSeg = () =>
     setCfg((c) => ({
       ...c,
       camino: [
         ...c.camino,
-        { uid: "s" + Date.now().toString(36), voz: "angel", tipo: "subtitulo", audio: false, audioUrl: null, audioName: "", dur: 0, texto: "", imagen: null, caption: "" },
+        { uid: "s" + Date.now().toString(36), voz: "angel", tipo: "subtitulo", audio: false, audioUrl: null, audioName: "", dur: 0, texto: "", imagen: "", caption: "", accion: "" },
       ],
     }));
   const delSeg = (i) => setCfg((c) => ({ ...c, camino: c.camino.filter((_, j) => j !== i) }));
@@ -390,7 +435,7 @@ export default function App() {
     <div className="shell">
       <style>{CSS}</style>
 
-      <audio
+            <audio
         ref={audioRef}
         preload="auto"
         onLoadedMetadata={(e) => setDur(e.target.duration || 0)}
@@ -398,6 +443,21 @@ export default function App() {
         onPause={() => setPlaying(false)}
         onEnded={handleEnded}
         onTimeUpdate={(e) => setCur(e.target.currentTime)}
+        onError={(e) => {
+          const a = e.currentTarget;
+          // Si aún no se reintentó y la extensión es .mp3, prueba con .MP3
+          // (algunos programas exportan la extensión en mayúsculas).
+          if (a.dataset.retry !== "1") {
+            const cur = a.getAttribute("src");
+            if (cur && cur.toLowerCase().endsWith(".mp3") && /\.mp3$/i.test(cur) && !/\.MP3$/.test(cur)) {
+              a.dataset.retry = "1";
+              a.src = cur.replace(/\.mp3$/i, ".MP3");
+              a.load();
+              const p = a.play();
+              if (p && p.catch) p.catch(() => {});
+            }
+          }
+        }}
       />
 
       {route === "config" && ready && (
@@ -416,17 +476,31 @@ export default function App() {
         />
       )}
 
-      {route === "welcome" && ready && <WelcomeScreen cfg={cfg} onStart={iniciarVisita} />}
+      {route === "welcome" && ready && (
+        <WelcomeScreen cfg={cfg} onStart={iniciarVisita} admin={admin} onToggleAdmin={toggleAdmin} />
+      )}
 
       {route === "select" && ready && (
         <SelectScreen cfg={cfg} eng={eng} introDone={introDone} onSkip={skipIntro} onSelect={onSelect} />
       )}
 
-      {route === "path" && ready && <PathScreen cfg={cfg} idx={pathIdx} onExit={exitPath} onNext={nextStep} eng={eng} />}
+      {route === "path" && ready && (
+        <PathScreen cfg={cfg} idx={pathIdx} onExit={exitPath} onNext={nextStep} eng={eng} admin={admin} />
+      )}
 
       {route === "fin" && ready && <FinScreen onHome={goHome} />}
 
-      <Watermark dark={route === "welcome" || route === "fin"} />
+      {(route === "welcome" || route === "fin") && <Watermark dark />}
+      {transition && (
+        <div className={"veil2 " + transition.tipo}>
+          <div className="veil2-inner">
+            <div className="veil2-cross">
+              <Ic.Cross s={34} />
+            </div>
+            {transition.titulo && <p className="veil2-txt">Comenzando: {transition.titulo}</p>}
+          </div>
+        </div>
+      )}
       {toastMsg && <div className="toast" key={toastMsg}>{toastMsg}</div>}
       {!ready && (
         <div className="boot">

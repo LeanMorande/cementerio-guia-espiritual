@@ -1,9 +1,9 @@
 /* =====================================================================
-   COMPONENTS / SelectScreen.jsx — presentación del Ángel + opciones.
+   COMPONENTS / SelectScreen.jsx — presentación del Ángel + opciones
+   (30% diálogo + 70% opciones).
    ===================================================================== */
 import { useEffect, useRef, useState } from "react";
-import SpeakerPanel from "./SpeakerPanel.jsx";
-import LiveCaption from "./LiveCaption.jsx";
+import Teleprompter from "./Teleprompter.jsx";
 import { Ic } from "./icons.jsx";
 
 export default function SelectScreen({ cfg, eng, introDone, onSkip, onSelect }) {
@@ -31,19 +31,28 @@ export default function SelectScreen({ cfg, eng, introDone, onSkip, onSelect }) 
 
   return (
     <div className="screen">
-      <SpeakerPanel img={cfg.voces.angel.img} nombre={cfg.voces.angel.nombre} speaking={speaking} />
-      {!introDone && hasIntro && (
-        <div className="capwrap">
-          <LiveCaption text={cfg.bienvenida.introTexto} audioRef={eng.audioRef} duration={eng.dur} />
-          <button className="linkbtn" onClick={onSkip}>
+      {/* ============ 30% superior — diálogo del Ángel ============ */}
+      <section className="sel-top">
+        <div className="sdial">
+          <div className={"savatar" + (speaking ? " speaking" : "")}>
+            <img src={cfg.voces.angel.img} alt={cfg.voces.angel.nombre} />
+            <b>{cfg.voces.angel.nombre}</b>
+          </div>
+          <div className="sballoon">
+            {!introDone && hasIntro ? (
+              <Teleprompter text={cfg.bienvenida.introTexto} audioRef={eng.audioRef} duration={eng.dur} />
+            ) : (
+              <p className="sdialtext">¿Con quién quieres orar?</p>
+            )}
+          </div>
+        </div>
+        {!introDone && hasIntro && (
+          <button className="linkbtn sel-skip" onClick={onSkip}>
             Saltar presentación ›
           </button>
-        </div>
-      )}
-      <div className="choosewrap">
-        <div className="chooserow">
-          <h2>¿Con quién quieres orar?</h2>
-          {introDone && secs > 0 && (
+        )}
+        {introDone && secs > 0 && (
+          <div className="sel-count">
             <div className="cdring" aria-hidden="true">
               <svg width="34" height="34" viewBox="0 0 34 34">
                 <circle cx="17" cy="17" r="14" className="cdtrack" />
@@ -55,9 +64,13 @@ export default function SelectScreen({ cfg, eng, introDone, onSkip, onSelect }) 
               </svg>
               <span>{secs}</span>
             </div>
-          )}
-        </div>
-        {introDone && <p className="cdnote">Si no eliges, elegiremos por ti</p>}
+            <span className="cdnote">Elige con quién orar</span>
+          </div>
+        )}
+      </section>
+
+      {/* ============ 70% inferior — opciones ============ */}
+      <section className="sel-bottom">
         <div className="options">
           {cfg.opciones.map((o) => (
             <button
@@ -74,7 +87,7 @@ export default function SelectScreen({ cfg, eng, introDone, onSkip, onSelect }) 
             </button>
           ))}
         </div>
-      </div>
+      </section>
     </div>
   );
 }

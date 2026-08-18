@@ -117,8 +117,10 @@ export default function ConfigScreen(props) {
                   <span className="segnum">{i + 1}</span>
                   <select className="inp sel" value={sg.voz} onChange={(e) => props.setSeg(i, { voz: e.target.value })} aria-label="Voz del paso">
                     <option value="angel">Voz: Ángel de la Guarda</option>
+                    <option value="padre">Voz: Dios Padre</option>
+                    <option value="jesus">Voz: Jesús</option>
                     <option value="maria">Voz: Virgen María</option>
-                    <option value="">Sin voz (canto / silencio)</option>
+                    <option value="canto">Canto / Meditación</option>
                   </select>
                   <div className="segtools2">
                     <button className="iconbtn sm3" disabled={i === 0} onClick={() => props.moveSeg(i, -1)} aria-label="Subir">
@@ -145,11 +147,32 @@ export default function ConfigScreen(props) {
                   <input
                     className="inp"
                     value={sg.audioUrl || ""}
+                    placeholder="/sounds/paso_N_xxx.mp3"
                     onChange={(e) =>
                       props.setSeg(i, { audioUrl: e.target.value, audio: !!e.target.value, audioName: e.target.value.split("/").pop() })
                     }
                   />
                 </div>
+                <div className="field2">
+                  <span className="lbl">Imagen de escena (public/)</span>
+                  <input
+                    className="inp"
+                    value={sg.imagen || ""}
+                    placeholder="escena_N.jpg"
+                    onChange={(e) => props.setSeg(i, { imagen: e.target.value })}
+                  />
+                </div>
+                {sg.voz === "canto" && (
+                  <div className="field2">
+                    <span className="lbl">Nombre de la acción / canto</span>
+                    <input
+                      className="inp"
+                      value={sg.accion || ""}
+                      placeholder="Meditación, «A ti alabanza», …"
+                      onChange={(e) => props.setSeg(i, { accion: e.target.value })}
+                    />
+                  </div>
+                )}
                 {sg.tipo === "subtitulo" ? (
                   <textarea className="inp ta" rows={5} value={sg.texto} onChange={(e) => props.setSeg(i, { texto: e.target.value })} />
                 ) : (

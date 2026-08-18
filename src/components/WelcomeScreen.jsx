@@ -3,11 +3,20 @@
    ===================================================================== */
 import { Ic } from "./icons.jsx";
 
-export default function WelcomeScreen({ cfg, onStart }) {
+export default function WelcomeScreen({ cfg, onStart, admin, onToggleAdmin }) {
   return (
     <div className="splash">
       <div className="sbg" style={{ backgroundImage: "url(" + cfg.bienvenida.fondo + ")" }} />
       <div className="sveil" />
+      <button
+        className="admin-a"
+        aria-label="Activar modo admin"
+        title="Modo administrador (A)"
+        onClick={onToggleAdmin}
+      >
+        A
+      </button>
+      {admin && <div className="admin-chip">Modo Admin ACTIVO</div>}
       <div className="scontent">
         <div className="semb">
           <Ic.Cross s={40} />
@@ -20,6 +29,10 @@ export default function WelcomeScreen({ cfg, onStart }) {
           <span>Iniciar la visita</span>
         </button>
         <p className="stap">Con este toque autorizas el sonido de la experiencia</p>
+        <p className="sfooter">
+          <span className="sfooter-t">La aplicación es 100% gratuita.</span>
+          <span className="sfooter-s">(Nunca deberá ingresar sus datos o información bancaria.)</span>
+        </p>
       </div>
     </div>
   );
