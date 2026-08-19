@@ -193,6 +193,29 @@ img{display:block}
 .savatar b{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:14px;text-align:center;line-height:1.15}
 .sballoon{flex:1;min-width:0;height:100%;display:flex;align-items:center;justify-content:center;border:1px solid #e2dfd5;border-radius:16px;background:linear-gradient(180deg,#fbfaf6,#f5f4ee);padding:14px 16px;overflow:hidden;box-shadow:inset 0 1px 6px rgba(80,65,30,.05)}
 .sdialtext{font-family:'Cormorant Garamond',serif;font-size:clamp(20px,5.2vw,25px);line-height:1.5;color:#3c2a0c;text-align:center;font-weight:600;white-space:pre-wrap}
+/* ---------- optimización del teleprompter / globo de texto en móvil ----------
+   Para pantallas ≤600px buscamos: más ancho de lectura (menos padding),
+   interlineado compacto (1.35–1.4), balanceo automático de palabras y letra
+   fluida que evita palabras huérfanas y el desperdicio de línea. */
+@media (max-width:600px){
+  .sballoon{padding:10px 12px}
+  .sballoon .tp .tp-track{padding:8px 4px}
+  .sballoon .tp .tp-line{
+    font-size:clamp(1.15rem,4.2vw,1.35rem);
+    line-height:1.38;
+    text-wrap:balance; /* balancea palabras por línea (quita huérfanas) */
+  }
+  .sdialtext{
+    font-size:clamp(1.15rem,4.2vw,1.35rem);
+    line-height:1.38;
+    text-wrap:balance;
+  }
+  /* Modo voz (diálogo a pantalla): mismo tratamiento para maximizar lectura */
+  .layout-voz-top .sdialtext{
+    font-size:clamp(1.15rem,4.2vw,1.35rem);
+    line-height:1.38;
+  }
+}
 .sadmtext{width:100%;height:100%;min-height:120px;border:none;background:transparent;resize:none;font-family:'Cormorant Garamond',serif;font-size:15px;line-height:1.5;color:#3c2a0c;font-weight:600;outline:none;overflow:auto}
 .sscene{width:100%;height:100%;min-height:0;border-radius:16px;overflow:hidden;position:relative;border:1px solid #e3e0d7;box-shadow:0 14px 28px -18px rgba(60,48,24,.45);background:#eee}
 .sscene img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center}

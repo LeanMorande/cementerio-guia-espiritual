@@ -1,18 +1,25 @@
 import { useMemo, useRef, useState, useCallback, useLayoutEffect, useEffect } from "react";
 
 /* Convierte el texto en un array de líneas acotadas (word-wrap aprox.)
-   para que quepan varias por ventana y el scroll sea fluido. */
-function wrapLines(text, maxChars = 48) {
+   para que quepan varias por ventana y el scroll sea fluido.
+   El máximo de caracteres por línea es responsivo: en móviles se permiten
+   menos caracteres para evitar que las líneas se desborden y queden palabras
+   sueltas/huérfanas; en pantallas anchas se aprovecha el espacio. */
+function wrapLines(text, maxChars, winWidth) {
   const words = text
     .split(/\r?\n/)
     .join(" ")
     .trim()
     .split(/\s+/)
     .filter(Boolean);
+  // Límite por caracteres según el ancho de la ventana (y el de la caja).
+  const limit =
+    maxChars ||
+    (winWidth ? (winWidth <= 600 ? 30 : winWidth <= 900 ? 40 : 48) : 48);
   const lines = [];
   let cur = "";
   for (const w of words) {
-    if ((cur + " " + w).trim().length > maxChars && cur) {
+    if ((cur + " " + w).trim().length > limit && cur) {
       lines.push(cur.trim());
       cur = w;
     } else {
@@ -40,7 +47,15 @@ function lineWeight(line) {
 }
 
 export default function Teleprompter({ text, audioRef, duration, hint }) {
-  const lines = useMemo(() => wrapLines(text || ""), [text]);
+  // Ancho de la ventana para redividir el texto según el espacio disponible
+  // (en móvil se generan líneas más cortas → menos palabras sueltas).
+  const [winW, setWinW] = useState(() => (typeof window !== "undefined" ? window.innerWidth : 900));
+  useEffect(() => {
+    const onR = () => setWinW(window.innerWidth);
+    window.addEventListener("resize", onR);
+    return () => window.removeEventListener("resize", onR);
+  }, []);
+  const lines = useMemo(() => wrapLines(text || "", undefined, winW), [text, winW]);
   const segs = useMemo(() => {
     if (!duration || duration <= 0 || !lines.length) return [];
     const w = lines.map((l) => lineWeight(l));
