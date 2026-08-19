@@ -13,6 +13,7 @@ import Teleprompter from "./Teleprompter.jsx";
 const FIRMA = "† CEMENTERIO CATÓLICO DE COLONIA CRESPO";
 
 export default function StepLayout({
+  id,
   speaker,
   speaking,
   texto,
@@ -21,9 +22,11 @@ export default function StepLayout({
   admin,
   audioName,
   hasAudio,
+  tipo,
   accion,
   eng,
   onNext,
+  onPrev,
   last,
   idx,
   totalSteps,
@@ -40,7 +43,9 @@ export default function StepLayout({
     eng.seekTo(ratio);
   };
 
-  const isCanto = !speaker || !speaker.img;
+  // Modo de renderizado según la nueva propiedad `tipo`.
+  const isVoice = tipo === "modo-voz";
+  const isCanto = tipo === "modo-canto" || !speaker || !speaker.img;
   const nombre = speaker?.nombre || "Canto";
   const balloon = accion ? accion : texto;
 
@@ -50,7 +55,7 @@ export default function StepLayout({
 
   return (
     <div
-      className="steplayout"
+      className={"steplayout" + (isVoice ? " voice" : " canto")}
       key={idx}
       style={{ animationDelay: idx === 0 ? "1.9s" : "0s" }}
     >
@@ -58,16 +63,25 @@ export default function StepLayout({
       {admin && (
         <div className="sadmbars">
           <span className="sadmitem">
-            <Ic.Img s={13} /> imagen: <code>{imagen || "(sin imagen)"}</code>
+            <b>#</b> ID: <code>{id || "(sin id)"}</code>
           </span>
+          {/* En modo-voz no hay imagen central, así que no se muestra esa línea. */}
+          {!isVoice && (
+            <span className="sadmitem">
+              <Ic.Img s={13} /> imagen: <code>{imagen || "(sin imagen)"}</code>
+            </span>
+          )}
           <span className={"sadmitem" + (hasAudio ? "" : " miss")}>
             <Ic.Note s={13} /> audio: <code>public/sounds/{audioName || "(sin definido)"}</code>
           </span>
         </div>
       )}
 
-      {/* ============ 30% superior — diálogo ============ */}
-      <section className="sstep sstep-top">
+      {/* ============ superior — diálogo (80vh en modo-voz, 30% en modo-canto) ============ */}
+      <section
+        className={"sstep sstep-top" + (isVoice ? " layout-voz-top" : "")}
+        style={isVoice ? { flex: "1 1 0%", minHeight: 0 } : undefined}
+      >
         <div className="sdial">
           <div className={"savatar" + (isCanto ? " canto" : "") + (speaking ? " speaking" : "")}>
             {!isCanto ? (
@@ -94,22 +108,24 @@ export default function StepLayout({
         </div>
       </section>
 
-      {/* ============ 50% central — imagen de la escena ============ */}
-      <section className="sstep sstep-mid">
-        <figure className="sscene">
-          {imagen && !admin ? (
-            <>
-              <img src={imagen} alt="" onError={(e) => (e.currentTarget.style.display = "none")} />
-              {caption && <figcaption className="ccap">{caption}</figcaption>}
-            </>
-          ) : (
-            <div className="splaceholder">
-              <Ic.Img s={40} />
-              <span>Imagen: {imagen || "(sin imagen)"}</span>
-            </div>
-          )}
-        </figure>
-      </section>
+      {/* ============ 50% central — imagen de la escena (se oculta en modo-voz) ============ */}
+      {!isVoice && (
+        <section className="sstep sstep-mid">
+          <figure className="sscene">
+            {imagen && !admin ? (
+              <>
+                <img src={imagen} alt="" onError={(e) => (e.currentTarget.style.display = "none")} />
+                {caption && <figcaption className="ccap">{caption}</figcaption>}
+              </>
+            ) : (
+              <div className="splaceholder">
+                <Ic.Img s={40} />
+                <span>Imagen: {imagen || "(sin imagen)"}</span>
+              </div>
+            )}
+          </figure>
+        </section>
+      )}
 
       {/* ============ 20% inferior — controles + firma ============ */}
       <footer className="sstep sstep-bottom">
@@ -132,7 +148,11 @@ export default function StepLayout({
           <span className="ptime num dim">{fmtTime(eng.dur)}</span>
         </div>
 
-        <div className="trow">
+        <div className="controles-reproductor">
+          <button className="btn ghost prevbtn" onClick={onPrev} disabled={idx === 0} aria-label="Paso anterior">
+            <Ic.ChL />
+            <span>Atrás</span>
+          </button>
           <button className="btn ghost" onClick={eng.rewind} aria-label="Retroceder 10 segundos">
             <Ic.Back10 />
             <span>10 s</span>

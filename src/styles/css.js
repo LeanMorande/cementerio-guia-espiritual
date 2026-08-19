@@ -126,14 +126,18 @@ img{display:block}
 .tp::before{top:0;background:linear-gradient(180deg,#fbfaf6,rgba(251,250,246,0))}
 .tp::after{bottom:0;background:linear-gradient(0deg,#f5f4ee,rgba(245,244,238,0))}
 .tp-track{position:relative;padding:14px 18px;will-change:transform}
-.tp-line{font-family:'Cormorant Garamond',serif;text-align:center;font-size:clamp(21px,5.8vw,26px);line-height:1.7;color:#8a877c;letter-spacing:.01em;transition:color .5s,opacity .5s;opacity:.62}
+.tp-line{font-family:'Cormorant Garamond',serif;text-align:center;font-size:clamp(27px,7.5vw,34px);line-height:1.7;color:#8a877c;letter-spacing:.01em;transition:color .5s,opacity .5s;opacity:.62}
 .tp-line.past{opacity:.3}
 .tp-line.active{color:#3c2a0c;font-weight:600;opacity:1;text-shadow:0 1px 0 rgba(255,255,255,.4)}
 /* Teleprompter incrustado dentro del globo de diálogo (30% superior) */
 .sballoon .tp{position:relative;flex:none;width:100%;height:100%;min-height:0;margin:0;border:none;box-shadow:none;background:transparent;overflow:hidden}
 .sballoon .tp::before,.sballoon .tp::after{display:none}
 .sballoon .tp .tp-track{position:absolute;left:0;right:0;top:0;padding:10px 12px;display:flex;flex-direction:column;align-items:center;will-change:transform}
-.sballoon .tp .tp-line{font-size:clamp(15px,4vw,18px);line-height:1.7;color:#8a877c;margin:2px 0;white-space:normal;width:100%}
+.sballoon .tp .tp-line{font-size:clamp(20px,5.2vw,23px);line-height:1.6;color:#8a877c;margin:3px 0;white-space:normal;width:100%}
+/* Bienvenida del selector (presentación del Ángel): globo + texto un 15% menor */
+.sel-top .sballoon{max-width:100%}
+.sel-top .tp .tp-line{font-size:clamp(17px,4.4vw,20px);line-height:1.5;margin:2px 0}
+.sel-top .sdialtext{font-size:clamp(17px,4.4vw,21px)}
 .tp-hint{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:rgba(42,41,38,.82);color:#f2ecdd;font-size:12px;padding:6px 14px;border-radius:99px;z-index:3;animation:fadeIn .6s ease;white-space:nowrap}
 .cimg{flex:1;margin:8px 14px 10px;border-radius:16px;overflow:hidden;position:relative;min-height:140px;border:1px solid #e3e0d7;box-shadow:0 14px 28px -18px rgba(60,48,24,.45)}
 .cimg img{width:100%;height:100%;object-fit:cover;animation:kb 22s ease-in-out infinite alternate}
@@ -153,13 +157,33 @@ img{display:block}
 .play{width:64px;height:64px;border-radius:50%;border:none;background:linear-gradient(135deg,#c9a254,#a97f2f);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 18px -8px rgba(140,100,30,.65);transition:transform .15s}
 .play:active{transform:scale(.95)}
 .play.idle{animation:ring 2.4s ease-out infinite}
+/* ---------- botonera única en fila (Atrás · 10s · Play · Siguiente) ---------- */
+.controles-reproductor{display:flex;justify-content:center;align-items:center;gap:10px;width:100%;flex-wrap:nowrap}
+.controles-reproductor .btn{min-height:46px;padding:0 14px;white-space:nowrap}
+.controles-reproductor .play{flex-shrink:0}
+@media (max-width:480px){
+  .controles-reproductor{gap:6px}
+  .controles-reproductor .btn{padding:0 10px;font-size:13px}
+  .controles-reproductor .play{width:54px;height:54px}
+}
 
 /* ---------- maquetación reutilizable del paso (30/50/20) ---------- */
-.steplayout{flex:1;display:flex;flex-direction:column;min-height:0;gap:8px;padding:4px 14px 12px;animation:fadeAppear 2s ease both}
+.steplayout{flex:1;position:relative;display:flex;flex-direction:column;min-height:0;gap:8px;padding:4px 14px 12px;overflow-y:auto;overflow-x:hidden;animation:fadeAppear 2s ease both}
 .sstep{min-height:0}
-.sstep-top{flex:0 0 30%;display:flex;align-items:center}
-.sstep-mid{flex:0 0 50%;position:relative}
-.sstep-bottom{flex:0 0 20%;display:flex;flex-direction:column;justify-content:flex-end;gap:8px}
+.sstep-top{flex:0 0 auto;flex-basis:30%;flex-shrink:0;display:flex;align-items:center}
+.sstep-mid{flex:1 1 0%;position:relative;min-height:0}
+.sstep-bottom{flex:0 0 auto;flex-basis:20%;flex-shrink:0;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;padding-top:2px}
+/* ---------- modo-voz: el diálogo ocupa todo el espacio libre (sin imagen) ---------- */
+.layout-voz-top{flex:1 1 0% !important;min-height:0;display:flex;flex-direction:column;justify-content:flex-start;padding-bottom:20px;box-sizing:border-box}
+/* modo-canto: la caja superior (avatar + título de canción) se reduce a la mitad
+   (15% ~= 50% del 30% original) y ese espacio pasa a la imagen central. */
+.steplayout.canto .sstep-top{flex:0 0 15%}
+.steplayout.canto .sstep-top .sdial{gap:8px}
+.steplayout.canto .sstep-top .savatar img,.steplayout.canto .sstep-top .savatar .cantoic{width:56px;height:56px}
+.layout-voz-top .sdial{flex:1 1 0%;height:100%;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:12px;min-height:0}
+.layout-voz-top .savatar{flex:0 0 auto;align-self:center}
+.layout-voz-top .sballoon{flex:1 1 0%;height:auto;min-height:0;overflow-y:auto}
+.layout-voz-top .sdialtext{font-size:clamp(23px,6.5vw,31px);line-height:1.45}
 .sdial{display:flex;align-items:center;gap:12px;width:100%;height:100%;min-height:0}
 .savatar{width:15%;max-width:96px;display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0}
 .savatar img,.savatar .cantoic{width:70px;height:70px;border-radius:50%;object-fit:cover;border:2px solid rgba(169,127,47,.45)}
@@ -168,14 +192,14 @@ img{display:block}
 .savatar.speaking img,.savatar.speaking .cantoic{animation:avatarGlow 2.6s ease-in-out infinite}
 .savatar b{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:14px;text-align:center;line-height:1.15}
 .sballoon{flex:1;min-width:0;height:100%;display:flex;align-items:center;justify-content:center;border:1px solid #e2dfd5;border-radius:16px;background:linear-gradient(180deg,#fbfaf6,#f5f4ee);padding:14px 16px;overflow:hidden;box-shadow:inset 0 1px 6px rgba(80,65,30,.05)}
-.sdialtext{font-family:'Cormorant Garamond',serif;font-size:clamp(15px,4vw,19px);line-height:1.5;color:#3c2a0c;text-align:center;font-weight:600;white-space:pre-wrap}
+.sdialtext{font-family:'Cormorant Garamond',serif;font-size:clamp(20px,5.2vw,25px);line-height:1.5;color:#3c2a0c;text-align:center;font-weight:600;white-space:pre-wrap}
 .sadmtext{width:100%;height:100%;min-height:120px;border:none;background:transparent;resize:none;font-family:'Cormorant Garamond',serif;font-size:15px;line-height:1.5;color:#3c2a0c;font-weight:600;outline:none;overflow:auto}
 .sscene{width:100%;height:100%;min-height:0;border-radius:16px;overflow:hidden;position:relative;border:1px solid #e3e0d7;box-shadow:0 14px 28px -18px rgba(60,48,24,.45);background:#eee}
 .sscene img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center}
 .ccap{position:absolute;left:0;right:0;bottom:0;margin:0;padding:6px 10px;font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;color:#fff;text-align:center;background:linear-gradient(180deg,transparent,rgba(0,0,0,.62));border-bottom-left-radius:16px;border-bottom-right-radius:16px}
 .splaceholder{width:100%;height:100%;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--silver);background:repeating-linear-gradient(45deg,#f0eee8,#f0eee8 12px,#e9e6de 12px,#e9e6de 24px);border-radius:16px}
 .splaceholder span{font-size:13px;font-weight:600;letter-spacing:.02em;text-align:center;padding:0 10px}
-.sfirma{font-size:9px;letter-spacing:.18em;text-align:center;color:rgba(90,86,76,.6);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sfirma{display:block;width:100%;text-align:center;margin:2px 0 0;padding:0 10px;font-size:9px;letter-spacing:.18em;line-height:1.4;color:rgba(90,86,76,.6);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sadmbars{display:flex;flex-direction:column;gap:3px;flex-shrink:0;font-size:11.5px;color:#4e3a10;background:var(--gold-faint);border:1px dashed var(--gold2);border-radius:10px;padding:5px 8px;line-height:1.35}
 .sadmitem{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
 .sadmitem code{font-family:ui-monospace,monospace;font-size:11px;font-weight:600;background:rgba(255,255,255,.7);padding:0 5px;border-radius:5px;word-break:break-all}

@@ -3,7 +3,7 @@
    ===================================================================== */
 import StepLayout from "./StepLayout.jsx";
 import { Ic } from "./icons.jsx";
-export default function PathScreen({ cfg, idx, onExit, onNext, eng, admin }) {
+export default function PathScreen({ cfg, idx, onExit, onNext, onPrev, eng, admin }) {
   const seg = cfg.camino[idx];
   const last = idx === cfg.camino.length - 1;
   if (!seg) return null;
@@ -29,6 +29,7 @@ export default function PathScreen({ cfg, idx, onExit, onNext, eng, admin }) {
       </div>
 
       <StepLayout
+        id={seg.id}
         speaker={speaker}
         speaking={speaking}
         texto={seg.texto}
@@ -37,9 +38,11 @@ export default function PathScreen({ cfg, idx, onExit, onNext, eng, admin }) {
         admin={admin}
         audioName={audioName}
         hasAudio={hasAudio}
+        tipo={seg.tipo}
         accion={seg.accion}
         eng={eng}
         onNext={onNext}
+        onPrev={onPrev}
         last={last}
         idx={idx}
         totalSteps={cfg.camino.length}

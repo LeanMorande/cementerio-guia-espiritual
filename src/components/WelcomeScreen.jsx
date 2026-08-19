@@ -28,10 +28,10 @@ export default function WelcomeScreen({ cfg, onStart, admin, onToggleAdmin }) {
           <Ic.Play s={22} />
           <span>Iniciar la visita</span>
         </button>
-        <p className="stap">Con este toque autorizas el sonido de la experiencia</p>
+        <p className="stap">Con este toque activas el sonido de la experiencia</p>
         <p className="sfooter">
           <span className="sfooter-t">La aplicación es 100% gratuita.</span>
-          <span className="sfooter-s">(Nunca deberá ingresar sus datos o información bancaria.)</span>
+          <span className="sfooter-s">(no ingreses tus datos o información bancaria)</span>
         </p>
       </div>
     </div>

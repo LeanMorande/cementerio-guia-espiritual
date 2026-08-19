@@ -383,9 +383,16 @@ export default function App() {
       // El efecto de route/pathIdx reproduce el audio del siguiente paso.
       setPathIdx(pathIdx + 1);
     } else {
-      stopAudio();
+            stopAudio();
       setRoute("fin");
     }
+  };
+
+  /* Retrocede un paso en el camino (lógica inversa de nextStep).
+     Cancela el gap/audio en curso y resta 1 a pathIdx mientras sea > 0. */
+  const prevStep = () => {
+    cancelGap();
+    if (pathIdx > 0) setPathIdx(pathIdx - 1);
   };
 
   /* ---------- setters de config ---------- */
@@ -485,7 +492,7 @@ export default function App() {
       )}
 
       {route === "path" && ready && (
-        <PathScreen cfg={cfg} idx={pathIdx} onExit={exitPath} onNext={nextStep} eng={eng} admin={admin} />
+        <PathScreen cfg={cfg} idx={pathIdx} onExit={exitPath} onNext={nextStep} onPrev={prevStep} eng={eng} admin={admin} />
       )}
 
       {route === "fin" && ready && <FinScreen onHome={goHome} />}

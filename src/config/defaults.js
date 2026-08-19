@@ -93,7 +93,7 @@ export function buildDefaults() {
     camino: [
       // Paso 1 — Ángel (apertura del camino)
       {
-        uid: uid(), voz: "angel", tipo: "subtitulo",
+        uid: uid(), id: "m1_voz", voz: "angel", tipo: "modo-voz",
         speaker: "Ángel de la Guarda",
         audio: true, audioUrl: "/sounds/paso_1_angel.mp3", audioName: "paso_1_angel.mp3", dur: 0,
         texto: "Busca un lugar tranquilo, en silencio, si deseas siéntate y empecemos a orar juntos, serán pocos minutos, veras como tu corazón experimentara una paz muy grande y tus queridos difuntos te lo agradecerán. Pongámonos en presencia de la Santísima Trinidad para que nos acompañen en este momento de oración, hagamos juntos la señal de la cruz: en el nombre del Padre y del Hijo y del Espíritu Santo. Amen.",
@@ -101,7 +101,7 @@ export function buildDefaults() {
       },
       // Paso 2 — Canto Trinidad (nuevo)
       {
-        uid: uid(), voz: "canto", tipo: "meditacion",
+        uid: uid(), id: "m2_canto", voz: "canto", tipo: "modo-canto",
         speaker: "Canto",
         audio: true, audioUrl: "/sounds/canto_trinidad.mp3", audioName: "canto_trinidad.mp3", dur: 0,
         accion: "A ti alabanza y gloria (Arpa Dei)",
@@ -110,23 +110,23 @@ export function buildDefaults() {
       },
       // Paso 3 — Ángel (continuación)
       {
-        uid: uid(), voz: "angel", tipo: "subtitulo",
+        uid: uid(), id: "m3_voz", voz: "angel", tipo: "modo-voz",
         speaker: "Ángel de la Guarda",
         audio: true, audioUrl: "/sounds/paso_2_angel.mp3", audioName: "paso_2_angel.mp3", dur: 0,
-        texto: "Tu elegiste hacer compartir este momento de oración junto con tu Madre la Virgen Maria. Te propongo que le cuentes a ella lo que siente tu corazón, es muy sencillo, consiste en decirle con palabras simples: cuáles son tus alegrías, y que cosa te da tristeza, cuéntale lo que estás viviendo con tu familia, en el trabajo, sabiendo que tu madre te ama y te esta escuchando en este momento.",
+        texto: "Tu elegiste hacer compartir este momento de oración junto con tu Madre la Virgen María. Te propongo que le cuentes a ella lo que siente tu corazón, es muy sencillo, consiste en decirle con palabras simples: cuáles son tus alegrías, y que cosa te da tristeza, cuéntale lo que estás viviendo con tu familia, en el trabajo, o con tu salud, sabiendo que tu madre te ama y te esta escuchando en este momento.",
         imagen: IMG_ESCENA_2, caption: "",
       },
       // Paso 4 — María
       {
-        uid: uid(), voz: "maria", tipo: "subtitulo",
+        uid: uid(), id: "m4_voz", voz: "maria", tipo: "modo-voz",
         speaker: "Virgen María",
         audio: true, audioUrl: "/sounds/paso_3_virgen.mp3", audioName: "paso_3_virgen.mp3", dur: 0,
-        texto: "Que alegría me estás dando con esta visita, yo soy tu madre y tú sabes cómo somos las mamas, no vemos la hora de poder estar a solas un rato con nuestros hijos para hablar de nuestras cosas. Si supieras cuanto tiempo llevo esperándote en este lugar santo para poder abrazarte, para poder consolar la tristeza que te ha dejado la muerte de tus seres queridos, para llenar la soledad de su partida, para cubrir tu alma con la paz que solo mi hijo Jesús puede darte. Cuando yo estoy a tu lado, en medio a los trajines de tu vida, entiendo muy bien cuanto extrañas a quienes aquí están sepultados. Comprendo que darías todo lo que tienes para sentarte, aunque sea solo cinco minutos a tomar unos mates con ellos por última vez, y poder despedirte, poder decirles que le perdonas algo que te ha hecho sufrir o simplemente decir ¡gracias, te quiero mucho! Yo estoy siempre junto a ti, por eso sé muy bien que la casa ya no es la misma sin ellos, que a la ramada del patio le falta el eco de sus risas, que la cocina parece distinta sin ese olor característico a la comida que te preparaban y que es difícil la vida sin tenerlos cerca para pedir un consejo en momentos difíciles. Todo esto lo comprendo muy bien porque yo soy mama y también pase por un dolor semejante al tuyo. Te voy a compartir un secreto que guardo en mi alma desde hace muchos años y estaba esperando el momento justo para contártelo. En aquel viernes santo, la muerte golpeo la puerta de mi corazón y me arranco de un tirón todo lo que yo más amaba, a mi Hijo Jesús. Aquella tarde, sentí la tristeza que tu sientes, esa misma soledad que ahoga tu alma, yo también añore un abrazo, un último beso, pero la muerte me lo arrebato. En ese momento desde lo profundo de mi corazón dolido me broto este lamento, que lo deposite en las manos de Dios Padre, y eso me trajo una profunda paz, que me dio fuerzas para seguir adelante con la vida.",
+        texto: "Yo soy tu madre la Virgen María, y te confieso que ahora me estás dando una alegría inmensa con esta visita. Tú sabes cómo somos las mamas, no vemos la hora de poder estar a solas un rato con nuestros hijos para hablar de nuestras cosas. Si supieras cuanto tiempo llevo esperándote en este lugar santo para poder abrazarte, para poder consolar la tristeza que te ha dejado la muerte de tus seres queridos, para llenar la soledad de su partida, para cubrir tu alma con la paz que solo mi hijo Jesús puede darte. Yo sé cuánto extrañas a quienes aquí están sepultados. Comprendo que darías todo lo que tienes para sentarte junto a ellos unos pocos minutos y por última vez abrazarlos y decirles ¡gracias, los quiero mucho! o talvez decirles que los perdonas porque en vida te han hecho sufrir. Como yo estoy día y noche junto a ti, sé muy bien que desde el instante de su partida de este mundo, tu casa ya no es la misma sin ellos, veo que a la ramada del patio le falta algo sin el eco de sus risas, siento que la cocina te parece vacía sin el olor a la comida que te preparaban y que hay momentos en tu vida que todo se te hace cuesta arriba porque no los tienes cerca para pedirles un consejo. Todo esto lo comprendo muy bien porque yo soy mama y también pase por un dolor semejante al tuyo. Te voy a contar un secreto que guardo en mi alma desde hace muchos años y estaba esperando el momento justo para decírtelo. El viernes santo, la muerte llamo a la puerta de mi corazón y me arranco de un tirón lo que yo más amaba, a mi Hijo Jesús. Aquella tarde, sentí la tristeza que tu sientes, esa misma soledad que ahoga tu alma, yo también añore un abrazo, un último beso, pero la muerte me lo arrebato. En ese momento desde lo profundo de mi corazón dolido, me broto esta oración como si fuera un lamento, que lo deposite en las manos de Dios Padre, y eso me trajo una profunda paz, que me dio fuerzas para seguir adelante con la vida.",
         imagen: IMG_ESCENA_3, caption: "",
       },
       // Paso 5 — Canto Calvario (nuevo)
       {
-        uid: uid(), voz: "canto", tipo: "meditacion",
+        uid: uid(), id: "m5_canto", voz: "canto", tipo: "modo-canto",
         speaker: "Canto",
         audio: true, audioUrl: "/sounds/diario_de_maria.mp3", audioName: "diario_de_maria.mp3", dur: 0,
         accion: "El diario de María",
@@ -135,15 +135,15 @@ export function buildDefaults() {
       },
       // Paso 6 — María (meditación personal)
       {
-        uid: uid(), voz: "maria", tipo: "subtitulo",
+        uid: uid(), id: "m6_voz", voz: "maria", tipo: "modo-voz",
         speaker: "Virgen María",
         audio: true, audioUrl: "/sounds/paso_4_virgen.mp3", audioName: "paso_4_virgen.mp3", dur: 0,
-        texto: "En el momento más difícil de mi vida, cuando tuve que enfrentar la muerte de mi Hijo, me trajo mucho alivio, el poder contarle a Dios con mis palabras, mi dolor, mi soledad y mi tristeza. Te propongo que hagas lo mismo que hice yo en aquel terrible momento: cuéntale a Dios y a tu ser querido, en una charla mano a mano, ¿que es lo que más extrañas de su ausencia?. Si les quedo una cuenta pendiente, habla de ello con su alma, ofrécele tu perdón, no guardes rencor, aprovecha este momento para que Dios Padre te sane esas heridas viejas, y aquellos problemas que no pudiste arreglar en vida. Si necesitas un consejo, cuéntale tu dificultad y pide ayuda. Es muy bueno que hables con el Alma de tus seres queridos en la presencia de Dios Padre, él te traerá paz y salud al corazón. Ahora yo me voy a quedar un momento en silencio para escucharte a ti. ¡vamos sin miedo! Saca todo lo que tengas en el corazón a través de una charla simple, yo que soy tu madre estaré junto a ti porque sé que no es fácil. Y luego rezaremos juntos.",
+        texto: "En el momento más difícil de mi vida, cuando tuve que enfrentar la muerte de mi Hijo, me trajo mucho alivio, el poder contarle a Dios con mis palabras, mi dolor, mi soledad y mi tristeza. Te propongo que hagas lo mismo que hice yo en aquel terrible momento: cuéntale a Dios y a tu ser querido difunto, en una charla mano a mano, ¿qué es lo que más extrañas de su ausencia?. Si te quedo una cuenta pendiente, habla de ello con su alma, ofrécele tu perdón, no guardes rencor, aprovecha este momento para que Dios Padre te sane esas heridas viejas, y aquellos problemas que no pudiste arreglar en vida. Si necesitas un consejo, cuéntale tu dificultad y pide ayuda. Es muy bueno que hables con el Alma de tus seres queridos en la presencia de Dios Padre, él te traerá paz y salud al corazón. Ahora yo me voy a quedar un momento en silencio para escucharte a ti. ¡vamos sin mido! Saca todo lo que tengas en el corazón a través de una charla simple con Dios y con el alma de tu ser querido, yo estaré junto a ti porque sé que no es fácil.",
         imagen: IMG_ESCENA_4, caption: "",
       },
       // Paso 7 — Meditación / Miserere (nuevo)
       {
-        uid: uid(), voz: "canto", tipo: "meditacion",
+        uid: uid(), id: "m7_canto", voz: "canto", tipo: "modo-canto",
         speaker: "Meditación",
         audio: true, audioUrl: "/sounds/miserere.mp3", audioName: "miserere.mp3", dur: 180,
         pauseDuration: 180,
@@ -153,7 +153,7 @@ export function buildDefaults() {
       },
       // Paso 8 — María
       {
-        uid: uid(), voz: "maria", tipo: "subtitulo",
+        uid: uid(), id: "m8_voz", voz: "maria", tipo: "modo-voz",
         speaker: "Virgen María",
         audio: true, audioUrl: "/sounds/paso_5_virgen.mp3", audioName: "paso_5_virgen.mp3", dur: 0,
         texto: "Todo esto que me has dicho, lo depositamos ahora en las manos de Dios Padre, para que sea El quien te traiga paz y consuelo. Con la esperanza cierta que las almas de tus difuntos un día resucitaran, y nos volveremos a encontrar. Por eso pedimos el eterno descanso para ellas.",
@@ -161,7 +161,7 @@ export function buildDefaults() {
       },
       // Paso 9 — Canto Gloria (nuevo)
       {
-        uid: uid(), voz: "canto", tipo: "meditacion",
+        uid: uid(), id: "m9_canto", voz: "canto", tipo: "modo-canto",
         speaker: "Canto",
         audio: true, audioUrl: "/sounds/padre_nuestro.mp3", audioName: "padre_nuestro.mp3", dur: 0,
         accion: "Padre Nuestro (Arpa Dei)",
@@ -170,7 +170,7 @@ export function buildDefaults() {
       },
       // Paso 10 — Ángel (cierre)
       {
-        uid: uid(), voz: "angel", tipo: "subtitulo",
+        uid: uid(), id: "m10_voz", voz: "angel", tipo: "modo-voz",
         speaker: "Ángel de la Guarda",
         audio: true, audioUrl: "/sounds/paso_6_cierre.mp3", audioName: "paso_6_cierre.mp3", dur: 0,
         texto: "Quédate en paz luego de este momento de oración, y ya sabes aquí te estamos esperando para que vengas a encontrarte con Dios y con el alma de tus seres queridos.",
