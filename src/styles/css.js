@@ -133,11 +133,11 @@ img{display:block}
 .sballoon .tp{position:relative;flex:none;width:100%;height:100%;min-height:0;margin:0;border:none;box-shadow:none;background:transparent;overflow:hidden}
 .sballoon .tp::before,.sballoon .tp::after{display:none}
 .sballoon .tp .tp-track{position:absolute;left:0;right:0;top:0;padding:10px 12px;display:flex;flex-direction:column;align-items:center;will-change:transform}
-.sballoon .tp .tp-line{font-size:clamp(20px,5.2vw,23px);line-height:1.6;color:#8a877c;margin:3px 0;white-space:normal;width:100%}
+.sballoon .tp .tp-line{font-size:clamp(28px,7.28vw,32.2px);line-height:1.6;color:#8a877c;margin:3px 0;white-space:normal;width:100%}
 /* Bienvenida del selector (presentación del Ángel): globo + texto un 15% menor */
 .sel-top .sballoon{max-width:100%}
-.sel-top .tp .tp-line{font-size:clamp(17px,4.4vw,20px);line-height:1.5;margin:2px 0}
-.sel-top .sdialtext{font-size:clamp(17px,4.4vw,21px)}
+.sel-top .tp .tp-line{font-size:clamp(18.7px,4.84vw,22px);line-height:1.5;margin:2px 0}
+.sel-top .sdialtext{font-size:clamp(18.7px,4.84vw,23.1px)}
 .tp-hint{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:rgba(42,41,38,.82);color:#f2ecdd;font-size:12px;padding:6px 14px;border-radius:99px;z-index:3;animation:fadeIn .6s ease;white-space:nowrap}
 .cimg{flex:1;margin:8px 14px 10px;border-radius:16px;overflow:hidden;position:relative;min-height:140px;border:1px solid #e3e0d7;box-shadow:0 14px 28px -18px rgba(60,48,24,.45)}
 .cimg img{width:100%;height:100%;object-fit:cover;animation:kb 22s ease-in-out infinite alternate}
@@ -183,7 +183,7 @@ img{display:block}
 .layout-voz-top .sdial{flex:1 1 0%;height:100%;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:12px;min-height:0}
 .layout-voz-top .savatar{flex:0 0 auto;align-self:center}
 .layout-voz-top .sballoon{flex:1 1 0%;height:auto;min-height:0;overflow-y:auto}
-.layout-voz-top .sdialtext{font-size:clamp(23px,6.5vw,31px);line-height:1.45}
+.layout-voz-top .sdialtext{font-size:clamp(32.2px,9.1vw,43.4px);line-height:1.45}
 .sdial{display:flex;align-items:center;gap:12px;width:100%;height:100%;min-height:0}
 .savatar{width:15%;max-width:96px;display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0}
 .savatar img,.savatar .cantoic{width:70px;height:70px;border-radius:50%;object-fit:cover;border:2px solid rgba(169,127,47,.45)}
@@ -200,20 +200,33 @@ img{display:block}
 @media (max-width:600px){
   .sballoon{padding:10px 12px}
   .sballoon .tp .tp-track{padding:8px 4px}
+  /* Teleprompter principal de pasos: +40 % (clamp base ×1.4) */
   .sballoon .tp .tp-line{
-    font-size:clamp(1.15rem,4.2vw,1.35rem);
+    font-size:clamp(1.61rem,5.88vw,1.89rem);
     line-height:1.38;
     text-wrap:balance; /* balancea palabras por línea (quita huérfanas) */
   }
   .sdialtext{
-    font-size:clamp(1.15rem,4.2vw,1.35rem);
+    font-size:clamp(1.61rem,5.88vw,1.89rem);
     line-height:1.38;
     text-wrap:balance;
   }
-  /* Modo voz (diálogo a pantalla): mismo tratamiento para maximizar lectura */
+  /* Modo voz (diálogo a pantalla): +40 % sobre el clamp móvil */
   .layout-voz-top .sdialtext{
-    font-size:clamp(1.15rem,4.2vw,1.35rem);
+    font-size:clamp(1.61rem,5.88vw,1.89rem);
     line-height:1.38;
+  }
+  /* Teleprompter de Bienvenida/Ángel: +10 % sobre su base ⇒ se mantiene
+     algo menor que el de pasos, pero más grande que antes. */
+  .sel-top .tp .tp-line{
+    font-size:clamp(1.27rem,4.62vw,1.49rem);
+    line-height:1.38;
+    text-wrap:balance;
+  }
+  .sel-top .sdialtext{
+    font-size:clamp(1.27rem,4.62vw,1.49rem);
+    line-height:1.38;
+    text-wrap:balance;
   }
 }
 .sadmtext{width:100%;height:100%;min-height:120px;border:none;background:transparent;resize:none;font-family:'Cormorant Garamond',serif;font-size:15px;line-height:1.5;color:#3c2a0c;font-weight:600;outline:none;overflow:auto}
