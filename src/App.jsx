@@ -28,10 +28,16 @@ export default function App() {
   const [transition, setTransition] = useState(null); // {tipo:"select", id, titulo}
   const toastTimer = useRef(null);
 
-  const audioRef = useRef(null);
+    const audioRef = useRef(null);
   const [playing, setPlaying] = useState(false);
   const [cur, setCur] = useState(0);
   const [dur, setDur] = useState(0);
+    // Ref con la última duración real conocida del elemento de audio, para que
+  // el seek sea fiable incluso si el estado `dur` aún no se propagó.
+  const durRef = useRef(0);
+  // Ref para el Screen Wake Lock (evita que la pantalla se apague durante la
+  // visita). Se libera al navegar a pantallas distintas del recorrido.
+  const wakeRef = useRef(null);
 
   const routeRef = useRef(route);
   routeRef.current = route;
@@ -170,7 +176,7 @@ export default function App() {
   }, [cfg, ready, persistNow]);
 
     /* ---------- motor de audio ---------- */
-    const loadAudio = useCallback((src, autoplay = false) => {
+        const loadAudio = useCallback((src, autoplay = false) => {
       const a = audioRef.current;
       if (!a) return;
       setCur(0);
@@ -179,10 +185,12 @@ export default function App() {
         a.removeAttribute("src");
         a.load();
         setDur(0);
+        durRef.current = 0;
         return;
       }
       if (a.getAttribute("src") !== src) {
         a.dataset.retry = "0";
+        durRef.current = 0;
         a.src = src;
         a.load();
       }
@@ -213,17 +221,31 @@ export default function App() {
     setCur(a.currentTime);
   }, []);
 
-    const seekTo = useCallback((ratio) => {
+        const seekTo = useCallback((ratio) => {
     const a = audioRef.current;
     if (!a) return;
     // Clamp estricto del ratio a [0, 1] para evitar valores fuera de rango.
     const safeRatio = Math.max(0, Math.min(1, ratio));
-    // Usa la duración real del elemento si está disponible y es finita;
-    // en caso contrario cae al estado `dur` (puede ser 0 o desactualizado).
-    const audioDur = a.duration && isFinite(a.duration) && a.duration > 0 ? a.duration : dur;
-    const targetTime = safeRatio * audioDur;
-    if (!isFinite(targetTime) || targetTime <= 0) return;
-    a.currentTime = targetTime;
+    // Usa la duración real del elemento siempre que sea finita y positiva;
+    // si el navegador aún no la expone (p. ej. iOS al inicio, donde duration
+    // puede ser NaN/Infinity), cae a durRef/estado. Así el target es fiable.
+    const realDur =
+      a.duration && isFinite(a.duration) && a.duration > 0
+        ? a.duration
+        : durRef.current > 0
+        ? durRef.current
+        : dur;
+    if (!isFinite(realDur) || realDur <= 0) return;
+    const targetTime = safeRatio * realDur;
+    // Permite retroceder/adelantar también desde 0 (tap inicial en el inicio).
+    if (!isFinite(targetTime) || targetTime < 0) return;
+    // Evita asignar si no hubo movimiento real (si el usuario tocó exactamente
+    // la posición actual no se fuerza currentTime, previniendo micro-jumps).
+    if (Math.abs(a.currentTime - targetTime) < 0.05) {
+      setCur(targetTime);
+      return;
+    }
+    try { a.currentTime = targetTime; } catch (_) {}
     setCur(targetTime);
   }, [dur]);
 
@@ -252,12 +274,13 @@ export default function App() {
   const stopAudio = useCallback(() => {
     const a = audioRef.current;
     if (!a) return;
-    a.pause();
+        a.pause();
     setCur(0);
     setPlaying(false);
     a.removeAttribute("src");
     a.load();
     setDur(0);
+    durRef.current = 0;
   }, []);
 
   const handleEnded = () => {
@@ -310,6 +333,37 @@ export default function App() {
       else setIntroDone(true);
     }
   }, [route, ready]); // eslint-disable-line
+
+  /* Screen Wake Lock: mantiene la pantalla encendida mientras se ve el
+     recorrido (selector y pasos) para que no se apague a mitad de la visita.
+     Se activa al entrar en "select"/"path" y se libera al volver a la
+     bienvenida/config/fin. Si el API no está disponible, se ignora. */
+  useEffect(() => {
+    if (!ready) return;
+    const activo = route === "select" || route === "path";
+    (async () => {
+      try {
+        const nav = navigator;
+        if (!activo || !nav.wakeLock || !nav.wakeLock.request) return;
+        // Si ya tenemos un wake lock activo en este paso, no lo duplicamos.
+        if (wakeRef.current) return;
+        const sentinel = await nav.wakeLock.request("screen");
+        wakeRef.current = sentinel;
+        // Si el navegador revoca automáticamente (p. ej. por visibilidad),
+        // lo liberamos del ref para poder reintentarlo al volver.
+        sentinel.addEventListener("release", () => { wakeRef.current = null; });
+      } catch (e) {
+        wakeRef.current = null;
+      }
+    })();
+    return () => {
+      // Al cambiar de ruta o desmontar, liberamos el wake lock activo.
+      if (wakeRef.current) {
+        try { wakeRef.current.release(); } catch (_) {}
+        wakeRef.current = null;
+      }
+    };
+  }, [route, ready]);
 
   const eng = { audioRef, playing, dur, cur, togglePlay, rewind, seekTo, loadAudio };
 
@@ -459,7 +513,11 @@ export default function App() {
             <audio
         ref={audioRef}
         preload="auto"
-        onLoadedMetadata={(e) => setDur(e.target.duration || 0)}
+        onLoadedMetadata={(e) => {
+          const d = e.target.duration || 0;
+          durRef.current = isFinite(d) && d > 0 ? d : durRef.current;
+          setDur(d);
+        }}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
         onEnded={handleEnded}

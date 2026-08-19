@@ -25,7 +25,6 @@ export const IMG_ESCENA_6 = "escena_6.jpg";
 export const IMG_TRINIDAD = "escena_trinidad.jpg";
 export const IMG_MANOS_ORANTES = "manos_orantes.jpg";
 export const IMG_CALVARIO = "calvario.jpeg";
-export const IMG_VIRGEN_ABRAZANDO = "virgen_abrazando.jpg";
 export const IMG_GLORIA_CIELO = "gloria_cielo.jpg";
 /*
   TRANSICIÓN DE MÚLTIPLES IMÁGENES (slides) en un paso:
@@ -195,7 +194,7 @@ export function buildDefaults() {
         pauseDuration: 180,
         accion: "Momento de Oración Personal",
         texto: "Momento de Oración Personal",
-        imagen: IMG_VIRGEN_ABRAZANDO, caption: "",
+        imagen: IMG_MISERERE_1, caption: "",
         /* Transición de 4 imágenes: el audio miserere.mp3 dura 3 min (180 s),
            así que cada imágen permanece ~45 s (180/4). Coloca los archivos en
            /public/: miserere_1.jpg, miserere_2.jpg, miserere_3.jpg y
@@ -239,6 +238,6 @@ export function buildDefaults() {
        que cambies textos, imágenes o estructura en defaults.js para que el
        navegador NO restaure una copia vieja guardada en localStorage y muestre
           siempre la última versión. */
-        version: 10,
+         version: 11,
   };
 }

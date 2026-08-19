@@ -37,18 +37,46 @@ export default function StepLayout({
   const dragRef = useRef(false);
   const pct = eng.dur ? Math.min(100, (eng.cur / eng.dur) * 100) : 0;
 
+  // Obtiene la coordenada horizontal del toque/clic de forma fiable, tanto en
+  // mouse (clientX) como en táctil (touches/changedTouches). En Safari iOS el
+  // campo clientX a veces no existe en el evento síntesis "click"; por eso
+  // preferimos leer touches cuando están disponibles.
+  const clientXOf = (e) => {
+    const t = (e && (e.touches || e.changedTouches)) || [];
+    const t0 = t && t[0];
+    if (t0 && typeof t0.clientX === "number") return t0.clientX;
+    if (e && typeof e.clientX === "number") return e.clientX;
+    return NaN;
+  };
+
   const seekFrom = (e) => {
     const bar = barRef.current;
-    if (!bar || !eng.dur) return;
+    if (!bar) return;
+    const clientX = clientXOf(e);
+    if (!isFinite(clientX)) return;
     const r = bar.getBoundingClientRect();
-    // La posición Y/X debe tomarse del evento de puntero; en toques táctiles
-    // `clientX` es la coordenada horizontal del dedo respecto al viewport.
-    const clientX = typeof e.clientX === "number" ? e.clientX : e.touches?.[0]?.clientX;
-    if (typeof clientX !== "number" || !isFinite(clientX)) return;
-    const rawRatio = (clientX - r.left) / Math.max(1, r.width);
-    // Clamp a [0, 1]; nunca enviamos ratios negativos ni fuera de rango.
+    // Evita dividir por ancho nulo o posición fuera.
+    if (r.width <= 0) return;
+    const rawRatio = (clientX - r.left) / r.width;
+    // Clamp a [0, 1]; nunca enviamos ratios negativos ni >1.
     const ratio = Math.max(0, Math.min(1, rawRatio));
     eng.seekTo(ratio);
+  };
+
+  // Inicia/reanuda el arrastre. No usamos setPointerCapture para evitar bugs
+  // de coordenadas en iOS/Android; manejamos la barra con toques/mouse.
+  const onBarDown = (e) => {
+    e.preventDefault();
+    dragRef.current = true;
+    seekFrom(e);
+  };
+  const onBarMove = (e) => {
+    if (!dragRef.current) return;
+    seekFrom(e);
+  };
+  const onBarUp = (e) => {
+    dragRef.current = false;
+    seekFrom(e);
   };
 
   // Modo de renderizado según la nueva propiedad `tipo`.
@@ -195,9 +223,12 @@ export default function StepLayout({
             ref={barRef}
             role="slider"
             aria-label="Progreso del audio"
-            onPointerDown={(e) => { dragRef.current = true; e.currentTarget.setPointerCapture(e.pointerId); seekFrom(e); }}
-            onPointerMove={(e) => { if (dragRef.current) seekFrom(e); }}
-            onPointerUp={() => { dragRef.current = false; }}
+            onTouchStart={onBarDown}
+            onTouchMove={onBarMove}
+            onTouchEnd={onBarUp}
+            onPointerDown={onBarDown}
+            onPointerMove={onBarMove}
+            onPointerUp={onBarUp}
             onPointerCancel={() => { dragRef.current = false; }}
           >
             <div className="ptrack">
