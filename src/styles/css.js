@@ -204,25 +204,15 @@ img{display:block}
 .slide-dots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.45);transition:background .3s,transform .3s}
 .slide-dots i.on{background:#fff;transform:scale(1.25)}
 /*
-  Modo sobrio para imágenes verticales (p. ej. calvario), adaptativo:
-  - Escritorio / área ancha: la caja contenedora se pega a la imagen según su
-    forma/proporción (una imagen fantasma .sizer define el tamaño real) →
-    sin franjas laterales sobrantes.
-  - Móvil / vertical: el área es más alta que ancha, así que la imagen se
-    centra según el límite del ancho disponible (object-fit:contain) y el
-    fondo del área se ve arriba/abajo. Evita forzar una caja angosta.
+  Imágenes de slides en modo "gala" (m5_canto, m7_canto): la imagen OCCUPA
+  todo el espacio de la caja con object-fit:cover (como manos_orantes.jpg y
+  gloria_cielo.jpg). Si la imagen es más vertical que el área, se recortan
+  bordes; el usuario acepta perder un poco de los exteriores para que llene.
 */
-.sstep-mid.slides-contain{display:flex;align-items:center;justify-content:center}
-.sscene.slides.contain-box{width:auto;height:100%;max-width:100%;min-width:0;background:#111;border-radius:12px;overflow:hidden}
-.sscene.slides.contain-box .sizer{position:relative;width:auto;height:100%;max-width:100%;max-height:100%;object-fit:contain;visibility:hidden}
-.sscene.slides.contain-box > img{position:absolute;inset:0;margin:auto;width:100%;height:100%;object-fit:contain;object-position:center}
-/* Móvil / vertical: centra la imagen según el ancho; la caja llena el área y
-   el fondo claro (.sscene) se ve arriba/abajo de la imagen. */
-@media (max-width:767px){
-  .sstep-mid.slides-contain{align-items:stretch}
-  .sscene.slides.contain-box{width:100%;height:100%;background:#e7e5df;border-radius:0}
-  .sscene.slides.contain-box .sizer{display:none}
-}
+.sstep-mid.slides-contain{display:block}
+.sscene.slides.contain-box{width:100%;height:100%;background:#eee;border-radius:12px;overflow:hidden}
+.sscene.slides.contain-box .sizer{display:none}
+.sscene.slides.contain-box > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
 .ccap{position:absolute;left:0;right:0;bottom:0;margin:0;padding:6px 10px;font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;color:#fff;text-align:center;background:linear-gradient(180deg,transparent,rgba(0,0,0,.62));border-bottom-left-radius:16px;border-bottom-right-radius:16px}
 .splaceholder{width:100%;height:100%;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--silver);background:repeating-linear-gradient(45deg,#f0eee8,#f0eee8 12px,#e9e6de 12px,#e9e6de 24px);border-radius:16px}
 .splaceholder span{font-size:13px;font-weight:600;letter-spacing:.02em;text-align:center;padding:0 10px}

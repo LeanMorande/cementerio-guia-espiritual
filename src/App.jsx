@@ -214,12 +214,14 @@ export default function App() {
     } else a.pause();
   }, [toast]);
 
-  const rewind = useCallback(() => {
+    const rewind = useCallback(() => {
     const a = audioRef.current;
     if (!a) return;
-    a.currentTime = Math.max(0, a.currentTime - 10);
-    setCur(a.currentTime);
-  }, []);
+    const target = a.currentTime > 10 ? a.currentTime - 10 : 0;
+    if (Math.abs(a.currentTime - target) < 0.05) return;
+    applySeek(a, target);
+    setCur(target);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
         const seekTo = useCallback((ratio) => {
     const a = audioRef.current;
@@ -236,7 +238,7 @@ export default function App() {
         ? durRef.current
         : dur;
     if (!isFinite(realDur) || realDur <= 0) return;
-    const targetTime = safeRatio * realDur;
+        const targetTime = safeRatio * realDur;
     // Permite retroceder/adelantar también desde 0 (tap inicial en el inicio).
     if (!isFinite(targetTime) || targetTime < 0) return;
     // Evita asignar si no hubo movimiento real (si el usuario tocó exactamente
@@ -245,9 +247,26 @@ export default function App() {
       setCur(targetTime);
       return;
     }
-    try { a.currentTime = targetTime; } catch (_) {}
+    applySeek(a, targetTime);
     setCur(targetTime);
   }, [dur]);
+
+  // Asigna una nueva posición al audio de forma robusta. Al buscar en MP3 de
+  // larga duración en móviles, algunos navegadores reinician el audio si se
+  // cambia currentTime estando en reproducción. Por eso pausamos antes de
+  // saltar y reanudamos justo después (mitiga el reinicio a 0).
+  const applySeek = (a, targetTime) => {
+    const wasPlaying = !a.paused;
+    try {
+      if (wasPlaying) a.pause();
+      a.currentTime = targetTime;
+    } catch (_) {}
+    if (wasPlaying) {
+      unlockAudio();
+      const p = a.play();
+      if (p && p.catch) p.catch(() => {});
+    }
+  };
 
   /* Delay (ms) entre la concatenación de voces para que no parezca tan rápido. */
   const GAP_MS = 4000;

@@ -176,9 +176,6 @@ export default function StepLayout({
         <section className={"sstep sstep-mid" + (contain && slides.length > 1 ? " slides-contain" : "")}>
           {slides.length > 1 && !admin ? (
             <figure className={"sscene slides" + (contain ? " contain-box" : "")}>
-              {/* En modo contain, una imagen fantasma (invisible) establece el
-                  tamaño real de la caja según la proporción de las imágenes. */}
-              {contain && <img className="sizer" src={slides[0]} alt="" aria-hidden="true" />}
               {slides.map((im, i) => (
                 <img
                   key={i}
