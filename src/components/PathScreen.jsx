@@ -20,10 +20,10 @@ export default function PathScreen({ cfg, idx, onExit, onNext, onPrev, eng, admi
           <Ic.Close s={20} />
         </button>
         <div className="phead-c">
-          <span className="mnum">Camino con la Virgen María</span>
-          <h1>
-            Paso {idx + 1} de {cfg.camino.length}
-          </h1>
+          <span className="mnum">
+            <span className="mnum-title">Camino con la Virgen María:</span>{" "}
+            <span className="mnum-step">Paso {idx + 1} de {cfg.camino.length}</span>
+          </span>
         </div>
         <span className="phead-sp" />
       </div>

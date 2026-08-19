@@ -240,7 +240,7 @@ export default function StepLayout({
             <Ic.ChL />
             <span>Atrás</span>
           </button>
-          <button className="btn ghost" onClick={eng.rewind} aria-label="Retroceder 10 segundos">
+          <button className="btn ghost rwdbtn" onClick={eng.rewind} aria-label="Retroceder 10 segundos">
             <Ic.Back10 />
             <span>10 s</span>
           </button>

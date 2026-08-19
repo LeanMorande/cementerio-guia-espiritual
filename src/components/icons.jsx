@@ -22,9 +22,9 @@ export const Ic = {
     </svg>
   ),
   Back10: (p) => (
-    <svg {...base(p)} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 10h4V6" />
-      <path d="M8 10a8 8 0 1 1-2.6 6" />
+    <svg {...base(p)} fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M7.5 7A7.5 7.5 0 1 1 5 14" />
+      <path d="M3.5 5.5v4.5H8" />
     </svg>
   ),
   ChR: (p) => (

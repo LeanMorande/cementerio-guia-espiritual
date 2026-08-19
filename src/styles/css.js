@@ -47,9 +47,23 @@ img{display:block}
 .wm-dark{color:rgba(240,236,226,.55)}
 .toast{position:absolute;top:14px;left:50%;transform:translateX(-50%);background:#2a2926;color:#f4efe3;font-size:13.5px;padding:9px 18px;border-radius:99px;z-index:80;animation:toastIn .3s ease;box-shadow:0 8px 24px -10px rgba(0,0,0,.5);max-width:86%;text-align:center}
 .veil2{position:absolute;inset:0;background:#141416;display:flex;align-items:center;justify-content:center;z-index:75;animation:fadeIn .35s ease}
-.veil2-inner{display:flex;flex-direction:column;align-items:center;text-align:center;color:#f0ece2;gap:16px;padding:24px;max-width:320px;animation:fadeUp .6s ease}
-.veil2-cross{width:86px;height:86px;border-radius:50%;border:1px solid rgba(201,169,97,.5);display:flex;align-items:center;justify-content:center;color:var(--gold2);animation:emb 3.4s ease-in-out infinite}
-.veil2-txt{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600}
+.veil2-inner{display:flex;flex-direction:column;align-items:center;text-align:center;color:#f0ece2;gap:10px;padding:0 24px;max-width:360px;animation:fadeUp .6s ease}
+/* Cruz: posición superior (~25 %) y centrada en el eje horizontal */
+.veil2-cross{position:absolute;top:24%;left:50%;transform:translateX(-50%);width:96px;height:96px;border-radius:50%;border:1px solid rgba(201,169,97,.5);display:flex;align-items:center;justify-content:center;color:var(--gold2);animation:emb 3.4s ease-in-out infinite}
+.veil2-cross svg{width:44px;height:44px}
+/* Texto centrado de forma absoluta (lo centra el flex de .veil2) */
+.veil2-txt{font-family:'Cormorant Garamond',serif;font-size:33px;font-weight:600;line-height:1.25;display:flex;flex-direction:column;align-items:center;gap:4px;text-shadow:0 2px 10px rgba(0,0,0,.55)}
+.veil2-txt span{display:block}
+.veil2-l1{color:#eee7d6}
+.veil2-l2{color:#d6ccb4}
+/* Línea 3: efecto metálico dorado (gradiente sutil sobre el texto) */
+.veil2-l3{
+  background:linear-gradient(180deg,#8a6a25 0%,#c9a254 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  color:transparent;
+}
 .boot{position:absolute;inset:0;background:#f7f6f2;z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--ink-soft);font-size:14px}
 .boot-cross{color:var(--gold);animation:bootp 1.6s ease-in-out infinite}
 
@@ -118,7 +132,10 @@ img{display:block}
 /* ---------- camino ---------- */
 .phead{display:flex;align-items:center;justify-content:space-between;padding:8px 10px 0;gap:6px;flex-shrink:0}
 .phead-c{flex:1;text-align:center;min-width:0}
-.mnum{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:#8a6a25;font-weight:600}
+.mnum{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:#8a6a25;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+/* Título del camino: bold + dorado más oscuro + 5% más grande que el paso */
+.mnum-title{color:#6b4e1a;font-weight:700;font-size:11px}
+.mnum-step{color:#8a6a25;font-weight:600}
 .phead-c h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;line-height:1.15}
 .phead-sp{width:44px}
 .tp{position:relative;flex:1;min-height:120px;margin:8px 14px 10px;border:1px solid #e2dfd5;border-radius:16px;background:linear-gradient(180deg,#fbfaf6,#f5f4ee);overflow:hidden;box-shadow:inset 0 1px 6px rgba(80,65,30,.05)}
@@ -136,6 +153,9 @@ img{display:block}
 .sballoon .tp .tp-line{font-size:clamp(28px,7.28vw,32.2px);line-height:1.6;color:#8a877c;margin:3px 0;white-space:normal;width:100%}
 /* Bienvenida del selector (presentación del Ángel): globo + texto un 15% menor */
 .sel-top .sballoon{max-width:100%}
+/* Nombre del Ángel en el selector: se permite 2 líneas centradas al avatar
+   (por espacio), quedando "Ángel de la" / "Guarda" centradas. */
+.sel-top .savatar b{font-size:13px;line-height:1.2;max-width:100%}
 .sel-top .tp .tp-line{font-size:clamp(18.7px,4.84vw,22px);line-height:1.5;margin:2px 0}
 .sel-top .sdialtext{font-size:clamp(18.7px,4.84vw,23.1px)}
 .tp-hint{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:rgba(42,41,38,.82);color:#f2ecdd;font-size:12px;padding:6px 14px;border-radius:99px;z-index:3;animation:fadeIn .6s ease;white-space:nowrap}
@@ -160,11 +180,18 @@ img{display:block}
 /* ---------- botonera única en fila (Atrás · 10s · Play · Siguiente) ---------- */
 .controles-reproductor{display:flex;justify-content:center;align-items:center;gap:10px;width:100%;flex-wrap:nowrap}
 .controles-reproductor .btn{min-height:46px;padding:0 14px;white-space:nowrap}
-.controles-reproductor .play{flex-shrink:0}
+/* Atrás empujado al borde izquierdo; Siguiente empujado al borde derecho.
+   Los botones del centro (10 s · Play) quedan centrados entre ambos. */
+.controles-reproductor .prevbtn{margin-right:auto}
+.controles-reproductor .nextbtn{margin-left:auto}
+.controles-reproductor .play{flex-shrink:0;width:67px;height:67px} /* 64px ×1.05 = ~5% más grande */
+.controles-reproductor .rwdbtn{min-height:37px;padding:0 10px;font-size:13px} /* 46px ×0.8 = 20% más chico */
+.controles-reproductor .rwdbtn svg{width:18px;height:18px}
 @media (max-width:480px){
   .controles-reproductor{gap:6px}
   .controles-reproductor .btn{padding:0 10px;font-size:13px}
-  .controles-reproductor .play{width:54px;height:54px}
+  .controles-reproductor .play{width:57px;height:57px} /* 54px ×1.05 ≈ 5% más grande en móvil */
+  .controles-reproductor .rwdbtn{min-height:34px;padding:0 8px}
 }
 
 /* ---------- maquetación reutilizable del paso (30/50/20) ---------- */
@@ -186,11 +213,12 @@ img{display:block}
 .layout-voz-top .sdialtext{font-size:clamp(32.2px,9.1vw,43.4px);line-height:1.45}
 .sdial{display:flex;align-items:center;gap:12px;width:100%;height:100%;min-height:0}
 .savatar{width:15%;max-width:96px;display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0}
-.savatar img,.savatar .cantoic{width:70px;height:70px;border-radius:50%;object-fit:cover;border:2px solid rgba(169,127,47,.45)}
+.savatar img{width:78px;height:78px;border-radius:50%;object-fit:cover;border:2px solid rgba(169,127,47,.45)}
+.savatar .cantoic{width:70px;height:70px;border-radius:50%;object-fit:cover;border:2px solid rgba(169,127,47,.45)}
 .savatar.canto .cantoic{display:flex;align-items:center;justify-content:center;border:none}
 .savatar .cantoic{font-size:28px;color:var(--gold2)}
 .savatar.speaking img,.savatar.speaking .cantoic{animation:avatarGlow 2.6s ease-in-out infinite}
-.savatar b{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:14px;text-align:center;line-height:1.15}
+.savatar b{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:13px;text-align:center;line-height:1.2;max-width:100%}
 .sballoon{flex:1;min-width:0;height:100%;display:flex;align-items:center;justify-content:center;border:1px solid #e2dfd5;border-radius:16px;background:linear-gradient(180deg,#fbfaf6,#f5f4ee);padding:14px 16px;overflow:hidden;box-shadow:inset 0 1px 6px rgba(80,65,30,.05)}
 .sdialtext{font-family:'Cormorant Garamond',serif;font-size:clamp(20px,5.2vw,25px);line-height:1.5;color:#3c2a0c;text-align:center;font-weight:600;white-space:pre-wrap}
 /* ---------- optimización del teleprompter / globo de texto en móvil ----------

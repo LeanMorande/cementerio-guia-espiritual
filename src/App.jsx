@@ -589,13 +589,19 @@ export default function App() {
       {route === "fin" && ready && <FinScreen onHome={goHome} />}
 
       {(route === "welcome" || route === "fin") && <Watermark dark />}
-      {transition && (
+            {transition && (
         <div className={"veil2 " + transition.tipo}>
+          <div className="veil2-cross">
+            <Ic.Cross s={34} />
+          </div>
           <div className="veil2-inner">
-            <div className="veil2-cross">
-              <Ic.Cross s={34} />
-            </div>
-            {transition.titulo && <p className="veil2-txt">Comenzando: {transition.titulo}</p>}
+            {transition.titulo && (
+              <p className="veil2-txt">
+                <span className="veil2-l1">Comenzando:</span>
+                <span className="veil2-l2">El camino de la</span>
+                <span className="veil2-l3">Virgen María</span>
+              </p>
+            )}
           </div>
         </div>
       )}
