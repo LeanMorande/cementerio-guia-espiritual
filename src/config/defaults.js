@@ -24,9 +24,41 @@ export const IMG_ESCENA_5 = "escena_5.jpg";
 export const IMG_ESCENA_6 = "escena_6.jpg";
 export const IMG_TRINIDAD = "escena_trinidad.jpg";
 export const IMG_MANOS_ORANTES = "manos_orantes.jpg";
-export const IMG_CALVARIO = "calvario.jpg";
+export const IMG_CALVARIO = "calvario.jpeg";
 export const IMG_VIRGEN_ABRAZANDO = "virgen_abrazando.jpg";
 export const IMG_GLORIA_CIELO = "gloria_cielo.jpg";
+/*
+  TRANSICIÓN DE MÚLTIPLES IMÁGENES (slides) en un paso:
+  Para que un paso muestre varias imágenes que cambian en el tiempo,
+  guarda los archivos en /public/ y nómbralos en la propiedad `imagenes`
+  (array) del paso. La duración del audio se reparte en partes iguales
+  entre las imágenes. Ejemplo (paso m5_canto):
+    imagenes: [
+      IMG_CALVARIO_1,  // calvario.jpeg
+      IMG_CALVARIO_2,  // calvario_2.jpeg
+      IMG_CALVARIO_3,  // calvario_3.jpeg
+      IMG_CALVARIO_4,  // calvario_4.jpeg
+      IMG_CALVARIO_5,  // calvario_5.jpeg
+    ],
+  En el panel admin verás la ruta exacta (public/...) de cada archivo.
+  Debes colocar el archivo físico en la carpeta /public/ del proyecto.
+*/
+export const IMG_CALVARIO_1 = "calvario.jpeg";
+export const IMG_CALVARIO_2 = "calvario_2.jpeg";
+export const IMG_CALVARIO_3 = "calvario_3.jpeg";
+export const IMG_CALVARIO_4 = "calvario_4.jpeg";
+export const IMG_CALVARIO_5 = "calvario_5.jpeg";
+
+/*
+  TRANSICIÓN DE MÚLTIPLES IMÁGENES (slides) del paso m7_canto (Miserere):
+  El audio miserere.mp3 dura 3 min (180 s) y muestra 4 imágenes que cambian
+  cada 45 s (180/4). Debes colocar estos archivos en /public/:
+    miserere_1.jpeg, miserere_2.jpeg, miserere_3.jpeg, miserere_4.jpeg
+*/
+export const IMG_MISERERE_1 = "miserere_1.jpg";
+export const IMG_MISERERE_2 = "miserere_2.jpg";
+export const IMG_MISERERE_3 = "miserere_3.jpg";
+export const IMG_MISERERE_4 = "miserere_4.jpg";
 
 /* ------------------------------------------------ */
 /* Imágenes de las OPIONES del selector de camino     */
@@ -61,7 +93,7 @@ export function buildDefaults() {
       titulo: "Cementerio Católico de Colonia Crespo",
       subtitulo: "Reza por tus difuntos",
       introTexto: [
-        "Bienvenido al cementerio católico de colonia crespo, soy tu Angel de la guarda y deseo acompañarte en esta visita al camposanto,",
+        "Bienvenido al Cementerio Católico de Colonia Crespo, soy tu Ángel de la Guarda y deseo acompañarte en esta visita al camposanto,",
         "donde descansan tus seres queridos en espera de la resurrección.",
         "Tu sabes que las lágrimas de tu rostro se secaran y las flores que adornan las tumbas se marchitan,",
         "lo único que tu corazón y las almas de tus seres queridos necesitan en este momento es de una oración.",
@@ -104,8 +136,8 @@ export function buildDefaults() {
         uid: uid(), id: "m2_canto", voz: "canto", tipo: "modo-canto",
         speaker: "Canto",
         audio: true, audioUrl: "/sounds/canto_trinidad.mp3", audioName: "canto_trinidad.mp3", dur: 0,
-        accion: "A ti alabanza y gloria (Arpa Dei)",
-        texto: "A ti alabanza y gloria (Arpa Dei)",
+        accion: "¡A Ti la Alabanza y la Gloria, Oh SANTA TRINIDAD!",
+        texto: "¡A Ti la Alabanza y la Gloria, Oh SANTA TRINIDAD!",
         imagen: IMG_MANOS_ORANTES, caption: "",
       },
       // Paso 3 — Ángel (continuación)
@@ -132,6 +164,20 @@ export function buildDefaults() {
         accion: "El diario de María",
         texto: "El diario de María",
         imagen: IMG_CALVARIO, caption: "",
+        /* Transición de 5 imágenes. El audio diario_de_maria.mp3 dura 5:11
+           (311 s), así que cada imágen permanece ~62 s (311/5). Coloca estos
+           archivos en /public/: calvario.jpeg, calvario_2.jpeg, calvario_3.jpeg,
+           calvario_4.jpeg y calvario_5.jpeg. */
+        imagenes: [
+          IMG_CALVARIO_1,
+          IMG_CALVARIO_2,
+          IMG_CALVARIO_3,
+          IMG_CALVARIO_4,
+          IMG_CALVARIO_5,
+        ],
+        /* Imágenes verticales 444x640: se muestran completas (object-fit:
+           contain) centradas, con los costados en el color de la caja. */
+        contain: true,
       },
       // Paso 6 — María (meditación personal)
       {
@@ -147,9 +193,20 @@ export function buildDefaults() {
         speaker: "Meditación",
         audio: true, audioUrl: "/sounds/miserere.mp3", audioName: "miserere.mp3", dur: 180,
         pauseDuration: 180,
-        accion: "Miserere (Allegri) — Momento de oración personal",
-        texto: "Miserere (Allegri) — Momento de oración personal",
+        accion: "Momento de Oración Personal",
+        texto: "Momento de Oración Personal",
         imagen: IMG_VIRGEN_ABRAZANDO, caption: "",
+        /* Transición de 4 imágenes: el audio miserere.mp3 dura 3 min (180 s),
+           así que cada imágen permanece ~45 s (180/4). Coloca los archivos en
+           /public/: miserere_1.jpg, miserere_2.jpg, miserere_3.jpg y
+           miserere_4.jpg. La caja se ajusta a la proporción de cada imagen. */
+        imagenes: [
+          IMG_MISERERE_1,
+          IMG_MISERERE_2,
+          IMG_MISERERE_3,
+          IMG_MISERERE_4,
+        ],
+        contain: true,
       },
       // Paso 8 — María
       {
@@ -178,5 +235,10 @@ export function buildDefaults() {
       },
     ],
     countdown: 20,
+    /* Versión de contenido del desarrollador. Incluyelo/incrémentalo cada vez
+       que cambies textos, imágenes o estructura en defaults.js para que el
+       navegador NO restaure una copia vieja guardada en localStorage y muestre
+          siempre la última versión. */
+        version: 10,
   };
 }

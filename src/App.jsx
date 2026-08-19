@@ -87,32 +87,39 @@ export default function App() {
   /* Carga inicial: defaults incrustados + opcional localStorage (sin blobs) */
   useEffect(() => {
     let alive = true;
-    (async () => {
+        (async () => {
       let merged = buildDefaults();
+      // Versión de contenido del desarrollador (en defaults.js). Si cambia,
+      // se descarta la copia guardada en localStorage y se muestran los
+      // defaults frescos (resuelve que los cambios solo se vean en incógnito).
+      const currentVersion = merged.version;
       try {
         const raw = localStorage.getItem(LS_KEY);
         if (raw) {
           const saved = JSON.parse(raw);
           if (saved) {
-            merged.bienvenida = { ...merged.bienvenida, ...saved.bienvenida };
-            merged.voces = {
-              ...merged.voces,
-              angel: { ...merged.voces.angel, ...saved.voces?.angel },
-              maria: { ...merged.voces.maria, ...saved.voces?.maria },
-            };
-            if (saved.opciones)
-              merged.opciones = merged.opciones.map((o, i) => (saved.opciones[i] ? { ...o, ...saved.opciones[i] } : o));
-                        if (saved.camino && saved.camino.length) {
-              // El contenido de "camino" se regenera con nuevos `uid` cada vez
-              // que el desarrollador modifica los pasos en defaults.js. Solo
-              // restauramos los guardados si TODOS sus uid coinciden con los
-              // defaults actuales (es decir, si el recorrido no cambió).
-              const defaultUids = new Set(buildDefaults().camino.map((d) => d.uid));
-              const caminoVálido = saved.camino.every((s) => defaultUids.has(s.uid));
-              if (caminoVálido) merged.camino = saved.camino;
-              // Si no: se mantienen los 10 pasos nuevos de defaults.js.
+                        const savedValid = saved.version === currentVersion;
+            if (savedValid) {
+              merged.bienvenida = { ...merged.bienvenida, ...saved.bienvenida };
+              merged.voces = {
+                ...merged.voces,
+                angel: { ...merged.voces.angel, ...saved.voces?.angel },
+                maria: { ...merged.voces.maria, ...saved.voces?.maria },
+              };
+              if (saved.opciones)
+                merged.opciones = merged.opciones.map((o, i) => (saved.opciones[i] ? { ...o, ...saved.opciones[i] } : o));
+              if (saved.camino && saved.camino.length) {
+                // El contenido de "camino" se regenera con nuevos `uid` cada vez
+                // que el desarrollador modifica los pasos en defaults.js. Solo
+                // restauramos los guardados si TODOS sus uid coinciden con los
+                // defaults actuales (es decir, si el recorrido no cambió).
+                const defaultUids = new Set(buildDefaults().camino.map((d) => d.uid));
+                const caminoVálido = saved.camino.every((s) => defaultUids.has(s.uid));
+                if (caminoVálido) merged.camino = saved.camino;
+                // Si no: se mantienen los 10 pasos nuevos de defaults.js.
+              }
+              if (saved.countdown) merged.countdown = saved.countdown;
             }
-            if (saved.countdown) merged.countdown = saved.countdown;
           }
         }
       } catch (e) {
@@ -206,11 +213,18 @@ export default function App() {
     setCur(a.currentTime);
   }, []);
 
-  const seekTo = useCallback((ratio) => {
+    const seekTo = useCallback((ratio) => {
     const a = audioRef.current;
-    if (!a || !dur) return;
-    a.currentTime = ratio * dur;
-    setCur(a.currentTime);
+    if (!a) return;
+    // Clamp estricto del ratio a [0, 1] para evitar valores fuera de rango.
+    const safeRatio = Math.max(0, Math.min(1, ratio));
+    // Usa la duración real del elemento si está disponible y es finita;
+    // en caso contrario cae al estado `dur` (puede ser 0 o desactualizado).
+    const audioDur = a.duration && isFinite(a.duration) && a.duration > 0 ? a.duration : dur;
+    const targetTime = safeRatio * audioDur;
+    if (!isFinite(targetTime) || targetTime <= 0) return;
+    a.currentTime = targetTime;
+    setCur(targetTime);
   }, [dur]);
 
   /* Delay (ms) entre la concatenación de voces para que no parezca tan rápido. */

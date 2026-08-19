@@ -18,12 +18,14 @@ export default function StepLayout({
   speaking,
   texto,
   imagen,
+  imagenes,
   caption,
   admin,
   audioName,
   hasAudio,
   tipo,
   accion,
+  contain,
   eng,
   onNext,
   onPrev,
@@ -39,7 +41,13 @@ export default function StepLayout({
     const bar = barRef.current;
     if (!bar || !eng.dur) return;
     const r = bar.getBoundingClientRect();
-    const ratio = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+    // La posición Y/X debe tomarse del evento de puntero; en toques táctiles
+    // `clientX` es la coordenada horizontal del dedo respecto al viewport.
+    const clientX = typeof e.clientX === "number" ? e.clientX : e.touches?.[0]?.clientX;
+    if (typeof clientX !== "number" || !isFinite(clientX)) return;
+    const rawRatio = (clientX - r.left) / Math.max(1, r.width);
+    // Clamp a [0, 1]; nunca enviamos ratios negativos ni fuera de rango.
+    const ratio = Math.max(0, Math.min(1, rawRatio));
     eng.seekTo(ratio);
   };
 
@@ -52,6 +60,21 @@ export default function StepLayout({
   // Teleprompter scrolleante: solo para subtítulos (sin acción/canto) con
   // audio cargado y duración conocida. Sin audio → texto completo fijo.
   const useTeleprompter = !admin && !accion && !!texto && hasAudio && eng.dur > 0;
+
+  // Transición de imágenes (slides): si el paso define un array `imagenes`,
+  // se reparten en partes iguales a lo largo de la duración del audio y se
+  // muestra la imagen correspondiente al progreso actual (crossfade).
+  // Reutilizable en cualquier paso con `tipo: "modo-canto"` o con imagen.
+  const slides =
+    imagenes && imagenes.length > 1 && eng.dur > 0
+      ? imagenes
+      : imagen
+      ? [imagen]
+      : [];
+  const slideIndex =
+    slides.length > 1 && eng.dur > 0
+      ? Math.min(slides.length - 1, Math.floor((eng.cur / eng.dur) * slides.length))
+      : 0;
 
   return (
     <div
@@ -71,9 +94,21 @@ export default function StepLayout({
               <Ic.Img s={13} /> imagen: <code>{imagen || "(sin imagen)"}</code>
             </span>
           )}
+          {/* Referencias de slides (varias imágenes por paso) para saber qué guardar */}
+          {!isVoice && imagenes && imagenes.length > 1 && (
+            <span className="sadmitem">
+              <Ic.Img s={13} /> slides ({imagenes.length}):{" "}
+              <code>{imagenes.map((im) => "public/" + im).join(", ")}</code>
+            </span>
+          )}
           <span className={"sadmitem" + (hasAudio ? "" : " miss")}>
             <Ic.Note s={13} /> audio: <code>public/sounds/{audioName || "(sin definido)"}</code>
           </span>
+          {!isVoice && slides.length > 1 && (
+            <span className="sadmitem">
+              <Ic.Play s={13} /> slide actual: <code>{slideIndex + 1}/{slides.length}</code>
+            </span>
+          )}
         </div>
       )}
 
@@ -110,20 +145,44 @@ export default function StepLayout({
 
       {/* ============ 50% central — imagen de la escena (se oculta en modo-voz) ============ */}
       {!isVoice && (
-        <section className="sstep sstep-mid">
-          <figure className="sscene">
-            {imagen && !admin ? (
-              <>
-                <img src={imagen} alt="" onError={(e) => (e.currentTarget.style.display = "none")} />
-                {caption && <figcaption className="ccap">{caption}</figcaption>}
-              </>
-            ) : (
-              <div className="splaceholder">
-                <Ic.Img s={40} />
-                <span>Imagen: {imagen || "(sin imagen)"}</span>
-              </div>
-            )}
-          </figure>
+        <section className={"sstep sstep-mid" + (contain && slides.length > 1 ? " slides-contain" : "")}>
+          {slides.length > 1 && !admin ? (
+            <figure className={"sscene slides" + (contain ? " contain-box" : "")}>
+              {/* En modo contain, una imagen fantasma (invisible) establece el
+                  tamaño real de la caja según la proporción de las imágenes. */}
+              {contain && <img className="sizer" src={slides[0]} alt="" aria-hidden="true" />}
+              {slides.map((im, i) => (
+                <img
+                  key={i}
+                  src={im}
+                  alt=""
+                  className={(i === slideIndex ? "on" : "") + (contain ? " contain" : "")}
+                  onError={(e) => (e.currentTarget.style.display = "none")}
+                />
+              ))}
+              {caption && <figcaption className="ccap">{caption}</figcaption>}
+              {/* Indicador de progresión de slides */}
+              <span className="slide-dots">
+                {slides.map((_, i) => (
+                  <i key={i} className={i === slideIndex ? "on" : ""} />
+                ))}
+              </span>
+            </figure>
+          ) : (
+            <figure className="sscene">
+              {slides.length === 1 && !admin ? (
+                <>
+                  <img src={slides[0]} alt="" onError={(e) => (e.currentTarget.style.display = "none")} />
+                  {caption && <figcaption className="ccap">{caption}</figcaption>}
+                </>
+              ) : (
+                <div className="splaceholder">
+                  <Ic.Img s={40} />
+                  <span>Imagen: {slides[0] || "(sin imagen)"}</span>
+                </div>
+              )}
+            </figure>
+          )}
         </section>
       )}
 

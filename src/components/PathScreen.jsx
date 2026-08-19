@@ -34,6 +34,8 @@ export default function PathScreen({ cfg, idx, onExit, onNext, onPrev, eng, admi
         speaking={speaking}
         texto={seg.texto}
         imagen={seg.imagen}
+        imagenes={seg.imagenes}
+        contain={seg.contain}
         caption={seg.caption}
         admin={admin}
         audioName={audioName}

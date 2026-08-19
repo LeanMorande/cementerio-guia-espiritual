@@ -196,6 +196,23 @@ img{display:block}
 .sadmtext{width:100%;height:100%;min-height:120px;border:none;background:transparent;resize:none;font-family:'Cormorant Garamond',serif;font-size:15px;line-height:1.5;color:#3c2a0c;font-weight:600;outline:none;overflow:auto}
 .sscene{width:100%;height:100%;min-height:0;border-radius:16px;overflow:hidden;position:relative;border:1px solid #e3e0d7;box-shadow:0 14px 28px -18px rgba(60,48,24,.45);background:#eee}
 .sscene img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center}
+/* Transición de imágenes (slides): apila las imágenes y hace crossfade.
+   La clase .on marca la visible; el resto permanece con opacidad 0. */
+.sscene.slides img{opacity:0;transition:opacity 1.2s ease}
+.sscene.slides img.on{opacity:1}
+.slide-dots{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);display:flex;gap:6px;z-index:4}
+.slide-dots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.45);transition:background .3s,transform .3s}
+.slide-dots i.on{background:#fff;transform:scale(1.25)}
+/*
+  Modo sobrio para imágenes verticales (p. ej. calvario): la caja contenedora
+  se pega a la imagen según su forma/proporción (no fuerza un recuadro fijo).
+  Una imagen fantasma (.sizer) establece el ancho/alto real según la imagen, y
+  las demás se superponen encima. Queda sin franjas laterales sobrantes.
+*/
+.sstep-mid.slides-contain{display:flex;align-items:center;justify-content:center}
+.sscene.slides.contain-box{width:auto;height:100%;max-width:100%;min-width:0;background:#111;border-radius:12px;overflow:hidden}
+.sscene.slides.contain-box img.sizer{position:relative;width:auto;height:100%;max-width:100%;max-height:100%;object-fit:contain;visibility:hidden}
+.sscene.slides.contain-box img{position:absolute;inset:0;margin:auto;width:100%;height:100%;object-fit:contain;object-position:center}
 .ccap{position:absolute;left:0;right:0;bottom:0;margin:0;padding:6px 10px;font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;color:#fff;text-align:center;background:linear-gradient(180deg,transparent,rgba(0,0,0,.62));border-bottom-left-radius:16px;border-bottom-right-radius:16px}
 .splaceholder{width:100%;height:100%;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--silver);background:repeating-linear-gradient(45deg,#f0eee8,#f0eee8 12px,#e9e6de 12px,#e9e6de 24px);border-radius:16px}
 .splaceholder span{font-size:13px;font-weight:600;letter-spacing:.02em;text-align:center;padding:0 10px}
