@@ -84,6 +84,11 @@ export default function StepLayout({
   const isCanto = tipo === "modo-canto" || !speaker || !speaker.img;
   const nombre = speaker?.nombre || "Canto";
   const balloon = accion ? accion : texto;
+  /* Divide el globo en título + posible subtítulo (separado por \n).
+     La 1ª línea se muestra a tamaño normal; las siguientes más pequeñas. */
+  const balloonLines = (balloon || "").split("\n");
+  const balloonMain = balloonLines[0] || "";
+  const balloonSub = balloonLines.slice(1);
 
   // Teleprompter scrolleante: solo para subtítulos (sin acción/canto) con
   // audio cargado y duración conocida. Sin audio → texto completo fijo.
@@ -165,7 +170,16 @@ export default function StepLayout({
             ) : useTeleprompter ? (
               <Teleprompter text={texto} audioRef={eng.audioRef} duration={eng.dur} />
             ) : (
-              <p className="sdialtext">{balloon || (isCanto ? accion || "Canto" : "—")}</p>
+              <p className="sdialtext">
+                {balloonMain || (isCanto ? accion || "Canto" : "—")}
+                {balloonSub.length > 0 && (
+                  <span className="sdialtext-sub">
+                    {balloonSub.map((l, i) => (
+                      <span key={i} className="sdialtext-sub-line">{l}</span>
+                    ))}
+                  </span>
+                )}
+              </p>
             )}
           </div>
         </div>

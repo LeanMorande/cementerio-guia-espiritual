@@ -1,4 +1,4 @@
-# Cementerio Católico de Colonia Nueva · Reza por tus difuntos
+# Cementerio Católico de Colonia Crespo · Reza por tus difuntos
 
 App React (Vite) que modula la experiencia espiritual. Modularizado desde un
 archivo único `app.jsx` a una arquitectura de componentes escalable.
