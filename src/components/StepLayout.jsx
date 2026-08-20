@@ -151,7 +151,7 @@ export default function StepLayout({
 
       {/* ============ superior — diálogo (80vh en modo-voz, 30% en modo-canto) ============ */}
       <section
-        className={"sstep sstep-top" + (isVoice ? " layout-voz-top" : "")}
+        className={"sstep sstep-top" + (isVoice ? " layout-voz-top" : "") + (balloonSub.length ? " has-sub" : "")}
         style={isVoice ? { flex: "1 1 0%", minHeight: 0 } : undefined}
       >
         <div className="sdial">

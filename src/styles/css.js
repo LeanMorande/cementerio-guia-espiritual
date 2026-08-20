@@ -205,6 +205,9 @@ img{display:block}
 /* modo-canto: la caja superior (avatar + título de canción) se reduce a la mitad
    (15% ~= 50% del 30% original) y ese espacio pasa a la imagen central. */
 .steplayout.canto .sstep-top{flex:0 0 15%}
+/* Con subtítulo (título + comentario en mayúscula pequeña) el globo necesita
+   más alto para que el texto quepa sin cortarse en escritorio. */
+.steplayout.canto .sstep-top.has-sub{flex:0 0 25%}
 .steplayout.canto .sstep-top .sdial{gap:8px}
 .steplayout.canto .sstep-top .savatar img,.steplayout.canto .sstep-top .savatar .cantoic{width:56px;height:56px}
 .layout-voz-top .sdial{flex:1 1 0%;height:100%;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:12px;min-height:0}
@@ -224,11 +227,11 @@ img{display:block}
 /* Título del globo: crece al máximo posible de su/s línea/s (fluido con vw) y
    en negrita. Balances de palabras para llenar cada línea aprovechando el ancho. */
 .sdialtext-title{display:block;width:100%;max-width:100%}
-.sdialtext-title-line{display:block;white-space:pre-wrap;overflow-wrap:break-word;width:100%;max-width:100%;font-size:clamp(18px,5.8vw,34px);line-height:1.2;font-weight:700}
+.sdialtext-title-line{display:block;white-space:pre-wrap;overflow-wrap:break-word;width:100%;max-width:100%;font-size:clamp(18px,4.8vw,30px);line-height:1.2;font-weight:700}
 /* Subtítulo del globo (bloque entre paréntesis): más pequeño que el título,
    fluye respetando el contenedor según el dispositivo. */
 .sdialtext-sub{display:flex;flex-direction:column;align-items:center;gap:3px;margin-top:8px;width:100%;max-width:100%}
-.sdialtext-sub-line{display:block;white-space:pre-wrap;overflow-wrap:break-word;width:100%;max-width:100%;font-size:clamp(13px,3vw,20px);font-weight:500;color:#7a6f5c;line-height:1.35}
+.sdialtext-sub-line{display:block;white-space:pre-wrap;overflow-wrap:break-word;width:100%;max-width:100%;font-size:clamp(14px,2.8vw,20px);font-weight:500;color:#7a6f5c;line-height:1.35}
 /* ---------- optimización del teleprompter / globo de texto en móvil ----------
    Para pantallas ≤600px buscamos: más ancho de lectura (menos padding),
    interlineado compacto (1.35–1.4), balanceo automático de palabras y letra
