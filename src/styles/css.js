@@ -239,25 +239,27 @@ img{display:block}
    más compacto para caber holgado sin desbordar. Esto NO toca el modo-voz ni el
    selector (allí el globo contiene teleprompters con altura propia). */
 @media (max-width:768px){
-  /* Altura fija y uniforme de la tarjeta de título/oración en modo-canto:
-     tanto los pasos de solo título (2, 5, 9) como los que llevan subtítulo
-     (Paso 7) comparten el mismo alto, sin desalinear la grilla ni robarle
-     espacio a la imagen central. box-sizing fijo y padding compacto. */
+  /* Tarjeta de título/oración en modo-canto (móvil): altura fija, compacta y
+     EQUITATIVA entre todos los pasos de Canto (2, 5, 7, 9). Así el Paso 7
+     (que lleva subtítulo) ya no crece más que los demás, no se roba espacio de
+     la imagen, y las letras pueden aprovechar mejor el alto de la caja. */
   .steplayout.canto .sstep-top{
     flex:0 0 auto;
-    height:115px;
-    min-height:115px;
+    height:100px;
+    max-height:100px;
+    min-height:100px;
     box-sizing:border-box;
-    padding:6px 8px;
+    padding:4px 8px;
     margin:0;
     overflow:hidden;
+    align-items:center;
   }
-  .steplayout.canto .sstep-top.has-sub{height:115px;min-height:115px}
+  .steplayout.canto .sstep-top.has-sub{height:100px;max-height:100px;min-height:100px}
   /* Contenedor del globo: ocupa todo el alto de la tarjeta y centra el texto. */
   .steplayout.canto .sstep-top .sballoon{
     min-height:0;
     height:100%;
-    padding:10px 14px;
+    padding:2px 8px;
     display:flex;
     flex-direction:column;
     justify-content:center;
@@ -271,16 +273,17 @@ img{display:block}
     justify-content:center;
     text-align:center;
     margin:0;
+    gap:2px;
   }
   .steplayout.canto .sstep-top .sdialtext-title-line{
     font-weight:700;
-    font-size:1.15rem;
+    font-size:1.32rem;
     color:#2D231A;
-    line-height:1.25;
+    line-height:1.18;
     margin:0;
   }
   .steplayout.canto .sstep-top .sdialtext-sub{
-    max-width:90%;
+    max-width:94%;
     margin:4px auto 0;
     text-wrap:balance;
   }
@@ -288,12 +291,12 @@ img{display:block}
     white-space:normal;
     text-wrap:balance;
     overflow-wrap:break-word;
-    max-width:90%;
+    max-width:94%;
     margin:0 auto;
-    font-size:clamp(14px,4.4vw,17px);
+    font-size:clamp(15px,4.6vw,18px);
     font-weight:500;
     color:#4A3E31;
-    line-height:1.25;
+    line-height:1.22;
   }
 }
 /* ---------- optimización del teleprompter / globo de texto en móvil ----------
