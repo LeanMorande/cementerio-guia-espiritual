@@ -232,6 +232,28 @@ img{display:block}
    fluye respetando el contenedor según el dispositivo. */
 .sdialtext-sub{display:flex;flex-direction:column;align-items:center;gap:3px;margin-top:8px;width:100%;max-width:100%}
 .sdialtext-sub-line{display:block;white-space:pre-wrap;overflow-wrap:break-word;width:100%;max-width:100%;font-size:clamp(14px,2.8vw,20px);font-weight:500;color:#7a6f5c;line-height:1.35}
+/* ---------- subtítulo en móvil: legibilidad y contraste (aislado del escritorio) ----------
+   En pantallas ≤768px el subtítulo del globo se hace más grande y oscuro para
+   que contraste con el fondo crema, y rompe de forma natural en 2 líneas con
+   text-wrap:balance y max-width:90% (sin saltos rígidos / <br>). */
+@media (max-width:768px){
+  .sdialtext-sub{
+    max-width:90%;
+    margin:10px auto 0;
+    text-wrap:balance;
+  }
+  .sdialtext-sub-line{
+    white-space:normal;
+    text-wrap:balance;
+    overflow-wrap:break-word;
+    max-width:90%;
+    margin:0 auto;
+    font-size:clamp(14px,4.4vw,17px);
+    font-weight:500;
+    color:#4A3E31;
+    line-height:1.35;
+  }
+}
 /* ---------- optimización del teleprompter / globo de texto en móvil ----------
    Para pantallas ≤600px buscamos: más ancho de lectura (menos padding),
    interlineado compacto (1.35–1.4), balanceo automático de palabras y letra
