@@ -39,8 +39,13 @@ export default function SelectScreen({ cfg, eng, introDone, onSkip, onSelect }) 
             <b>{cfg.voces.angel.nombre}</b>
           </div>
           <div className="sballoon">
-            {!introDone && hasIntro ? (
+            {!introDone && hasIntro && eng.dur > 0 ? (
               <Teleprompter text={cfg.bienvenida.introTexto} audioRef={eng.audioRef} duration={eng.dur} />
+            ) : !introDone && hasIntro ? (
+              /* La duración del audio de la bienvenida aún no está disponible
+                 (p. ej. autoplay bloqueado en móvil antes de cargar metadatos).
+                 Mostramos el texto fluido en vez de romper el teleprompter. */
+              <p className="sdialtext">{cfg.bienvenida.introTexto}</p>
             ) : (
               <p className="sdialtext">¿Con quién quieres orar?</p>
             )}

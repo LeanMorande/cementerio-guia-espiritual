@@ -233,14 +233,30 @@ img{display:block}
 .sdialtext-sub{display:flex;flex-direction:column;align-items:center;gap:3px;margin-top:8px;width:100%;max-width:100%}
 .sdialtext-sub-line{display:block;white-space:pre-wrap;overflow-wrap:break-word;width:100%;max-width:100%;font-size:clamp(14px,2.8vw,20px);font-weight:500;color:#7a6f5c;line-height:1.35}
 /* ---------- tarjeta de título/oración en móvil (aislado del escritorio) ----------
-   En pantallas ≤768px la tarjeta (globo) mantiene una altura fija y uniforme,
-   con el contenido centrado verticalmente y un padding compacto. El título va
-   en bold con contraste y el subtítulo queda más compacto para caber holgado
-   dentro de la caja, sin apretar los bordes. */
+   En pantallas ≤768px, y SOLO en el modo-canto (título de la tarjeta), el globo
+   mantiene una altura fija y uniforme, con el contenido centrado verticalmente
+   y un padding compacto. El título va en bold con contraste y el subtítulo queda
+   más compacto para caber holgado sin desbordar. Esto NO toca el modo-voz ni el
+   selector (allí el globo contiene teleprompters con altura propia). */
 @media (max-width:768px){
-  .sballoon{
+  /* Altura fija y uniforme de la tarjeta de título/oración en modo-canto:
+     tanto los pasos de solo título (2, 5, 9) como los que llevan subtítulo
+     (Paso 7) comparten el mismo alto, sin desalinear la grilla ni robarle
+     espacio a la imagen central. box-sizing fijo y padding compacto. */
+  .steplayout.canto .sstep-top{
+    flex:0 0 auto;
+    height:115px;
     min-height:115px;
-    height:auto;
+    box-sizing:border-box;
+    padding:6px 8px;
+    margin:0;
+    overflow:hidden;
+  }
+  .steplayout.canto .sstep-top.has-sub{height:115px;min-height:115px}
+  /* Contenedor del globo: ocupa todo el alto de la tarjeta y centra el texto. */
+  .steplayout.canto .sstep-top .sballoon{
+    min-height:0;
+    height:100%;
     padding:10px 14px;
     display:flex;
     flex-direction:column;
@@ -248,25 +264,27 @@ img{display:block}
     align-items:center;
     text-align:center;
   }
-  .sdialtext{
+  .steplayout.canto .sstep-top .sdialtext{
     align-items:center;
     display:flex;
     flex-direction:column;
     justify-content:center;
     text-align:center;
+    margin:0;
   }
-  .sdialtext-title-line{
+  .steplayout.canto .sstep-top .sdialtext-title-line{
     font-weight:700;
     font-size:1.15rem;
     color:#2D231A;
     line-height:1.25;
+    margin:0;
   }
-  .sdialtext-sub{
+  .steplayout.canto .sstep-top .sdialtext-sub{
     max-width:90%;
     margin:4px auto 0;
     text-wrap:balance;
   }
-  .sdialtext-sub-line{
+  .steplayout.canto .sstep-top .sdialtext-sub-line{
     white-space:normal;
     text-wrap:balance;
     overflow-wrap:break-word;
