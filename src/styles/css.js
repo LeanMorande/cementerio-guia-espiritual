@@ -232,14 +232,38 @@ img{display:block}
    fluye respetando el contenedor según el dispositivo. */
 .sdialtext-sub{display:flex;flex-direction:column;align-items:center;gap:3px;margin-top:8px;width:100%;max-width:100%}
 .sdialtext-sub-line{display:block;white-space:pre-wrap;overflow-wrap:break-word;width:100%;max-width:100%;font-size:clamp(14px,2.8vw,20px);font-weight:500;color:#7a6f5c;line-height:1.35}
-/* ---------- subtítulo en móvil: legibilidad y contraste (aislado del escritorio) ----------
-   En pantallas ≤768px el subtítulo del globo se hace más grande y oscuro para
-   que contraste con el fondo crema, y rompe de forma natural en 2 líneas con
-   text-wrap:balance y max-width:90% (sin saltos rígidos / <br>). */
+/* ---------- tarjeta de título/oración en móvil (aislado del escritorio) ----------
+   En pantallas ≤768px la tarjeta (globo) mantiene una altura fija y uniforme,
+   con el contenido centrado verticalmente y un padding compacto. El título va
+   en bold con contraste y el subtítulo queda más compacto para caber holgado
+   dentro de la caja, sin apretar los bordes. */
 @media (max-width:768px){
+  .sballoon{
+    min-height:115px;
+    height:auto;
+    padding:10px 14px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+  }
+  .sdialtext{
+    align-items:center;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    text-align:center;
+  }
+  .sdialtext-title-line{
+    font-weight:700;
+    font-size:1.15rem;
+    color:#2D231A;
+    line-height:1.25;
+  }
   .sdialtext-sub{
     max-width:90%;
-    margin:10px auto 0;
+    margin:4px auto 0;
     text-wrap:balance;
   }
   .sdialtext-sub-line{
@@ -251,7 +275,7 @@ img{display:block}
     font-size:clamp(14px,4.4vw,17px);
     font-weight:500;
     color:#4A3E31;
-    line-height:1.35;
+    line-height:1.25;
   }
 }
 /* ---------- optimización del teleprompter / globo de texto en móvil ----------
