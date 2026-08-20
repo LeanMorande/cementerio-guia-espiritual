@@ -84,11 +84,15 @@ export default function StepLayout({
   const isCanto = tipo === "modo-canto" || !speaker || !speaker.img;
   const nombre = speaker?.nombre || "Canto";
   const balloon = accion ? accion : texto;
-  /* Divide el globo en título + posible subtítulo (separado por \n).
-     La 1ª línea se muestra a tamaño normal; las siguientes más pequeñas. */
-  const balloonLines = (balloon || "").split("\n");
-  const balloonMain = balloonLines[0] || "";
-  const balloonSub = balloonLines.slice(1);
+  /* Divide el globo. El subtítulo es el bloque que comienza con "("
+     (p. ej. "Momento de Oración Personal (Habla con Dios…)"). El resto es el
+     título. NO forzamos saltos de línea en el texto: cada bloque fluye y se
+     balancea (text-wrap:balance) según el ancho de su contenedor, para que el
+     texto nunca desborde y aproveche siempre el espacio disponible. */
+  const balloonTxt = (balloon || "").trim();
+  const subIdx = balloonTxt.indexOf("(");
+  const balloonTitle = subIdx === -1 ? [balloonTxt || "—"] : [balloonTxt.slice(0, subIdx).trim()];
+  const balloonSub = subIdx === -1 ? [] : [balloonTxt.slice(subIdx).trim()];
 
   // Teleprompter scrolleante: solo para subtítulos (sin acción/canto) con
   // audio cargado y duración conocida. Sin audio → texto completo fijo.
@@ -171,7 +175,11 @@ export default function StepLayout({
               <Teleprompter text={texto} audioRef={eng.audioRef} duration={eng.dur} />
             ) : (
               <p className="sdialtext">
-                {balloonMain || (isCanto ? accion || "Canto" : "—")}
+                <span className="sdialtext-title">
+                  {(balloonTitle.length ? balloonTitle : [isCanto ? accion || "Canto" : "—"]).map((l, i) => (
+                    <span key={i} className="sdialtext-title-line">{l}</span>
+                  ))}
+                </span>
                 {balloonSub.length > 0 && (
                   <span className="sdialtext-sub">
                     {balloonSub.map((l, i) => (

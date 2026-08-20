@@ -221,10 +221,14 @@ img{display:block}
 .savatar b{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:13px;text-align:center;line-height:1.2;max-width:100%}
 .sballoon{flex:1;min-width:0;height:100%;display:flex;align-items:center;justify-content:center;border:1px solid #e2dfd5;border-radius:16px;background:linear-gradient(180deg,#fbfaf6,#f5f4ee);padding:14px 16px;overflow:hidden;box-shadow:inset 0 1px 6px rgba(80,65,30,.05)}
 .sdialtext{font-family:'Cormorant Garamond',serif;font-size:clamp(20px,5.2vw,25px);line-height:1.5;color:#3c2a0c;text-align:center;font-weight:600;white-space:pre-wrap}
-/* Subtítulo del globo (2ª línea de una acción): un 30% más pequeño y en un
-   tono más suave, bajo el título principal. */
-.sdialtext-sub{display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:6px}
-.sdialtext-sub-line{font-size:.7em;font-weight:500;color:#7a6f5c;line-height:1.4}
+/* Título del globo: crece al máximo posible de su/s línea/s (fluido con vw) y
+   en negrita. Balances de palabras para llenar cada línea aprovechando el ancho. */
+.sdialtext-title{display:block;width:100%;max-width:100%}
+.sdialtext-title-line{display:block;white-space:pre-wrap;text-wrap:balance;overflow-wrap:break-word;width:100%;max-width:100%;font-size:clamp(17px,3.4vw,27px);line-height:1.25;font-weight:700}
+/* Subtítulo del globo (bloque entre paréntesis): más pequeño que el título,
+   fluye respetando el contenedor en hasta 2 líneas según el dispositivo. */
+.sdialtext-sub{display:flex;flex-direction:column;align-items:center;gap:3px;margin-top:8px;width:100%;max-width:100%}
+.sdialtext-sub-line{display:block;white-space:pre-wrap;text-wrap:balance;overflow-wrap:break-word;width:100%;max-width:100%;font-size:clamp(12px,2vw,17px);font-weight:500;color:#7a6f5c;line-height:1.4}
 /* ---------- optimización del teleprompter / globo de texto en móvil ----------
    Para pantallas ≤600px buscamos: más ancho de lectura (menos padding),
    interlineado compacto (1.35–1.4), balanceo automático de palabras y letra
