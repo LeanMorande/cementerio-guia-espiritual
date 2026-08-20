@@ -135,8 +135,8 @@ export function buildDefaults() {
         uid: uid(), id: "m2_canto", voz: "canto", tipo: "modo-canto",
         speaker: "Canto",
         audio: true, audioUrl: "/sounds/canto_trinidad.mp3", audioName: "canto_trinidad.mp3", dur: 0,
-        accion: "¡A Ti la Alabanza y la Gloria, Oh Santa Trinidad!",
-        texto: "¡A Ti la Alabanza y la Gloria, Oh Santa Trinidad!",
+        accion: "¡A Ti la Alabanza y la Gloria,\nOh Santa Trinidad!",
+        texto: "¡A Ti la Alabanza y la Gloria,\nOh Santa Trinidad!",
         imagen: IMG_MANOS_ORANTES, caption: "",
       },
       // Paso 3 — Ángel (continuación)
@@ -192,8 +192,8 @@ export function buildDefaults() {
         speaker: "Meditación",
         audio: true, audioUrl: "/sounds/miserere.mp3", audioName: "miserere.mp3", dur: 180,
         pauseDuration: 180,
-        accion: "Momento de Oración Personal (Habla con Dios y con el alma de tus seres queridos)",
-        texto: "Momento de Oración Personal (Habla con Dios y con el alma de tus seres queridos)",
+        accion: "Momento de Oración Personal\n(Habla con Dios y con el\nalma de tus seres queridos)",
+        texto: "Momento de Oración Personal\n(Habla con Dios y con el\nalma de tus seres queridos)",
         imagen: IMG_MISERERE_1, caption: "",
         /* Transición de 4 imágenes: el audio miserere.mp3 dura 3 min (180 s),
            así que cada imágen permanece ~45 s (180/4). Coloca los archivos en

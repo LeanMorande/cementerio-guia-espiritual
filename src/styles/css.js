@@ -224,11 +224,11 @@ img{display:block}
 /* Título del globo: crece al máximo posible de su/s línea/s (fluido con vw) y
    en negrita. Balances de palabras para llenar cada línea aprovechando el ancho. */
 .sdialtext-title{display:block;width:100%;max-width:100%}
-.sdialtext-title-line{display:block;white-space:pre-wrap;text-wrap:balance;overflow-wrap:break-word;width:100%;max-width:100%;font-size:clamp(17px,3.4vw,27px);line-height:1.25;font-weight:700}
+.sdialtext-title-line{display:block;white-space:pre-wrap;overflow-wrap:break-word;width:100%;max-width:100%;font-size:clamp(18px,5.8vw,34px);line-height:1.2;font-weight:700}
 /* Subtítulo del globo (bloque entre paréntesis): más pequeño que el título,
-   fluye respetando el contenedor en hasta 2 líneas según el dispositivo. */
+   fluye respetando el contenedor según el dispositivo. */
 .sdialtext-sub{display:flex;flex-direction:column;align-items:center;gap:3px;margin-top:8px;width:100%;max-width:100%}
-.sdialtext-sub-line{display:block;white-space:pre-wrap;text-wrap:balance;overflow-wrap:break-word;width:100%;max-width:100%;font-size:clamp(12px,2vw,17px);font-weight:500;color:#7a6f5c;line-height:1.4}
+.sdialtext-sub-line{display:block;white-space:pre-wrap;overflow-wrap:break-word;width:100%;max-width:100%;font-size:clamp(13px,3vw,20px);font-weight:500;color:#7a6f5c;line-height:1.35}
 /* ---------- optimización del teleprompter / globo de texto en móvil ----------
    Para pantallas ≤600px buscamos: más ancho de lectura (menos padding),
    interlineado compacto (1.35–1.4), balanceo automático de palabras y letra
