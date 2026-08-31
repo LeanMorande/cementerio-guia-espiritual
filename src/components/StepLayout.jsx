@@ -14,9 +14,10 @@ const FIRMA = "† CEMENTERIO CATÓLICO DE COLONIA CRESPO";
 
 export default function StepLayout({
   id,
-  speaker,
+    speaker,
   speaking,
   texto,
+  teleprompter,
   imagen,
   imagenes,
   caption,
@@ -171,8 +172,13 @@ export default function StepLayout({
                 value={balloon || ""}
                 onFocus={(e) => e.target.select()}
               />
-            ) : useTeleprompter ? (
-              <Teleprompter text={texto} audioRef={eng.audioRef} duration={eng.dur} />
+                        ) : useTeleprompter ? (
+              <Teleprompter
+                text={texto}
+                audioRef={eng.audioRef}
+                duration={eng.dur}
+                keyframes={teleprompter ? teleprompter.keyframes : undefined}
+              />
             ) : (
               <p className="sdialtext">
                 <span className="sdialtext-title">

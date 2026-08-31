@@ -3,12 +3,12 @@
    ===================================================================== */
 import StepLayout from "./StepLayout.jsx";
 import { Ic } from "./icons.jsx";
-export default function PathScreen({ cfg, idx, onExit, onNext, onPrev, eng, admin }) {
-  const seg = cfg.camino[idx];
-  const last = idx === cfg.camino.length - 1;
+export default function PathScreen({ camino = [], voces = {}, idx, onExit, onNext, onPrev, eng, admin }) {
+  const seg = camino[idx];
+  const last = idx === camino.length - 1;
   if (!seg) return null;
 
-  const speaker = seg.voz ? cfg.voces[seg.voz] : null;
+  const speaker = seg.voz ? voces[seg.voz] : null;
   const speaking = eng.playing && !!seg.audioUrl;
 
   const audioName = seg.audioUrl ? seg.audioUrl.split("/").pop() : null;
@@ -20,9 +20,9 @@ export default function PathScreen({ cfg, idx, onExit, onNext, onPrev, eng, admi
           <Ic.Close s={20} />
         </button>
         <div className="phead-c">
-          <span className="mnum">
-            <span className="mnum-title">Camino con la Virgen María:</span>{" "}
-            <span className="mnum-step">Paso {idx + 1} de {cfg.camino.length}</span>
+                    <span className="mnum">
+            <span className="mnum-title">Camino de oración:</span>{" "}
+            <span className="mnum-step">Paso {idx + 1} de {camino.length}</span>
           </span>
         </div>
         <span className="phead-sp" />
@@ -31,8 +31,9 @@ export default function PathScreen({ cfg, idx, onExit, onNext, onPrev, eng, admi
       <StepLayout
         id={seg.id}
         speaker={speaker}
-        speaking={speaking}
+                speaking={speaking}
         texto={seg.texto}
+        teleprompter={seg.teleprompter}
         imagen={seg.imagen}
         imagenes={seg.imagenes}
         contain={seg.contain}
@@ -45,9 +46,9 @@ export default function PathScreen({ cfg, idx, onExit, onNext, onPrev, eng, admi
         eng={eng}
         onNext={onNext}
         onPrev={onPrev}
-        last={last}
+                last={last}
         idx={idx}
-        totalSteps={cfg.camino.length}
+        totalSteps={camino.length}
       />
     </div>
   );

@@ -1,33 +1,49 @@
 import { useMemo, useRef, useState, useCallback, useLayoutEffect, useEffect } from "react";
 
+/* Convierte el texto en un array de palabras con su posición inicial
+   (índice de carácter) dentro del string original. Se usa para poder mapear
+   cada fragmento de texto (keyframe) a una posición concreta del audio. */
+function tokenize(text) {
+  const toks = [];
+  const re = /\S+/g;
+  let m;
+  while ((m = re.exec(text || "")) !== null) toks.push({ w: m[0], i: m.index });
+  return toks;
+}
+
 /* Convierte el texto en un array de líneas acotadas (word-wrap aprox.)
    para que quepan varias por ventana y el scroll sea fluido.
    El máximo de caracteres por línea es responsivo: en móviles se permiten
    menos caracteres para evitar que las líneas se desborden y queden palabras
-   sueltas/huérfanas; en pantallas anchas se aprovecha el espacio. */
+   sueltas/huérfanas; en pantallas anchas se aprovecha el espacio.
+   Además calcula `startChars` y `endChars` (posiciones inicial/final en el
+   string original) de cada línea, necesarios para la sincronización por
+   keyframes (asociar frases a segundos concretos del audio). */
 function wrapLines(text, maxChars, winWidth) {
-  const words = text
-    .split(/\r?\n/)
-    .join(" ")
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean);
+  const toks = tokenize(text || "");
   // Límite por caracteres según el ancho de la ventana (y el de la caja).
   const limit =
     maxChars ||
     (winWidth ? (winWidth <= 600 ? 30 : winWidth <= 900 ? 40 : 48) : 48);
   const lines = [];
   let cur = "";
-  for (const w of words) {
-    if ((cur + " " + w).trim().length > limit && cur) {
-      lines.push(cur.trim());
-      cur = w;
+  let curStart = 0; // posición inicial del primer token de la línea actual
+  let curEnd = 0; //   posición (fin del último token agregado)
+  for (const t of toks) {
+    if ((cur + " " + t.w).trim().length > limit && cur) {
+      lines.push({ text: cur.trim(), startChars: curStart, endChars: curEnd });
+      cur = t.w;
+      curStart = t.i;
+      curEnd = t.i + t.w.length;
     } else {
-      cur = (cur + " " + w).trim();
+      if (!cur) curStart = t.i;
+      cur = (cur + " " + t.w).trim();
+      curEnd = t.i + t.w.length;
     }
   }
-  if (cur) lines.push(cur.trim());
-  return lines.length ? lines : [""];
+  if (cur) lines.push({ text: cur.trim(), startChars: curStart, endChars: curEnd });
+  if (!lines.length) lines.push({ text: "", startChars: 0, endChars: 0 });
+  return lines;
 }
 
 /* Estima las sílabas de un texto en español (golpes de voz). Cada secuencia
@@ -46,7 +62,7 @@ function lineWeight(line) {
   return Math.max(2, countSyllables(line) + line.length * 0.12);
 }
 
-export default function Teleprompter({ text, audioRef, duration, hint }) {
+export default function Teleprompter({ text, audioRef, duration, hint, keyframes }) {
   // Ancho de la ventana para redividir el texto según el espacio disponible
   // (en móvil se generan líneas más cortas → menos palabras sueltas).
   const [winW, setWinW] = useState(() => (typeof window !== "undefined" ? window.innerWidth : 900));
@@ -55,18 +71,77 @@ export default function Teleprompter({ text, audioRef, duration, hint }) {
     window.addEventListener("resize", onR);
     return () => window.removeEventListener("resize", onR);
   }, []);
+  // Las líneas son objetos { text, startChars, endChars }.
   const lines = useMemo(() => wrapLines(text || "", undefined, winW), [text, winW]);
+
+  /* Sincronización por keyframes (compensación manual).
+     Los keyframes definen que cierto fragmento de texto debe mostrarse a
+     partir de un segundo concreto del audio (porque la voz real no es
+     monótona: tiene pausas, reflexiones, cambios de ritmo). Construimos una
+     tabla de "puntos de control" (posición char → tiempo) y luego
+     interpolamos linealmente entre ellos para cada línea:
+       - posición 0          → tiempo 0
+       - cada keyframe       → su segundo t
+       - posición final      → duración total del audio
+     Si no hay keyframes, se cae al algoritmo por defecto (reparto
+     proporcional por sílabas/peso a lo largo de la duración total). */
   const segs = useMemo(() => {
-    if (!duration || duration <= 0 || !lines.length) return [];
-    const w = lines.map((l) => lineWeight(l));
-    const tot = w.reduce((a, b) => a + b, 0) || 1;
-    let acc = 0;
-    return w.map((x) => {
-      const s = (acc / tot) * duration;
-      acc += x;
-      return [s, (acc / tot) * duration];
+        if (!duration || duration <= 0 || !lines.length) return [];
+
+    const buildPoints = () => {
+      const totalChars = (text || "");
+      const points = [
+        { pos: 0, t: 0 },
+        { pos: totalChars.length, t: duration },
+      ];
+      const rawText = totalChars;
+      if (Array.isArray(keyframes)) {
+        for (const kf of keyframes) {
+          if (!kf || typeof kf.t !== "number" || !kf.sub) continue;
+          const pos = rawText.indexOf(kf.sub);
+          if (pos !== -1) points.push({ pos, t: kf.t });
+        }
+      }
+      // Ordena por posición char y garantiza tiempos crecientes.
+      points.sort((a, b) => a.pos - b.pos || a.t - b.t);
+      return points;
+    };
+    const points = buildPoints();
+
+    // Interpola el tiempo para una posición char según los puntos de control.
+    const timeAt = (pos) => {
+      let a = points[0];
+      let b = points[points.length - 1];
+      for (let i = 0; i < points.length; i++) {
+        if (points[i].pos >= pos) { b = points[i]; a = points[i - 1] || points[0]; break; }
+      }
+      if (b.pos === a.pos) return b.t;
+      const ratio = (pos - a.pos) / (b.pos - a.pos);
+      return a.t + ratio * (b.t - a.t);
+    };
+
+                // Sin keyframes (o sin ninguno válido, p. ej. fragmento no encontrado):
+    // reparto proporcional por sílabas/peso (algoritmo original).
+    if (points.length <= 2) {
+      const w = lines.map((l) => lineWeight(l.text));
+      const tot = w.reduce((a, b) => a + b, 0) || 1;
+      let acc = 0;
+      return w.map((x) => {
+        const s = (acc / tot) * duration;
+        acc += x;
+        return [s, (acc / tot) * duration];
+      });
+    }
+
+        // Con keyframes: interpola por los puntos de control (posición char →
+    // tiempo). Cada línea recibe un intervalo [inicio, fin] según su offset.
+    return lines.map((l) => {
+      const start = timeAt(l.startChars);
+      const end =
+        l === lines[lines.length - 1] ? duration : timeAt(l.endChars);
+      return [start, Math.max(start, end)];
     });
-  }, [lines, duration]);
+  }, [lines, duration, keyframes, text]);
 
   const winRef = useRef(null);
   const trackRef = useRef(null);
@@ -125,14 +200,14 @@ export default function Teleprompter({ text, audioRef, duration, hint }) {
   return (
     <div className="tp" ref={winRef}>
       <div className="tp-track" ref={trackRef}>
-        {lines.length === 0 && <p className="tp-line future">Agrega el texto en Configuración…</p>}
+                {lines.length === 0 && <p className="tp-line future">Agrega el texto en Configuración…</p>}
         {lines.map((l, i) => (
           <p
             key={i}
             ref={(el) => { lineEls.current[i] = el; }}
             className={"tp-line " + (i === active ? "active" : i < active ? "past" : "future")}
           >
-            {l}
+            {l.text}
           </p>
         ))}
       </div>

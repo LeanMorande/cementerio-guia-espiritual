@@ -43,11 +43,22 @@ export default function App() {
   routeRef.current = route;
   const cfgRef = useRef(cfg);
   cfgRef.current = cfg;
-  const pathIdxRef = useRef(pathIdx);
+    const pathIdxRef = useRef(pathIdx);
   pathIdxRef.current = pathIdx;
+  /* El camino activo (array de pasos) según la opción elegida. */
+    const activePathRef = useRef("maria");
 
   /* Timer del gap silencioso entre pasos (para limpiarlo al navegar). */
   const gapTimerRef = useRef(null);
+
+  /* Devuelve el array de pasos del camino según el id de la opción.
+     Por defecto (y retrocompatibilidad) usa el camino de María. */
+    const getPath = useCallback((id) => {
+    const c = cfgRef.current;
+    if (id === "padre") return c.caminoPadre || [];
+    if (id === "jesus") return c.caminoJesus || [];
+    return c.camino || [];
+  }, []);
 
   /* Marca cuando el paso 1 fue iniciado por un gesto de usuario (clic),
      para no reproducirlo dos veces (gesto + efecto). */
@@ -309,8 +320,8 @@ export default function App() {
       setIntroDone(true);
       return;
     }
-    if (r === "path") {
-      const segs = cfgRef.current.camino;
+        if (r === "path") {
+      const segs = getPath(activePathRef.current);
       const i = pathIdxRef.current;
       const next = segs[i + 1];
       if (next) {
@@ -395,10 +406,10 @@ export default function App() {
       playIsFromGestureRef.current = false;
       return;
     }
-    const seg = cfg.camino[pathIdx];
+        const seg = getPath(activePathRef.current)[pathIdx];
     if (seg && seg.audioUrl) playUrl(seg.audioUrl);
     else stopAudio();
-  }, [route, pathIdx]); // eslint-disable-line
+  }, [route, pathIdx, getPath]);
 
   /* ---------- navegación ---------- */
   const iniciarVisita = () => {
@@ -421,7 +432,7 @@ export default function App() {
     setTransition(null);
   };
 
-    const onSelect = (id, auto) => {
+        const onSelect = (id, auto) => {
     const o = cfg.opciones.find((x) => x.id === id);
     if (!o) return;
     if (!o.habilitado) {
@@ -429,6 +440,13 @@ export default function App() {
       return;
     }
         if (auto) toast("Elegimos por ti: " + o.titulo);
+    // Programación defensiva: valida que el camino tenga al menos 1 paso
+    // antes de intentar entrar; si no, no cambia de pantalla.
+    const caminoElegido = getPath(id) || [];
+    if (!caminoElegido.length) {
+      toast("Este recorrido aún no tiene pasos definidos");
+      return;
+    }
     cancelGap();
     // Detiene el audio en curso (p. ej. la bienvenida del selector) para que
     // la transición de entrada al camino transcurra en silencio y el paso 1
@@ -438,8 +456,10 @@ export default function App() {
     // que comience el audio: la reproducción se retrasa con un timer. Como
     // el audio ya quedó desbloqueado por el gesto del usuario (la bienvenida
     // y el clic), el navegador permite reproducir unos segundos después.
-    playIsFromGestureRef.current = true;
-    const first = cfg.camino[0];
+        playIsFromGestureRef.current = true;
+    // Establece el camino activo según la opción elegida.
+    activePathRef.current = id;
+    const first = caminoElegido[0];
     setPathIdx(0);
     setRoute("path");
     // Transición visual al elegir: fundido con el nombre de la opción.
@@ -464,9 +484,9 @@ export default function App() {
     stopAudio();
     setRoute("select");
   };
-  const nextStep = () => {
+    const nextStep = () => {
     cancelGap();
-    if (pathIdx < cfg.camino.length - 1) {
+    if (pathIdx < getPath(activePathRef.current).length - 1) {
       // El efecto de route/pathIdx reproduce el audio del siguiente paso.
       setPathIdx(pathIdx + 1);
     } else {
@@ -582,8 +602,17 @@ export default function App() {
         <SelectScreen cfg={cfg} eng={eng} introDone={introDone} onSkip={skipIntro} onSelect={onSelect} />
       )}
 
-      {route === "path" && ready && (
-        <PathScreen cfg={cfg} idx={pathIdx} onExit={exitPath} onNext={nextStep} onPrev={prevStep} eng={eng} admin={admin} />
+                        {route === "path" && ready && (getPath(activePathRef.current) || []).length > 0 && (
+        <PathScreen
+          camino={getPath(activePathRef.current)}
+          voces={cfg.voces}
+          idx={pathIdx}
+          onExit={exitPath}
+          onNext={nextStep}
+          onPrev={prevStep}
+          eng={eng}
+          admin={admin}
+        />
       )}
 
       {route === "fin" && ready && <FinScreen onHome={goHome} />}
@@ -595,13 +624,13 @@ export default function App() {
             <Ic.Cross s={34} />
           </div>
           <div className="veil2-inner">
-            {transition.titulo && (
-              <p className="veil2-txt">
-                <span className="veil2-l1">Comenzando:</span>
-                <span className="veil2-l2">El camino de la</span>
-                <span className="veil2-l3">Virgen María</span>
-              </p>
-            )}
+                        {transition.titulo && (
+                          <p className="veil2-txt">
+                            <span className="veil2-l1">Comenzando:</span>
+                            <span className="veil2-l2">El camino de la</span>
+                            <span className="veil2-l3">{transition.id === "padre" ? "Piedad del Padre" : transition.id === "jesus" ? "Redención de Jesús" : "Virgen María"}</span>
+                          </p>
+                        )}
           </div>
         </div>
       )}
