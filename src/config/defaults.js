@@ -41,6 +41,16 @@ export const IMG_TRINIDAD = "escena_trinidad.jpg";
 export const IMG_MANOS_ORANTES = "manos_orantes.jpg";
 export const IMG_CALVARIO = "calvario.jpeg";
 export const IMG_GLORIA_CIELO = "gloria_cielo.jpg";
+
+/* Imágenes del bloque Padre Nuestro → 3 Ave María → Gloria (audio nuevo).
+   Fases del audio padre_nuestro_ave_gloria.mp3 (4:21 total):
+     0:00–1:04  Padre Nuestro  (IMG_PADRE_NUESTRO)
+     1:04–3:48  3 Ave María     (IMG_AVE_MARIA, se repite en las 3)
+     3:48–4:21  Gloria          (IMG_GLORIA)
+   Coloca estos archivos en /public/ (o reemplaza por las que quieras). */
+export const IMG_PADRE_NUESTRO = "padre_nuestro.jpg";
+export const IMG_AVE_MARIA = "ave_maria.jpg";
+export const IMG_GLORIA = "gloria.jpg";
 /*
   TRANSICIÓN DE MÚLTIPLES IMÁGENES (slides) en un paso:
   Para que un paso muestre varias imágenes que cambian en el tiempo,
@@ -230,15 +240,38 @@ export function buildDefaults() {
         texto: "Todo esto que me has dicho, lo depositamos ahora en las manos de Dios Padre, para que sea El quien te traiga paz y consuelo. Con la esperanza cierta que las almas de tus difuntos un día resucitaran, y nos volveremos a encontrar. Por eso pedimos el eterno descanso para ellas.",
         imagen: IMG_ESCENA_5, caption: "",
       },
-      // Paso 9 — Canto Gloria (nuevo)
+            // Paso 9 — Canto Padre Nuestro + 3 Ave María + Gloria (nuevo)
       {
         uid: uid(), id: "m9_canto", voz: "canto", tipo: "modo-canto",
         speaker: "Canto",
-        audio: true, audioUrl: "/sounds/padre_nuestro.mp3", audioName: "padre_nuestro.mp3", dur: 0,
-        accion: "Padre Nuestro",
-        texto: "Padre Nuestro",
-        imagen: IMG_GLORIA_CIELO, caption: "",
-      },
+        audio: true, audioUrl: "/sounds/padre_nuestro_ave_gloria.mp3", audioName: "padre_nuestro_ave_gloria.mp3", dur: 261,
+        texto: "Padre Nuestro\nAve María (3)\nGloria",
+        imagen: IMG_PADRE_NUESTRO, caption: "",
+        /* Transición de 3 imágenes. El audio padre_nuestro_ave_gloria.mp3
+           dura 4:21 (261 s). Las imágenes cambian en los instantes exactos en
+           que cambia cada oración (se usa `slideTimes`):
+             0:00–1:04  Padre Nuestro → IMG_PADRE_NUESTRO  (inicio 0s)
+             1:04–3:48  3 Ave María    → IMG_AVE_MARIA     (64s, se mantiene)
+             3:48–4:21  Gloria         → IMG_GLORIA        (228s)
+           Coloca estos archivos en /public/. */
+        imagenes: [
+          IMG_PADRE_NUESTRO,
+          IMG_AVE_MARIA,
+          IMG_GLORIA,
+        ],
+        /* Segundos en que inicia cada imagen (debe coincidir con `imagenes`). */
+        slideTimes: [0, 64, 228],
+        /* Teleprompter de secciones: cada línea se ilumina mientras se canta
+           esa parte del audio (efecto "pasado / activo / futuro"). */
+        teleprompter: {
+          keyframes: [
+            { t: 0, sub: "Padre Nuestro" },
+            { t: 64, sub: "Ave María" },
+            { t: 228, sub: "Gloria" },
+          ],
+        },
+        contain: true,
+    },
             // Paso 10 — Ángel (cierre)
       {
         uid: uid(), id: "m10_voz", voz: "angel", tipo: "modo-voz",
@@ -379,15 +412,38 @@ export function buildCaminoPadre() {
       texto: "Te propongo que mientras rezas el Padrenuestro, vayas haciendo memoria de todas las palabras o actos que han hecho sufrir a Dios o al prójimo, y pidas perdón por ello. Esto te dejará bien preparado para que en breve te puedas confesar con un sacerdote, y recibir la absolución sacramental.",
       imagen: IMG_ANGEL_GUARDA_2, caption: "",
     },
-    /* PASO 8 — Padre Nuestro (Modelo 2: Canto con imagen)
-       Canto de Harpa Dei, imagen estática. */
+        /* PASO 8 — Padre Nuestro · 3 Ave María · Gloria (Modelo 2: Canto con slide)
+       Canto de Harpa Dei, imagen con transición por sección. */
     {
       uid: uid(), id: "p8_canto", voz: "canto", tipo: "modo-canto",
       speaker: "Canto",
-      audio: true, audioUrl: "/sounds/padre_nuestro.mp3", audioName: "padre_nuestro.mp3", dur: 0,
-      accion: "Padre Nuestro",
-      texto: "Padre Nuestro que estás en el cielo...",
-      imagen: IMG_CRUZ_CIELO, caption: "",
+            audio: true, audioUrl: "/sounds/padre_nuestro_ave_gloria.mp3", audioName: "padre_nuestro_ave_gloria.mp3", dur: 261,
+      texto: "Padre Nuestro\nAve María (3)\nGloria",
+      imagen: IMG_PADRE_NUESTRO, caption: "",
+      /* Transición de 3 imágenes. El audio padre_nuestro_ave_gloria.mp3
+         dura 4:21 (261 s). Las imágenes cambian en los instantes exactos en
+         que cambia cada oración (se usa `slideTimes`):
+           0:00–1:04  Padre Nuestro → IMG_PADRE_NUESTRO  (inicio 0s)
+           1:04–3:48  3 Ave María    → IMG_AVE_MARIA     (64s, se mantiene)
+           3:48–4:21  Gloria         → IMG_GLORIA        (228s)
+         Coloca estos archivos en /public/. */
+      imagenes: [
+        IMG_PADRE_NUESTRO,
+        IMG_AVE_MARIA,
+        IMG_GLORIA,
+      ],
+      /* Segundos en que inicia cada imagen (debe coincidir con `imagenes`). */
+      slideTimes: [0, 64, 228],
+      /* Teleprompter de secciones: cada línea se ilumina mientras se canta
+         esa parte del audio (efecto "pasado / activo / futuro"). */
+      teleprompter: {
+        keyframes: [
+          { t: 0, sub: "Padre Nuestro" },
+          { t: 64, sub: "Ave María" },
+          { t: 228, sub: "Gloria" },
+        ],
+      },
+      contain: true,
     },
     /* PASO 9 — Pésame y Oración Final (Modelo 8: Voz de despedida)
        Voz del Ángel de la Guarda, imagen estática. */

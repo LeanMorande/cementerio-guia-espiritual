@@ -32,10 +32,11 @@ export default function PathScreen({ camino = [], voces = {}, idx, onExit, onNex
         id={seg.id}
         speaker={speaker}
                 speaking={speaking}
-        texto={seg.texto}
+                texto={seg.texto}
         teleprompter={seg.teleprompter}
         imagen={seg.imagen}
         imagenes={seg.imagenes}
+        slideTimes={seg.slideTimes}
         contain={seg.contain}
         caption={seg.caption}
         admin={admin}

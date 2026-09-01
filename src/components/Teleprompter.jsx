@@ -20,28 +20,40 @@ function tokenize(text) {
    string original) de cada línea, necesarios para la sincronización por
    keyframes (asociar frases a segundos concretos del audio). */
 function wrapLines(text, maxChars, winWidth) {
-  const toks = tokenize(text || "");
   // Límite por caracteres según el ancho de la ventana (y el de la caja).
   const limit =
     maxChars ||
     (winWidth ? (winWidth <= 600 ? 30 : winWidth <= 900 ? 40 : 48) : 48);
+  // Los saltos de línea explícitos (`\n`) se respetan como líneas
+  // independientes del teleprompter: sirven para mostrar bloques separados
+  // (p. ej. "Padre Nuestro\nAve María (3)\nGloria") que se van iluminando
+  // según la sección del audio. Un segmento largo se sigue partiendo por el
+  // límite de caracteres para no desbordar la ventana.
+  const segments = (text || "").split(/\r?\n/);
   const lines = [];
-  let cur = "";
-  let curStart = 0; // posición inicial del primer token de la línea actual
-  let curEnd = 0; //   posición (fin del último token agregado)
-  for (const t of toks) {
-    if ((cur + " " + t.w).trim().length > limit && cur) {
-      lines.push({ text: cur.trim(), startChars: curStart, endChars: curEnd });
-      cur = t.w;
-      curStart = t.i;
-      curEnd = t.i + t.w.length;
-    } else {
-      if (!cur) curStart = t.i;
-      cur = (cur + " " + t.w).trim();
-      curEnd = t.i + t.w.length;
+  let charOffset = 0; // offset global para poder mapear a keyframes
+  for (const seg of segments) {
+    const toks = tokenize(seg);
+    let cur = "";
+    let curStart = 0; // posición char global del primer token de la línea
+    let curEnd = 0; //   posición char global del fin del último token agregado
+    for (const t of toks) {
+      const absStart = charOffset + t.i;
+      if ((cur + " " + t.w).trim().length > limit && cur) {
+        lines.push({ text: cur.trim(), startChars: curStart, endChars: curEnd });
+        cur = t.w;
+        curStart = absStart;
+        curEnd = absStart + t.w.length;
+      } else {
+        if (!cur) curStart = absStart;
+        cur = (cur + " " + t.w).trim();
+        curEnd = absStart + t.w.length;
+      }
     }
+    if (cur) lines.push({ text: cur.trim(), startChars: curStart, endChars: curEnd });
+    else if (seg.trim() === "" && lines.length) lines.push({ text: "", startChars: charOffset, endChars: charOffset });
+    charOffset = charOffset + seg.length + 1; // +1 por el salto de línea
   }
-  if (cur) lines.push({ text: cur.trim(), startChars: curStart, endChars: curEnd });
   if (!lines.length) lines.push({ text: "", startChars: 0, endChars: 0 });
   return lines;
 }

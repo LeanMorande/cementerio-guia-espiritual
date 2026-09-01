@@ -16,10 +16,11 @@ export default function StepLayout({
   id,
     speaker,
   speaking,
-  texto,
+    texto,
   teleprompter,
   imagen,
   imagenes,
+  slideTimes,
   caption,
   admin,
   audioName,
@@ -99,19 +100,39 @@ export default function StepLayout({
   // audio cargado y duración conocida. Sin audio → texto completo fijo.
   const useTeleprompter = !admin && !accion && !!texto && hasAudio && eng.dur > 0;
 
-  // Transición de imágenes (slides): si el paso define un array `imagenes`,
+    // Transición de imágenes (slides): si el paso define un array `imagenes`,
   // se reparten en partes iguales a lo largo de la duración del audio y se
   // muestra la imagen correspondiente al progreso actual (crossfade).
   // Reutilizable en cualquier paso con `tipo: "modo-canto"` o con imagen.
+  //
+  // Si además se define `slideTimes` (array con el segundo en que EMPIEZA cada
+  // imagen), los cambios de imagen se sincronizan con esos instantes exactos
+  // en lugar de repartirlos uniformemente. Esto permite acompañar el audio
+  // cuando cambia de sección (p. ej. Padre Nuestro → 3 Ave María → Gloria).
   const slides =
     imagenes && imagenes.length > 1 && eng.dur > 0
       ? imagenes
       : imagen
       ? [imagen]
       : [];
+  const hasSlideTimes =
+    Array.isArray(slideTimes) &&
+    slideTimes.length >= slides.length &&
+    eng.dur > 0;
   const slideIndex =
     slides.length > 1 && eng.dur > 0
-      ? Math.min(slides.length - 1, Math.floor((eng.cur / eng.dur) * slides.length))
+      ? hasSlideTimes
+        ? Math.min(
+            slides.length - 1,
+            Math.max(
+              0,
+              slideTimes.reduce(
+                (acc, t, i) => (eng.cur >= t && i < slides.length ? i : acc),
+                0
+              )
+            )
+          )
+        : Math.min(slides.length - 1, Math.floor((eng.cur / eng.dur) * slides.length))
       : 0;
 
   return (
