@@ -262,20 +262,53 @@ export default function App() {
     setCur(targetTime);
   }, [dur]);
 
-  // Asigna una nueva posición al audio de forma robusta. Al buscar en MP3 de
-  // larga duración en móviles, algunos navegadores reinician el audio si se
-  // cambia currentTime estando en reproducción. Por eso pausamos antes de
-  // saltar y reanudamos justo después (mitiga el reinicio a 0).
+    // Asigna una nueva posición al audio de forma robusta. Al buscar en MP3 de
+  // larga duración en móviles (iOS/Android), algunos navegadores reinician el
+  // audio a 0 si se cambia `currentTime` estando en reproducción, sobre todo
+  // al saltar a una región aún no bufferizada. La solución fiable es:
+  //   1) pausar,
+  //   2) recargar el elemento (`.load()`) para que el navegador recalcule el
+  //      buffering desde la nueva posición,
+  //   3) re-asignar `currentTime` tras volver a cargar la metadata,
+  //   4) reanudar la reproducción preservando la posición alcanzada.
+  // Si el navegador no dispara `loadedmetadata` a tiempo (fallback) se fuerza
+  // igualmente la posición y se reanuda.
   const applySeek = (a, targetTime) => {
     const wasPlaying = !a.paused;
+    const resume = () => {
+      try { a.currentTime = targetTime; } catch (_) {}
+      if (wasPlaying) {
+        unlockAudio();
+        const p = a.play();
+        if (p && p.catch) p.catch(() => {});
+      }
+    };
+    if (!wasPlaying) {
+      try { a.currentTime = targetTime; } catch (_) {}
+      return;
+    }
     try {
-      if (wasPlaying) a.pause();
-      a.currentTime = targetTime;
-    } catch (_) {}
-    if (wasPlaying) {
-      unlockAudio();
-      const p = a.play();
-      if (p && p.catch) p.catch(() => {});
+      let done = false;
+      const afterLoad = () => {
+        if (done) return;
+        done = true;
+        a.removeEventListener("loadedmetadata", afterLoad);
+        resume();
+      };
+      a.addEventListener("loadedmetadata", afterLoad);
+      a.pause();
+      a.load();
+      // Fallback de seguridad: si no llega `loadedmetadata` (p. ej. archivo
+      // ya en caché o navegador que resuelve de otra forma), saltamos igual.
+      setTimeout(() => {
+        if (!done) {
+          done = true;
+          a.removeEventListener("loadedmetadata", afterLoad);
+          resume();
+        }
+      }, 1600);
+    } catch (_) {
+      resume();
     }
   };
 
