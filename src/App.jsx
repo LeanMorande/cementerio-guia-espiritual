@@ -188,9 +188,10 @@ export default function App() {
 
     /* ---------- motor de audio ---------- */
         const loadAudio = useCallback((src, autoplay = false) => {
-      const a = audioRef.current;
-      if (!a) return;
-      setCur(0);
+          const a = audioRef.current;
+          if (!a) return;
+          if (typeof a.__seekCleanup === "function") { a.__seekCleanup(); a.__seekCleanup = null; }
+          setCur(0);
       setPlaying(false);
       if (!src) {
         a.removeAttribute("src");
@@ -262,54 +263,76 @@ export default function App() {
     setCur(targetTime);
   }, [dur]);
 
-    // Asigna una nueva posición al audio de forma robusta. Al buscar en MP3 de
-  // larga duración en móviles (iOS/Android), algunos navegadores reinician el
-  // audio a 0 si se cambia `currentTime` estando en reproducción, sobre todo
-  // al saltar a una región aún no bufferizada. La solución fiable es:
-  //   1) pausar,
-  //   2) recargar el elemento (`.load()`) para que el navegador recalcule el
-  //      buffering desde la nueva posición,
-  //   3) re-asignar `currentTime` tras volver a cargar la metadata,
-  //   4) reanudar la reproducción preservando la posición alcanzada.
-  // Si el navegador no dispara `loadedmetadata` a tiempo (fallback) se fuerza
-  // igualmente la posición y se reanuda.
+        // =====================================================================
+    // applySeek — salto de posición con AUTO-CORRECCIÓN (self-healing).
+    //
+    // PROBLEMA: En iOS/Android algunos navegadores reinician el audio a 0 (o
+    // a una posición incorrecta) al cambiar `currentTime` en MP3 largos
+    // mientras se reproduce, sobre todo al saltar a una región aún no
+    // bufferizada. Esto se acentúa en audios largos (los de 4–5 min) y se
+    // ha reportado repetidamente en distintos pasos (p. ej. p8_canto,
+    // m5_canto, p4_canto, p3_voz).
+    //
+    // POR QUÉ NO USAMOS `.load()`: recargar el elemento (`.load()`) vuelve a
+    // romper la cadena de gesto de usuario en iOS Safari: el `play()` que
+    // luego se dispara en un callback asíncrono (loadedmetadata) queda fuera
+    // del gesto y el navegador lo bloquea; además vuelve a descargar la
+    // metadata (lento en MP3 grandes) y, si no llega a tiempo, el seek falla
+    // y el audio se reinicia. Por eso aquí evitamos `.load()` y en su lugar
+    //:   1) pausamos,
+    //   2) re-asignamos `currentTime` SÍNCRONA dentro del gesto del usuario,
+    //   3) reanudamos `play()` inmediatamente (misma cadena de gesto),
+    //   4) VIGILAMOS el elemento durante 0.7 s: si el navegador "rebota" y
+    //      vuelve a quedar en ~0 / muy por detrás del objetivo, re-forzamos
+    //      la posición y volvemos a reproducir. Esto corrige el reinicio sin
+    //      depender de tiempos de carga ni de recargas.
+    //
+    // Si el problema reaparece en el futuro, revisa estos puntos:
+    //  - ¿El paso tiene un audio MUY largo? Confirma que la metadata del MP3
+    //    sea válida (CBR/LAME bien codificado) y que `a.duration` sea finito.
+    //  - ¿El navegador bloquea `play()`? Añade un segundo reintento de
+    //    `applySeek` desde el togglePlay tras un toque.
+    //  - El límite superior del guard (tries) controla cuántas veces
+    //    re-intentamos corregir antes de rendirnos.
+    // =====================================================================
   const applySeek = (a, targetTime) => {
     const wasPlaying = !a.paused;
-    const resume = () => {
+    const setPos = () => {
       try { a.currentTime = targetTime; } catch (_) {}
+    };
+    const resume = () => {
       if (wasPlaying) {
         unlockAudio();
         const p = a.play();
         if (p && p.catch) p.catch(() => {});
       }
     };
-    if (!wasPlaying) {
-      try { a.currentTime = targetTime; } catch (_) {}
-      return;
-    }
-    try {
-      let done = false;
-      const afterLoad = () => {
-        if (done) return;
-        done = true;
-        a.removeEventListener("loadedmetadata", afterLoad);
+    // 1) Pausa si estaba sonando (evita micro-jumps durante la asignación).
+    try { if (!a.paused) a.pause(); } catch (_) {}
+    // 2) Asigna la posición deseada (dentro del gesto de usuario).
+    setPos();
+    // 3) Reanuda la reproducción.
+    resume();
+
+        // 4) Auto-corrección: vigila el audio y corrige si el navegador lo
+    //    reinició a ~0 (o lo dejó muy por detrás del objetivo) tras el seek.
+    //    Solo interviene si el audio SIGUE EN REPRODUCCIÓN (no pausado),
+    //    para no pelear con un pausado manual o el cambio de paso.
+    const tries = [90, 250, 500]; // ms entre cada intento de verificación
+    const timerIds = [];
+    const maybeFix = () => {
+      if (a.paused) return; // el usuario pausó o se cambió de paso: no corregir
+      const now = a.currentTime || 0;
+      if (now < targetTime - 2) { // reinició (rebotó a ~0)
+        setPos();
         resume();
-      };
-      a.addEventListener("loadedmetadata", afterLoad);
-      a.pause();
-      a.load();
-      // Fallback de seguridad: si no llega `loadedmetadata` (p. ej. archivo
-      // ya en caché o navegador que resuelve de otra forma), saltamos igual.
-      setTimeout(() => {
-        if (!done) {
-          done = true;
-          a.removeEventListener("loadedmetadata", afterLoad);
-          resume();
-        }
-      }, 1600);
-    } catch (_) {
-      resume();
-    }
+      }
+    };
+    tries.forEach((ms) => timerIds.push(window.setTimeout(maybeFix, ms)));
+    // Expone una limpieza por si se sale del paso antes de que terminen los
+    // checks (evita tocar audio de otro paso). El check es inofensivo si ya
+    // terminó, pero así cancelamos los pendientes al desmontar.
+    a.__seekCleanup = () => timerIds.forEach((id) => clearTimeout(id));
   };
 
   /* Delay (ms) entre la concatenación de voces para que no parezca tan rápido. */
@@ -320,9 +343,12 @@ export default function App() {
      Si la fuente es nueva, se asigna y carga, y play() se lanza justo
      después: el navegador permite que la promesa de play() se resuelva
      cuando el archivo termine de cargar. */
-    const playUrl = useCallback((url) => {
+        const playUrl = useCallback((url) => {
     const a = audioRef.current;
     if (!a || !url) return;
+    // Cancela la auto-corrección del seek (si había checks pendientes) para
+    // que no toque el nuevo audio al cambiar de paso.
+    if (typeof a.__seekCleanup === "function") { a.__seekCleanup(); a.__seekCleanup = null; }
     unlockAudio();
     if (a.getAttribute("src") !== url) {
       a.dataset.retry = "0";
@@ -334,9 +360,10 @@ export default function App() {
   }, []);
 
   /* Detiene el audio y resetea posiciones. */
-  const stopAudio = useCallback(() => {
+    const stopAudio = useCallback(() => {
     const a = audioRef.current;
     if (!a) return;
+    if (typeof a.__seekCleanup === "function") { a.__seekCleanup(); a.__seekCleanup = null; }
         a.pause();
     setCur(0);
     setPlaying(false);
