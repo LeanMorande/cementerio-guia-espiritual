@@ -619,9 +619,9 @@ export default function App() {
     <div className="shell">
       <style>{CSS}</style>
 
-            <audio
+                        <audio
               ref={audioRef}
-              preload="auto"
+              preload="metadata"
               onLoadedMetadata={(e) => {
                 logAudio("loadedmetadata", e);
                 const d = e.target.duration || 0;
@@ -633,9 +633,9 @@ export default function App() {
               onEnded={handleEnded}
               onTimeUpdate={(e) => setCur(e.target.currentTime)}
               /* ---- DEBUG TEMPORAL de audio (ver por eruda). Quitar después ---- */
-              onSeeking={(e) => logAudio("seeking", e)}
+                            onSeeking={(e) => logAudio("seeking", e)}
               onSeeked={(e) => logAudio("seeked", e)}
-                            onWaiting={(e) => logAudio("waiting", e)}
+              onWaiting={(e) => logAudio("waiting", e)}
               onStalled={(e) => logAudio("stalled", e)}
               onEmptied={(e) => logAudio("emptied", e)}
               onAbort={(e) => logAudio("abort", e)}
@@ -643,22 +643,14 @@ export default function App() {
               onLoadedData={(e) => logAudio("loadeddata", e)}
               onCanPlay={(e) => logAudio("canplay", e)}
               /* ---- fin DEBUG TEMPORAL ---- */
+              /* Nota: ya NO se reintenta .mp3 → .MP3 dentro del manejo de
+                 error. Todos los audios se sirven como .mp3 (minúsculas);
+                 ese reintento ciego provocaba 404 falsos y reinicios (emptied)
+                 en Chrome/Android. Solo se registra el error de forma
+                 diagnóstica. */
               onError={(e) => {
                 const a = e.currentTarget;
                 logAudio("error code=" + (a.error && a.error.code), e);
-                // Si aún no se reintentó y la extensión es .mp3, prueba con .MP3
-                // (algunos programas exportan la extensión en mayúsculas).
-                if (a.dataset.retry !== "1") {
-                  const cur = a.getAttribute("src");
-                  if (cur && cur.toLowerCase().endsWith(".mp3") && /\.mp3$/i.test(cur) && !/\.MP3$/.test(cur)) {
-                    a.dataset.retry = "1";
-                    logAudio("retry->.MP3", e);
-                    a.src = cur.replace(/\.mp3$/i, ".MP3");
-                    a.load();
-                    const p = a.play();
-                    if (p && p.catch) p.catch(() => {});
-                  }
-                }
               }}
             />
 
