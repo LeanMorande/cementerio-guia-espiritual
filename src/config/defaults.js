@@ -289,7 +289,7 @@ export function buildDefaults() {
        que cambies textos, imágenes o estructura en defaults.js para que el
        navegador NO restaure una copia vieja guardada en localStorage y muestre
           siempre la última versión. */
-         version: 14,
+         version: 15,
   };
 }
 
@@ -345,9 +345,9 @@ export function buildCaminoPadre() {
         keyframes: [
           { t: 2, sub: "Dios mío" },
           { t: 6, sub: "Señor, date prisa" },
-          { t: 11, sub: "Gloria al Padre" },
-          { t: 16, sub: "como era" },
-                    { t: 22, sub: "por los siglos" },
+          { t: 14, sub: "Gloria al Padre" },
+          { t: 21, sub: "como era" },
+          { t: 26, sub: "por los siglos" },
           { t: 29.5, sub: "Amén." },
         ],
       },
@@ -481,14 +481,44 @@ export function buildCaminoPadre() {
       },
       imagen: IMG_REZO_FINAL, caption: "",
     },
-    /* PASO 10 — Oración por los Pueblos (Modelo 7: Canto de cierre)
-       Canto de Harpa Dei, imagen estática. */
+        /* PASO 10 — Oración por los Pueblos (Modelo 2: Canto con imagen + teleprompter)
+       Canto de Harpa Dei, imagen estática. El texto se muestra en el
+       teleprompter y cada línea se ilumina al cantarse.
+       Audio: oracion_pueblos.mp3. Los tiempos de los keyframes marcan el
+       momento exacto (en segundos) en que inicia cada frase del audio.
+       Formato de tiempos del desarrollador: "1,02" = 1 minuto 2 seg = 62 s. */
     {
       uid: uid(), id: "p10_canto", voz: "canto", tipo: "modo-canto",
       speaker: "Canto",
       audio: true, audioUrl: "/sounds/oracion_pueblos.mp3", audioName: "oracion_pueblos.mp3", dur: 0,
-      accion: "Oración por los Pueblos",
-      texto: "Amado Padre Celestial, llenos de confianza acudimos a Ti, creyendo firmemente que vendrás al auxilio de los pueblos. Mira el sufrimiento causado por tantas formas de violencia injusta, y manifiesta tu poder para debilitar al Maligno. Mira la confusión anticristiana que se difunde cada vez más en este mundo, queriendo influenciar aún a la Iglesia. Ilumínanos y fortalécenos con tu Espíritu Santo para que podamos resistir al espíritu del mal con tu poder. Preserva a los tuyos en la fidelidad a Ti, y haznos apóstoles de tu amor paternal, para que todos los hombres reconozcan y sigan a tu Hijo Jesucristo, nuestro Señor. Amén.",
+      texto: "Amado Padre Celestial,\nllenos de confianza acudimos a Ti,\ncreyendo firmemente que vendrás al\nauxilio de los pueblos.\nMira el sufrimiento causado por tantas\nformas de violencia injusta,\ny manifiesta tu poder para debilitar al Maligno.\nMira la confusión anticristiana que\nse difunde cada vez más en\neste mundo, queriendo influenciar\naún a la Iglesia. Ilumínanos y fortalécenos\ncon tu Espíritu Santo para que\npodamos resistir al espíritu del mal\ncon tu poder.\nPreserva a los tuyos en la fidelidad\na Ti, y haznos apóstoles\nde tu amor paternal, para que todos\nlos hombres reconozcan y sigan a tu\nHijo Jesucristo, nuestro Señor.\nAmén.",
+      /* Teleprompter: cada línea ilumina al cantarse. El segundo indica el
+         instante del audio en que arranca esa frase (mín=seg por si difiere
+         del real). Ajusta si el audio cambia. */
+      teleprompter: {
+        keyframes: [
+          { t: 0, sub: "Amado Padre Celestial" },
+          { t: 6, sub: "llenos de confianza acudimos" },
+          { t: 14, sub: "creyendo firmemente que vendrás" },
+          { t: 19, sub: "auxilio de los pueblos" },
+          { t: 23, sub: "Mira el sufrimiento causado" },
+          { t: 29, sub: "formas de violencia injusta" },
+          { t: 37, sub: "manifiesta tu poder" },
+          { t: 45, sub: "Mira la confusión anticristiana" },
+          { t: 53, sub: "se difunde cada vez más" },
+          { t: 57, sub: "este mundo, queriendo" },
+          { t: 62, sub: "aún a la Iglesia" },
+          { t: 73, sub: "con tu Espíritu Santo" },
+          { t: 77, sub: "podamos resistir al espíritu" },
+          { t: 84, sub: "con tu poder" },
+          { t: 88, sub: "Preserva a los tuyos" },
+          { t: 93, sub: "haznos apóstoles" },
+          { t: 98, sub: "amor paternal" },
+          { t: 105, sub: "los hombres reconozcan" },
+          { t: 111, sub: "Hijo Jesucristo" },
+          { t: 118, sub: "Amén." },
+        ],
+      },
       imagen: IMG_LUZ_MUNDO, caption: "",
     },
   ];
