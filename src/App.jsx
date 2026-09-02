@@ -282,14 +282,19 @@ export default function App() {
     //:   1) pausamos,
     //   2) re-asignamos `currentTime` SÍNCRONA dentro del gesto del usuario,
     //   3) reanudamos `play()` inmediatamente (misma cadena de gesto),
-    //   4) VIGILAMOS el elemento durante 0.7 s: si el navegador "rebota" y
-    //      vuelve a quedar en ~0 / muy por detrás del objetivo, re-forzamos
-    //      la posición y volvemos a reproducir. Esto corrige el reinicio sin
-    //      depender de tiempos de carga ni de recargas.
+        //   4) VIGILAMOS el elemento unos instantes: si el navegador "rebota" y
+    //      vuelve a quedar en ~0 / muy por detrás del objetivo (esté en pausa
+    //      o reproduciendo), re-forzamos la posición y, si se esperaba
+    //      reproducción, reanudamos. Esto corrige el reinicio sin depender
+    //      de tiempos de carga ni de recargas.
     //
     // Si el problema reaparece en el futuro, revisa estos puntos:
     //  - ¿El paso tiene un audio MUY largo? Confirma que la metadata del MP3
     //    sea válida (CBR/LAME bien codificado) y que `a.duration` sea finito.
+    //  - OJO: si vuelve a quedar "reiniciado y en pausa", asegúrate de que la
+    //    auto-corrección cubra el caso `wasPlaying && a.paused` (rebote que
+    //    deja el elemento pausado); si `maybeFix` se rinde ante `a.paused`
+    //    genérico, el reinicio no se corrige (esto afectó a p4/p6/p10_canto).
     //  - ¿El navegador bloquea `play()`? Añade un segundo reintento de
     //    `applySeek` desde el togglePlay tras un toque.
     //  - El límite superior del guard (tries) controla cuántas veces
@@ -315,20 +320,39 @@ export default function App() {
     resume();
 
         // 4) Auto-corrección: vigila el audio y corrige si el navegador lo
-    //    reinició a ~0 (o lo dejó muy por detrás del objetivo) tras el seek.
-    //    Solo interviene si el audio SIGUE EN REPRODUCCIÓN (no pausado),
-    //    para no pelear con un pausado manual o el cambio de paso.
-    const tries = [90, 250, 500]; // ms entre cada intento de verificación
-    const timerIds = [];
-    const maybeFix = () => {
-      if (a.paused) return; // el usuario pausó o se cambió de paso: no corregir
-      const now = a.currentTime || 0;
-      if (now < targetTime - 2) { // reinició (rebotó a ~0)
-        setPos();
-        resume();
-      }
-    };
-    tries.forEach((ms) => timerIds.push(window.setTimeout(maybeFix, ms)));
+        //    reinició a ~0 (o lo dejó muy por detrás del objetivo) tras el seek.
+        //
+        // IMPORTANTE (bug conocido en móviles, p. ej. p4_canto/p6_canto/
+        // p10_canto): algunos navegadores, al "rebotar" el seek a una zona no
+        // bufferizada, reinician el audio a 0 Y TAMBIÉN lo dejan en PAUSA (no
+        // solo unos segundos abajo). Si nos rendíamos ante `a.paused`, la
+        // auto-corrección NO actuaba y el audio se quedaba reiniciado/pausado.
+        // Distinguimos entonces:
+        //   a) si el seek se hizo para REPRODUCIR (wasPlaying=true) y el audio
+        //      quedó en PAUSA en una posición inferior al objetivo, es un
+        //      "rebote" (el navegador lo frenó): re-posicionamos y REANUDAMOS.
+        //   b) si quedó reproduciendo pero a ~0, sólo re-posicionamos.
+        //   c) si el usuario deliberadamente buscó estando en PAUSA (wasPlaying
+        //      =false) NO reanudamos solo (evita sorpresas), solo re-posiciona
+        //      si acaso quedó lejos.
+        const tries = [90, 250, 500, 900]; // ms entre intentos de verificación
+        const timerIds = [];
+        const maybeFix = () => {
+          const now = a.currentTime || 0;
+          const rolledBack = now < targetTime - 2; // se reinició / quedó muy atrás
+          // Caso a): quedó pausado tras el rebote.
+          if (wasPlaying && a.paused && rolledBack) {
+            setPos();
+            resume(); // lo reanudamos porque el "pause" no fue del usuario
+            return;
+          }
+          // Caso b): sigue "reproduciendo" pero volvió a una posición baja.
+          if (!a.paused && rolledBack) {
+            setPos();
+            resume();
+          }
+        };
+        tries.forEach((ms) => timerIds.push(window.setTimeout(maybeFix, ms)));
     // Expone una limpieza por si se sale del paso antes de que terminen los
     // checks (evita tocar audio de otro paso). El check es inofensivo si ya
     // terminó, pero así cancelamos los pendientes al desmontar.
