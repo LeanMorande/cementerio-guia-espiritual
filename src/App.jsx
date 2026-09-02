@@ -29,14 +29,6 @@ export default function App() {
   const toastTimer = useRef(null);
 
     const audioRef = useRef(null);
-  // <audio> Oculto de PRECARGA: descarga en silencio y en paralelo el MP3 del
-  // paso actual para que Chrome/Android conozca (mapee en caché) el rango
-  // completo del archivo. Necesario porque, sin esa anticipación, Chrome móvil
-  // reporta el <audio> principal como seek=[0..0] (no-seekable) y por tanto
-  // todo seek a una zona aún no bufferizada REINICIA el audio a 0 (p. ej. los
-  // pasos canto largos del camino de María). Al estar el rango ya cacheado,
-  // el seek a la mitad funciona igual que en desktop.
-  const preloadRef = useRef(null);
   const [playing, setPlaying] = useState(false);
   const [cur, setCur] = useState(0);
   const [dur, setDur] = useState(0);
@@ -335,7 +327,7 @@ export default function App() {
      Si la fuente es nueva, se asigna y carga, y play() se lanza justo
      después: el navegador permite que la promesa de play() se resuelva
      cuando el archivo termine de cargar. */
-                const playUrl = useCallback((url) => {
+        const playUrl = useCallback((url) => {
     const a = audioRef.current;
     if (!a || !url) return;
     // Cancela la auto-corrección del seek (si había checks pendientes) para
@@ -349,27 +341,7 @@ export default function App() {
     }
     const p = a.play();
     if (p && p.catch) p.catch((err) => console.error("Error Audio:", err, url));
-    // --- PRECARGA SILENCIOSA (fix seek a 0 en Chrome/Android) -----------
-    // Hace que un <audio> oculto (muted/volume=0, en silencio) descargue el
-    // mismo MP3. Mientras este segundo elemento baja el archivo, Chrome arma
-    // los offsets de salto (el rango 'seekable') y lo guarda en caché. Así,
-    // cuando el usuario arrastra la barra a la mitad, el <audio> PRINCIPAL ya
-    // puede saltar y NO se reinicia a 0 (antes Chrome lo daba como
-    // seekable=[0..0] y todo seek caía al principio).
-    // Importante: 'muted'+'volume=0' no emiten sonido; y este elemento NUNCA
-    // se reproduce (solo se deja que precargue haciendo play() en silencio,
-    // necesario para que Chrome realmente proceda a descargar el stream).
-    try {
-      const pe = preloadRef.current;
-      if (pe && pe.getAttribute("src") !== url) {
-        pe.removeAttribute("src");
-        pe.load();
-        pe.src = url;
-        const pp = pe.play();
-        if (pp && pp.catch) pp.catch(() => {});
-      }
-    } catch (_) {}
-  }, [toast]);
+  }, []);
 
   /* Detiene el audio y resetea posiciones. */
     const stopAudio = useCallback(() => {
@@ -661,9 +633,9 @@ export default function App() {
               onEnded={handleEnded}
               onTimeUpdate={(e) => setCur(e.target.currentTime)}
               /* ---- DEBUG TEMPORAL de audio (ver por eruda). Quitar después ---- */
-                            onSeeking={(e) => logAudio("seeking", e)}
+              onSeeking={(e) => logAudio("seeking", e)}
               onSeeked={(e) => logAudio("seeked", e)}
-              onWaiting={(e) => logAudio("waiting", e)}
+                            onWaiting={(e) => logAudio("waiting", e)}
               onStalled={(e) => logAudio("stalled", e)}
               onEmptied={(e) => logAudio("emptied", e)}
               onAbort={(e) => logAudio("abort", e)}
@@ -687,22 +659,8 @@ export default function App() {
                     if (p && p.catch) p.catch(() => {});
                   }
                 }
-                            }}
+              }}
             />
-
-      {/* ---- <audio> Oculto de PRECARGA (fix seek en móvil) ----
-          NEVER reproduce sonido: se mantiene 'muted'+'volume=0'. Solo se usa
-          para que Chrome/Android descargue y mapee el MP3 del paso actual en
-          caché. Sin él, Chrome móvil reporta el audio principal como no
-          -seekable (seek=[0..0]) y todo seek a la mitad vuelve a 0.
-          REVERTIR junto con la consola eruda tras validar. */}
-      <audio
-        ref={preloadRef}
-        preload="auto"
-        muted
-        playsInline
-        style={{ display: "none" }}
-      />
 
       {route === "config" && ready && (
         <ConfigScreen
