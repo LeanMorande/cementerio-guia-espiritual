@@ -33,8 +33,19 @@ export default function App() {
   const [cur, setCur] = useState(0);
   const [dur, setDur] = useState(0);
     // Ref con la última duración real conocida del elemento de audio, para que
-  // el seek sea fiable incluso si el estado `dur` aún no se propagó.
-  const durRef = useRef(0);
+    // el seek sea fiable incluso si el estado `dur` aún no se propagó.
+    const durRef = useRef(0);
+    // SOLUCIÓN BLOB (ver informe REPORTE_BUG_AUDIO_SEEK.md): el servidor
+    // (Cloudflare assets/Worker) NO responde HTTP Range/206 correctamente; sirve
+    // el MP3 completo en 200 ignorando el header `Range`. Eso hace que en
+    // Chrome/Android el `<audio>` no pueda armar `seekable` cuando intenta
+    // posicionarse a mitad de un stream → vuelve a 0 al hacer seek.
+    // Para resolverlo definitivamente REPRODUCIMOS DESDE UN BLOB COMPLETO:
+    // se descarga el .mp3 entero y se asigna `URL.createObjectURL(blob)` al
+    // src del <audio>; así el archivo queda íntegro en memoria y `seekable`
+    // siempre es [0..duración total], con el seek fiable sin depender del server.
+    const blobUrlRef = useRef(new Map());   // src -> objectURL (cache)
+    const blobFetchRef = useRef(new Map()); // src -> Promise<objectURL> (en curso)
   // Ref para el Screen Wake Lock (evita que la pantalla se apague durante la
   // visita). Se libera al navegar a pantallas distintas del recorrido.
   const wakeRef = useRef(null);
@@ -186,20 +197,70 @@ export default function App() {
     return () => clearTimeout(t);
   }, [cfg, ready, persistNow]);
 
-    /* ---------- motor de audio ---------- */
-        const loadAudio = useCallback((src, autoplay = false) => {
-          const a = audioRef.current;
-          if (!a) return;
-          if (typeof a.__seekCleanup === "function") { a.__seekCleanup(); a.__seekCleanup = null; }
-          setCur(0);
-      setPlaying(false);
-      if (!src) {
-        a.removeAttribute("src");
-        a.load();
-        setDur(0);
-        durRef.current = 0;
-        return;
+        /* ---------- motor de audio (solución BLOB) ---------- */
+
+    // Cabecera del pasaje de la caché: mantiene a lo sumo N objectURLs en
+    // memoria (avanza en orden FIFO). Cada objectURL corresponde a un .mp3
+    // ya descargado COMPLETO, por lo que el <audio> siempre tendrá un
+    // `seekable = [0..duración]` (el seek nunca vuelve a 0 en el camino).
+    const BLOB_CACHE_MAX = 8;
+    const getBlobSource = useCallback(async (url) => {
+      if (!url) return undefined;
+      // Devuelve al instante (o el promise en curso) si ya existe.
+      const existente = blobUrlRef.current.get(url);
+      if (existente) return existente;
+      const enCurso = blobFetchRef.current.get(url);
+      if (enCurso) return enCurso;
+      const prom = (async () => {
+        const r = await fetch(url);
+        if (!r.ok) throw new Error("HTTP " + r.status + " al descargar " + url);
+        const blob = await r.blob();
+        const objUrl = URL.createObjectURL(blob);
+        blobUrlRef.current.set(url, objUrl);
+        // Limita la memoria: si hay más de BLOB_CACHE_MAX audios cacheados,
+        // revoca los objectURLs más antiguos (los primeros del Map → FIFO).
+        while (blobUrlRef.current.size > BLOB_CACHE_MAX) {
+          const it = blobUrlRef.current.keys().next();
+          if (it.done) break;
+          const old = it.value;
+          const oldUrl = blobUrlRef.current.get(old);
+          blobUrlRef.current.delete(old);
+          try { URL.revokeObjectURL(oldUrl); } catch (_) {}
+        }
+        return objUrl;
+      })();
+      blobFetchRef.current.set(url, prom);
+      try {
+        return await prom;
+      } finally {
+        blobFetchRef.current.delete(url);
       }
+    }, []);
+
+    // Descarga en paralelo (precarga) un audio a la caché de blobs SIN
+    // reproducirlo. Lo usa el motor para tener listo el paso actual/siguiente
+    // y que el play no espere a la descarga (no se nota el "costo" del blob).
+    const prefetchBlob = useCallback((url) => {
+      if (!url) return;
+      if (blobUrlRef.current.has(url) || blobFetchRef.current.has(url)) return;
+      getBlobSource(url).catch((e) => console.error("prefetch blob falló:", e));
+    }, [getBlobSource]);
+
+    // Asigna la URL (desde blob si ya está local, si no descarga completa) y
+    // dispara play() tan pronto el src está listo. Conserva el autoplay: el
+    // primer play del recorrido parte siempre de un gesto ya realizado.
+    const playResolvedSrc = useCallback(async (a, url, autoplay, onBlocked) => {
+      let src = url; // por defecto streaming (si falla el blob, no romper reproducción)
+      try {
+        // Obtiene la URL blob: si está en caché devuelve al instante. Si aún no
+        // está descargado, espera SIN bloquear la pantalla (se muestra "cargando"
+        // según la fuente). Preferimos esperar el blob para garantizar el seek.
+        src = await getBlobSource(url);
+      } catch (e) {
+        src = url; // fallback a streaming directo
+        console.error("Blob falló, usando streaming:", e);
+      }
+      // "src" es la URL efectiva (blob: o url). Asigna y reproduce.
       if (a.getAttribute("src") !== src) {
         a.dataset.retry = "0";
         durRef.current = 0;
@@ -209,9 +270,26 @@ export default function App() {
       if (autoplay) {
         unlockAudio();
         const p = a.play();
-        if (p && p.catch) p.catch(() => toast("Toca ▶ para reproducir"));
+        if (p && p.catch) p.catch((err) => { if (onBlocked) onBlocked(err); });
       }
-    }, [toast]);
+      return src;
+    }, [getBlobSource]);
+
+    const loadAudio = useCallback(async (src, autoplay = false) => {
+      const a = audioRef.current;
+      if (!a) return;
+      if (typeof a.__seekCleanup === "function") { a.__seekCleanup(); a.__seekCleanup = null; }
+      setCur(0);
+      setPlaying(false);
+      if (!src) {
+        a.removeAttribute("src");
+        a.load();
+        setDur(0);
+        durRef.current = 0;
+        return;
+      }
+      await playResolvedSrc(a, src, autoplay, () => toast("Toca ▶ para reproducir"));
+    }, [playResolvedSrc, toast]);
 
   const togglePlay = useCallback(() => {
     const a = audioRef.current;
@@ -327,21 +405,40 @@ export default function App() {
      Si la fuente es nueva, se asigna y carga, y play() se lanza justo
      después: el navegador permite que la promesa de play() se resuelva
      cuando el archivo termine de cargar. */
-        const playUrl = useCallback((url) => {
+                  /* Precargan (al fondo, sin reproducir) los siguientes pasos del camino
+     activo después de cada url reproducida, para que al hacer la transición
+     el siguiente audio ya esté descargado como Blob y no haya espera
+     perceptible (el "costo" de la descarga completa queda absorbido antes). */
+  const prefetchNeighbors = useCallback((fromUrl) => {
+    const cam = getPath(activePathRef.current) || [];
+    // localiza el índice de fromUrl en el camino actual
+    const segIdx = cam.findIndex((s) => s.audioUrl === fromUrl);
+    if (segIdx < 0) return;
+    const N = 3; // cuántos pasos adelante traemos por adelantado
+    for (let i = 1; i <= N; i++) {
+      const seg = cam[segIdx + i];
+      if (!seg) break;
+      if (seg.audioUrl) prefetchBlob(seg.audioUrl);
+    }
+  }, [getPath, prefetchBlob]);
+
+  /* Reproduce un URL en el elemento de audio. La clave para el autoplay es
+     llamar a play() de forma SÍNCRONA, dentro del gesto de usuario (clic).
+     Si la fuente es nueva, se asigna y carga, y play() se lanza justo
+     después: el navegador permite que la promesa de play() se resuelva
+     cuando el archivo termine de cargar. */
+                const playUrl = useCallback(async (url) => {
     const a = audioRef.current;
     if (!a || !url) return;
     // Cancela la auto-corrección del seek (si había checks pendientes) para
     // que no toque el nuevo audio al cambiar de paso.
     if (typeof a.__seekCleanup === "function") { a.__seekCleanup(); a.__seekCleanup = null; }
-    unlockAudio();
-    if (a.getAttribute("src") !== url) {
-      a.dataset.retry = "0";
-      a.src = url;
-      a.load();
-    }
-    const p = a.play();
-    if (p && p.catch) p.catch((err) => console.error("Error Audio:", err, url));
-  }, []);
+    await playResolvedSrc(a, url, true, (err) => console.error("Error Audio (autoplay bloqueado):", err, url));
+    // Dado que el paso empieza, precarga el/los siguientes para que la
+    // transición no tenga que esperar la descarga completa (busco dos veces
+    // BLOB_CACHE_MAX esp. para pasos consecutivos).
+    prefetchNeighbors(url);
+  }, [playResolvedSrc, prefetchNeighbors]);
 
   /* Detiene el audio y resetea posiciones. */
     const stopAudio = useCallback(() => {
@@ -428,11 +525,21 @@ export default function App() {
     if (route === "welcome") {
       setIntroDone(false);
     }
-    if (route === "select") {
+        if (route === "select") {
       if (cfg.bienvenida.introAudioUrl && !introDone) loadAudio(cfg.bienvenida.introAudioUrl, true);
       else setIntroDone(true);
     }
   }, [route, ready]); // eslint-disable-line
+
+  /* Pre-carga la bienvenida (Blob) desde la pantalla de inicio, para que al
+     pulsar "Iniciar" el audio ya esté descargado y no haya espera perceptible
+     (el primer play arranca sin el "costo" de la descarga completa). */
+  useEffect(() => {
+    if (!ready) return;
+    if (route === "welcome" && cfg.bienvenida.introAudioUrl) {
+      prefetchBlob(cfg.bienvenida.introAudioUrl);
+    }
+  }, [ready, route, cfg.bienvenida.introAudioUrl, prefetchBlob]);
 
   /* Screen Wake Lock: mantiene la pantalla encendida mientras se ve el
      recorrido (selector y pasos) para que no se apague a mitad de la visita.
@@ -534,6 +641,9 @@ export default function App() {
     setRoute("path");
     // Transición visual al elegir: fundido con el nombre de la opción.
     setTransition({ tipo: "select", id: o.id, titulo: o.titulo });
+    // Preacarga inmediata del inicio del camino (aprovechando los 2 s del
+    // fundido) para que al sonar el paso la descarga Blob ya esté lista.
+    caminoElegido.slice(0, 4).forEach((s) => { if (s.audioUrl) prefetchBlob(s.audioUrl); });
     if (first && first.audioUrl) {
       // El audio del paso 1 arranca a los 2 s (silencio de transición).
       const tid = window.setTimeout(() => {
