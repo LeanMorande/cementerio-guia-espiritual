@@ -23,5 +23,11 @@
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
+  <!-- DEBUG TEMPORAL: consola eruda para diagnóstico en móvil (sin cable USB).
+       Se muestra un botón flotante en el celular que abre la consola.
+       REVERTIR/eliminar antes de producción. -->
+  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+  <script>eruda.init();</script>
 </body>
 </html>
+

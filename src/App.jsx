@@ -357,6 +357,32 @@ export default function App() {
     durRef.current = 0;
   }, []);
 
+    /* DEBUG TEMPORAL — instrumentación de audio (ver logs con eruda en el
+     celular). No altera la lógica de reproducción/seek; solo registra los
+     eventos de red/buffer/seek del <audio> para diagnosticar el reinicio a 0
+     en Chrome/Android. Quitar junto con la consola eruda de index.html. */
+  const __lastEv = { t: 0 };
+  const logAudio = (evt, e) => {
+    const a = e && (e.currentTarget || e.target);
+    if (!a) return;
+    const now = performance.now();
+    const dt = (now - __lastEv.t).toFixed(0);
+    __lastEv.t = now;
+    const sk =
+      a.seekable && a.seekable.length
+        ? "seek=[" + a.seekable.start(0).toFixed(1) + "-" + a.seekable.end(0).toFixed(1) + "]"
+        : "seek=[]";
+    console.log(
+      "[audio] ct=" + a.currentTime.toFixed(2),
+      "dur=" + (isFinite(a.duration) ? a.duration.toFixed(1) : "NaN"),
+      evt,
+      "rdy=" + a.readyState,
+      "net=" + a.networkState,
+      sk,
+      "+" + dt + "ms"
+    );
+  };
+
   const handleEnded = () => {
     setPlaying(false);
     const r = routeRef.current;
@@ -594,33 +620,47 @@ export default function App() {
       <style>{CSS}</style>
 
             <audio
-        ref={audioRef}
-        preload="auto"
-        onLoadedMetadata={(e) => {
-          const d = e.target.duration || 0;
-          durRef.current = isFinite(d) && d > 0 ? d : durRef.current;
-          setDur(d);
-        }}
-        onPlay={() => setPlaying(true)}
-        onPause={() => setPlaying(false)}
-        onEnded={handleEnded}
-        onTimeUpdate={(e) => setCur(e.target.currentTime)}
-        onError={(e) => {
-          const a = e.currentTarget;
-          // Si aún no se reintentó y la extensión es .mp3, prueba con .MP3
-          // (algunos programas exportan la extensión en mayúsculas).
-          if (a.dataset.retry !== "1") {
-            const cur = a.getAttribute("src");
-            if (cur && cur.toLowerCase().endsWith(".mp3") && /\.mp3$/i.test(cur) && !/\.MP3$/.test(cur)) {
-              a.dataset.retry = "1";
-              a.src = cur.replace(/\.mp3$/i, ".MP3");
-              a.load();
-              const p = a.play();
-              if (p && p.catch) p.catch(() => {});
-            }
-          }
-        }}
-      />
+              ref={audioRef}
+              preload="auto"
+              onLoadedMetadata={(e) => {
+                logAudio("loadedmetadata", e);
+                const d = e.target.duration || 0;
+                durRef.current = isFinite(d) && d > 0 ? d : durRef.current;
+                setDur(d);
+              }}
+              onPlay={() => setPlaying(true)}
+              onPause={() => setPlaying(false)}
+              onEnded={handleEnded}
+              onTimeUpdate={(e) => setCur(e.target.currentTime)}
+              /* ---- DEBUG TEMPORAL de audio (ver por eruda). Quitar después ---- */
+              onSeeking={(e) => logAudio("seeking", e)}
+              onSeeked={(e) => logAudio("seeked", e)}
+                            onWaiting={(e) => logAudio("waiting", e)}
+              onStalled={(e) => logAudio("stalled", e)}
+              onEmptied={(e) => logAudio("emptied", e)}
+              onAbort={(e) => logAudio("abort", e)}
+              onPlaying={(e) => logAudio("playing", e)}
+              onLoadedData={(e) => logAudio("loadeddata", e)}
+              onCanPlay={(e) => logAudio("canplay", e)}
+              /* ---- fin DEBUG TEMPORAL ---- */
+              onError={(e) => {
+                const a = e.currentTarget;
+                logAudio("error code=" + (a.error && a.error.code), e);
+                // Si aún no se reintentó y la extensión es .mp3, prueba con .MP3
+                // (algunos programas exportan la extensión en mayúsculas).
+                if (a.dataset.retry !== "1") {
+                  const cur = a.getAttribute("src");
+                  if (cur && cur.toLowerCase().endsWith(".mp3") && /\.mp3$/i.test(cur) && !/\.MP3$/.test(cur)) {
+                    a.dataset.retry = "1";
+                    logAudio("retry->.MP3", e);
+                    a.src = cur.replace(/\.mp3$/i, ".MP3");
+                    a.load();
+                    const p = a.play();
+                    if (p && p.catch) p.catch(() => {});
+                  }
+                }
+              }}
+            />
 
       {route === "config" && ready && (
         <ConfigScreen
