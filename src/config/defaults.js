@@ -289,7 +289,7 @@ export function buildDefaults() {
        que cambies textos, imágenes o estructura en defaults.js para que el
        navegador NO restaure una copia vieja guardada en localStorage y muestre
           siempre la última versión. */
-         version: 13,
+         version: 14,
   };
 }
 
@@ -326,14 +326,31 @@ export function buildCaminoPadre() {
             },
             imagen: IMG_ANGEL_GUARDA_1, caption: "",
     },
-    /* PASO 2 — Invocación Inicial (Modelo 2: Canto con imagen)
-       Canto de Harpa Dei, imagen estática. */
+        /* PASO 2 — Invocación Inicial (Modelo 2: Canto con imagen + teleprompter)
+       Canto de Harpa Dei, imagen estática. El texto se muestra en el
+       teleprompter (varias líneas) y cada una se ilumina al cantarse.
+       Audio: canto_invocacion.mp3 — duración total 40 s; la voz inicia en el
+       segundo 2 y cierra con "Amén" en el segundo ~32.
+       Los keyframes sincronizan el inicio de cada línea con su momento en el
+       audio (ajusta los segundos si el audio final difiere). Sin `accion`, el
+       teleprompter se activa automáticamente (useTeleprompter). */
     {
       uid: uid(), id: "p2_canto", voz: "canto", tipo: "modo-canto",
       speaker: "Canto",
-      audio: true, audioUrl: "/sounds/canto_invocacion.mp3", audioName: "canto_invocacion.mp3", dur: 0,
-      accion: "Dios mío, ven en mi auxilio.\nSeñor, date prisa en socorrerme.",
-      texto: "Dios mío, ven en mí auxilio. Señor, date prisa en socorrerme. Gloria al Padre, y al Hijo, y al Espíritu Santo, como era en el principio, ahora y siempre, por los siglos de los siglos. Amén.",
+      audio: true, audioUrl: "/sounds/canto_invocacion.mp3", audioName: "canto_invocacion.mp3", dur: 40,
+      texto: "Dios mío, ven en mí auxilio.\nSeñor, date prisa en socorrerme.\nGloria al Padre, y al Hijo, y al Espíritu Santo,\ncomo era en el principio, ahora y siempre,\npor los siglos de los siglos.\nAmén.",
+      /* Teleprompter de secciones: cada línea se ilumina cuando se canta.
+         `t` es el segundo del audio donde arranca la frase (entre 2 y 32). */
+      teleprompter: {
+        keyframes: [
+          { t: 2, sub: "Dios mío" },
+          { t: 6, sub: "Señor, date prisa" },
+          { t: 11, sub: "Gloria al Padre" },
+          { t: 16, sub: "como era" },
+          { t: 22, sub: "por los siglos" },
+          { t: 28, sub: "Amén." },
+        ],
+      },
       imagen: IMG_MANOS_ORANTES, caption: "",
     },
     /* PASO 3 — Reflexión en el cementerio (Modelo 3: Voz larga)
