@@ -264,99 +264,59 @@ export default function App() {
   }, [dur]);
 
         // =====================================================================
-    // applySeek — salto de posición con AUTO-CORRECCIÓN (self-healing).
-    //
-    // PROBLEMA: En iOS/Android algunos navegadores reinician el audio a 0 (o
-    // a una posición incorrecta) al cambiar `currentTime` en MP3 largos
-    // mientras se reproduce, sobre todo al saltar a una región aún no
-    // bufferizada. Esto se acentúa en audios largos (los de 4–5 min) y se
-    // ha reportado repetidamente en distintos pasos (p. ej. p8_canto,
-    // m5_canto, p4_canto, p3_voz).
-    //
-    // POR QUÉ NO USAMOS `.load()`: recargar el elemento (`.load()`) vuelve a
-    // romper la cadena de gesto de usuario en iOS Safari: el `play()` que
-    // luego se dispara en un callback asíncrono (loadedmetadata) queda fuera
-    // del gesto y el navegador lo bloquea; además vuelve a descargar la
-    // metadata (lento en MP3 grandes) y, si no llega a tiempo, el seek falla
-    // y el audio se reinicia. Por eso aquí evitamos `.load()` y en su lugar
-    //:   1) pausamos,
-    //   2) re-asignamos `currentTime` SÍNCRONA dentro del gesto del usuario,
-    //   3) reanudamos `play()` inmediatamente (misma cadena de gesto),
-        //   4) VIGILAMOS el elemento unos instantes: si el navegador "rebota" y
-    //      vuelve a quedar en ~0 / muy por detrás del objetivo (esté en pausa
-    //      o reproduciendo), re-forzamos la posición y, si se esperaba
-    //      reproducción, reanudamos. Esto corrige el reinicio sin depender
-    //      de tiempos de carga ni de recargas.
-    //
-    // Si el problema reaparece en el futuro, revisa estos puntos:
-    //  - ¿El paso tiene un audio MUY largo? Confirma que la metadata del MP3
-    //    sea válida (CBR/LAME bien codificado) y que `a.duration` sea finito.
-    //  - OJO: si vuelve a quedar "reiniciado y en pausa", asegúrate de que la
-    //    auto-corrección cubra el caso `wasPlaying && a.paused` (rebote que
-    //    deja el elemento pausado); si `maybeFix` se rinde ante `a.paused`
-    //    genérico, el reinicio no se corrige (esto afectó a p4/p6/p10_canto).
-    //  - ¿El navegador bloquea `play()`? Añade un segundo reintento de
-    //    `applySeek` desde el togglePlay tras un toque.
-    //  - El límite superior del guard (tries) controla cuántas veces
-    //    re-intentamos corregir antes de rendirnos.
-    // =====================================================================
-  const applySeek = (a, targetTime) => {
-    const wasPlaying = !a.paused;
-    const setPos = () => {
-      try { a.currentTime = targetTime; } catch (_) {}
-    };
-    const resume = () => {
-      if (wasPlaying) {
-        unlockAudio();
-        const p = a.play();
-        if (p && p.catch) p.catch(() => {});
-      }
-    };
-    // 1) Pausa si estaba sonando (evita micro-jumps durante la asignación).
-    try { if (!a.paused) a.pause(); } catch (_) {}
-    // 2) Asigna la posición deseada (dentro del gesto de usuario).
-    setPos();
-    // 3) Reanuda la reproducción.
-    resume();
-
-        // 4) Auto-corrección: vigila el audio y corrige si el navegador lo
-        //    reinició a ~0 (o lo dejó muy por detrás del objetivo) tras el seek.
+        // applySeek — salto de posición.
         //
-        // IMPORTANTE (bug conocido en móviles, p. ej. p4_canto/p6_canto/
-        // p10_canto): algunos navegadores, al "rebotar" el seek a una zona no
-        // bufferizada, reinician el audio a 0 Y TAMBIÉN lo dejan en PAUSA (no
-        // solo unos segundos abajo). Si nos rendíamos ante `a.paused`, la
-        // auto-corrección NO actuaba y el audio se quedaba reiniciado/pausado.
-        // Distinguimos entonces:
-        //   a) si el seek se hizo para REPRODUCIR (wasPlaying=true) y el audio
-        //      quedó en PAUSA en una posición inferior al objetivo, es un
-        //      "rebote" (el navegador lo frenó): re-posicionamos y REANUDAMOS.
-        //   b) si quedó reproduciendo pero a ~0, sólo re-posicionamos.
-        //   c) si el usuario deliberadamente buscó estando en PAUSA (wasPlaying
-        //      =false) NO reanudamos solo (evita sorpresas), solo re-posiciona
-        //      si acaso quedó lejos.
-        const tries = [90, 250, 500, 900]; // ms entre intentos de verificación
+        // PROBLEMA (repro en Chrome/Android, p. ej. p4/p6/p10_canto): al avanzar
+        // con la barra hacia una zona aún SIN DESCARGAR de un MP3 largo que se
+        // está transmitiendo (streaming), secuencias que PAUSAN y fuerzan play()
+        // hacen que Chrome/Android RECOMIENCE el audio desde 0 y suene desde el
+        // principio (el `a.pause()` corta el avance del buffer del stream y luego
+        // un `a.play()` imperativo sobre una zona no lista provoca el reset).
+        // En desktop no aparece porque el buffer suele estar completo/adelantado.
+        //
+        // SOLUCIÓN: repetir lo que ya funciona en desktop — SI el audio está
+        // sonando, NO pausar: solo se asigna `currentTime` (en vivo, dentro del
+        // gesto) y se deja que Chrome/Android haga su propio seek/range; él mismo
+        // descarga desde la nueva posición y continúa, sin resetear a 0.
+        //     - Si estaba sonando   → setPos(), sin pausar ni forzar play().
+        //     - Si estaba en pausa  → setPos() (queda pausado; el usuario toca ▶).
+        // Un watchdog suave sólo vuelve a pedir la posición si el navegador se
+        // quedó muy por detrás del objetivo (p. ej. porque tardó en descargar la
+        // zona); nunca fuerza play() desde ~0, que es lo que lo hacía reproducir
+        // de nuevo desde el principio.
+        // =====================================================================
+  const applySeek = (a, targetTime) => {
+        const wasPlaying = !a.paused;
+        const setPos = () => {
+          try { a.currentTime = targetTime; } catch (_) {}
+        };
+        // 1) Sólo asigna la nueva posición. NO pausamos si estaba sonando: pausar
+        //    un stream largo en Chrome/Android corta la descarga y fuerza play()
+        //    desde un punto aún no cargado termina reiniciando a 0. Dejamos que
+        //    Chrome haga su propio seek/buffer (igual que en desktop).
+        setPos();
+        // 2) Watchdog (suave): si unos instantes después el audio quedó muy por
+        //    detrás del objetivo (Chrome tardó en traer la zona), volvemos a pedir
+        //    la posición. Evitamos forzar play() desde ~0 porque eso es lo que lo
+        //    hacía arrancar de nuevo desde el principio.
+        const tries = [150, 400, 800, 1400]; // ms entre comprobaciones
         const timerIds = [];
         const maybeFix = () => {
           const now = a.currentTime || 0;
-          const rolledBack = now < targetTime - 2; // se reinició / quedó muy atrás
-          // Caso a): quedó pausado tras el rebote.
-          if (wasPlaying && a.paused && rolledBack) {
+          // Sólo re-pedimos si seguimos muy por detrás del objetivo.
+          if (now < targetTime - 2) {
             setPos();
-            resume(); // lo reanudamos porque el "pause" no fue del usuario
-            return;
-          }
-          // Caso b): sigue "reproduciendo" pero volvió a una posición baja.
-          if (!a.paused && rolledBack) {
-            setPos();
-            resume();
+            // Si quedó pausado por el buffer pero la idea era reproducir y YA no
+            // está en ~0 (no se reseteó al inicio), reanudamos de forma suave.
+            if (wasPlaying && a.paused && now >= 0.5) {
+              try { a.play(); } catch (_) {}
+            }
           }
         };
         tries.forEach((ms) => timerIds.push(window.setTimeout(maybeFix, ms)));
-    // Expone una limpieza por si se sale del paso antes de que terminen los
-    // checks (evita tocar audio de otro paso). El check es inofensivo si ya
-    // terminó, pero así cancelamos los pendientes al desmontar.
-    a.__seekCleanup = () => timerIds.forEach((id) => clearTimeout(id));
+        // Expone una limpieza por si se sale del paso antes de que terminen los
+        // checks (evita tocar audio de otro paso) o si se hace otro seek encima.
+        a.__seekCleanup = () => timerIds.forEach((id) => clearTimeout(id));
   };
 
   /* Delay (ms) entre la concatenación de voces para que no parezca tan rápido. */
