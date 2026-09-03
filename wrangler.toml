@@ -1,0 +1,17 @@
+# Configuración de despliegue con Wrangler (Workers Assets).
+# El sitio es una SPA de Vite: los estáticos de producción salen a `dist/`
+# (npm run build) y se sirven desde ahí.
+#
+#   Despliegue local (requiere ejecutar primero `npm run build`):
+#     npm run build
+#     npx wrangler deploy
+#
+# Nota: `dist/` NO está en el repositorio (lo genera el build). El dashboard de
+# Cloudflare (GitHub connector) normalmente ejecuta `npm run build` solo.
+name = "ccc"
+compatibility_date = "2026-08-31"
+
+[assets]
+directory = "dist"
+not_found_handling = "single-page-application"
+serve_directly = true

@@ -10,13 +10,14 @@
 - **App React (Vite).** Entrada: `src/main.jsx` → `src/App.jsx`. Motor de audio y
   config: `src/lib/*`, `src/config/defaults.js`.
 - **Hosting:** sitio estático en **Cloudflare Workers Assets** (dominio
-  `ccc.camposanto.workers.dev`). Se despliega al hacer push a `main` de GitHub
-  (Cloudflare construye `npm run build` y sirve `dist/`).
-- **⚠️ Renombrado Worker → ccc:** el nombre real del Worker vive **en el dashboard de
-  Cloudflare** (este repo NO usa `wrangler.toml`; es un deploy de assets estáticos).
-  Para que `ccc.camposanto.workers.dev` resuelva, el Worker debe existir/renombrarse
-  como **`ccc`** en el dashboard de Cloudflare (Workers Assets). Las referencias de
-  URL en el código/README ya apuntan a la URL nueva.
+  `ccc.camposanto.workers.dev`). Se despliega desde el repo/push a `main` (el
+  dashboard construye `npm run build`) o, localmente, con
+  `npm run build && npx wrangler deploy` (config en `wrangler.toml`,
+  `name = "ccc"`, assets en `dist/`).
+- **⚠️ Renombrado Worker → ccc:** el nombre real del Worker se configura en
+  `wrangler.toml` (`name = "ccc"`) y debía corresponder con el Worker creado en
+  el dashboard. El dominio final es `ccc.camposanto.workers.dev`. `dist/` NO está
+  en git: lo genera `npm run build`.
 - **Audios:** archivos MP3 en `public/sounds/*.mp3` (se copian a `dist/sounds/`).
   Imágenes OG en `public/`.
 
