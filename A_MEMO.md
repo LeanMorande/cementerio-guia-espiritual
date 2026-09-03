@@ -1,4 +1,4 @@
-# AYUDA-MEMORIA · cementerio-guia-espiritual
+# AYUDA-MEMORIA · Proyecto CCC (Cementerio Católico de Colonia Crespo)
 
 > **Para qué:** resumen breve y accionable de la arquitectura, decisiones clave y
 > limitaciones, para que una IA (o un humano) con poco contexto vuelva rápido.
@@ -10,8 +10,13 @@
 - **App React (Vite).** Entrada: `src/main.jsx` → `src/App.jsx`. Motor de audio y
   config: `src/lib/*`, `src/config/defaults.js`.
 - **Hosting:** sitio estático en **Cloudflare Workers Assets** (dominio
-  `cementerio-guia-espiritual.ldmorande.workers.dev`). Se despliega al hacer push a
-  `main` de GitHub (Cloudflare construye `npm run build` y sirve `dist/`).
+  `ccc.camposanto.workers.dev`). Se despliega al hacer push a `main` de GitHub
+  (Cloudflare construye `npm run build` y sirve `dist/`).
+- **⚠️ Renombrado Worker → ccc:** el nombre real del Worker vive **en el dashboard de
+  Cloudflare** (este repo NO usa `wrangler.toml`; es un deploy de assets estáticos).
+  Para que `ccc.camposanto.workers.dev` resuelva, el Worker debe existir/renombrarse
+  como **`ccc`** en el dashboard de Cloudflare (Workers Assets). Las referencias de
+  URL en el código/README ya apuntan a la URL nueva.
 - **Audios:** archivos MP3 en `public/sounds/*.mp3` (se copian a `dist/sounds/`).
   Imágenes OG en `public/`.
 

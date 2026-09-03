@@ -19,7 +19,7 @@
 ## 1. Resumen ejecutivo
 
 - App React (Vite), un único `<audio>` nativo (`preload="metadata"`).
-- Los MP3 se sirven desde un **Cloudflare Worker** (`cementerio-guia-espiritual.ldmorande.workers.dev`),
+- Los MP3 se sirven desde un **Cloudflare Worker** (`ccc.camposanto.workers.dev`),
   que proxya a los archivos del repo (`public/sounds/*.mp3`). El worker se recluye desde GitHub;
   tras un push tarda ~5-20 s en propagar (verificado con `curl` por tamaño del archivo).
 - Síntoma: en **Chrome/Android** (Poco X6 Pro), en CIERTOS pasos *modo-canto*, al hacer seek a
@@ -118,7 +118,7 @@ atribuible al encoder de CapCut.
 Propagación del worker (útil para verificar cache por tamaño):
 ```
 curl -s -o NUL -w "%{http_code} %{content_type} %{size_download}"
-  https://cementerio-guia-espiritual.ldmorande.workers.dev/sounds/canto_hijo_prodigo.mp3
+  https://ccc.camposanto.workers.dev/sounds/canto_hijo_prodigo.mp3
 → 200 audio/mpeg  <size>
 ```
 **Acción recomendada de la próxima IA (antes de tocar más código):** comparar con `curl` sobre un

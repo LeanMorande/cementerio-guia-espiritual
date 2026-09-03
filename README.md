@@ -31,7 +31,7 @@ npm run preview
 ## Estructura de carpetas
 
 ```
-cementerio-guia-espiritual/
+ccc/
 ├── index.html                 # Entrada HTML (montaje de React)
 ├── package.json
 ├── vite.config.js
