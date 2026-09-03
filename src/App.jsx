@@ -1,3 +1,5 @@
+
+
 /* =====================================================================
    APP / App.jsx — orquestador principal.
    =====================================================================
@@ -440,7 +442,7 @@ export default function App() {
     prefetchNeighbors(url);
   }, [playResolvedSrc, prefetchNeighbors]);
 
-  /* Detiene el audio y resetea posiciones. */
+    /* Detiene el audio y resetea posiciones. */
     const stopAudio = useCallback(() => {
     const a = audioRef.current;
     if (!a) return;
@@ -453,32 +455,6 @@ export default function App() {
     setDur(0);
     durRef.current = 0;
   }, []);
-
-    /* DEBUG TEMPORAL — instrumentación de audio (ver logs con eruda en el
-     celular). No altera la lógica de reproducción/seek; solo registra los
-     eventos de red/buffer/seek del <audio> para diagnosticar el reinicio a 0
-     en Chrome/Android. Quitar junto con la consola eruda de index.html. */
-  const __lastEv = { t: 0 };
-  const logAudio = (evt, e) => {
-    const a = e && (e.currentTarget || e.target);
-    if (!a) return;
-    const now = performance.now();
-    const dt = (now - __lastEv.t).toFixed(0);
-    __lastEv.t = now;
-    const sk =
-      a.seekable && a.seekable.length
-        ? "seek=[" + a.seekable.start(0).toFixed(1) + "-" + a.seekable.end(0).toFixed(1) + "]"
-        : "seek=[]";
-    console.log(
-      "[audio] ct=" + a.currentTime.toFixed(2),
-      "dur=" + (isFinite(a.duration) ? a.duration.toFixed(1) : "NaN"),
-      evt,
-      "rdy=" + a.readyState,
-      "net=" + a.networkState,
-      sk,
-      "+" + dt + "ms"
-    );
-  };
 
   const handleEnded = () => {
     setPlaying(false);
@@ -729,11 +705,10 @@ export default function App() {
     <div className="shell">
       <style>{CSS}</style>
 
-                        <audio
+                                                <audio
               ref={audioRef}
               preload="metadata"
               onLoadedMetadata={(e) => {
-                logAudio("loadedmetadata", e);
                 const d = e.target.duration || 0;
                 durRef.current = isFinite(d) && d > 0 ? d : durRef.current;
                 setDur(d);
@@ -742,25 +717,14 @@ export default function App() {
               onPause={() => setPlaying(false)}
               onEnded={handleEnded}
               onTimeUpdate={(e) => setCur(e.target.currentTime)}
-              /* ---- DEBUG TEMPORAL de audio (ver por eruda). Quitar después ---- */
-                            onSeeking={(e) => logAudio("seeking", e)}
-              onSeeked={(e) => logAudio("seeked", e)}
-              onWaiting={(e) => logAudio("waiting", e)}
-              onStalled={(e) => logAudio("stalled", e)}
-              onEmptied={(e) => logAudio("emptied", e)}
-              onAbort={(e) => logAudio("abort", e)}
-              onPlaying={(e) => logAudio("playing", e)}
-              onLoadedData={(e) => logAudio("loadeddata", e)}
-              onCanPlay={(e) => logAudio("canplay", e)}
-              /* ---- fin DEBUG TEMPORAL ---- */
-              /* Nota: ya NO se reintenta .mp3 → .MP3 dentro del manejo de
-                 error. Todos los audios se sirven como .mp3 (minúsculas);
-                 ese reintento ciego provocaba 404 falsos y reinicios (emptied)
-                 en Chrome/Android. Solo se registra el error de forma
-                 diagnóstica. */
               onError={(e) => {
                 const a = e.currentTarget;
-                logAudio("error code=" + (a.error && a.error.code), e);
+                const errCode = a.error && a.error.code;
+                // Solo registramos en consola; ya NO hay reintento .mp3 → .MP3.
+                // Todos los audios se sirven como .mp3 (minúsculas); ese
+                // reintento ciego provocaba 404 falsos y reinicios (emptied).
+                // (En una app de producción todavía el error se silencia.)
+                if (errCode) console.error("Audio error code", errCode);
               }}
             />
 

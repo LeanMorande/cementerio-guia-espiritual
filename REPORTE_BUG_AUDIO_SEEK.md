@@ -1,5 +1,13 @@
 # INFORME DEFINITIVO — Bug: el `<audio>` vuelve a 0 al hacer *seek* en Chrome/Android móvil
 
+> ✅ **ESTADO FINAL: RESUELTO.** La causa raíz era que el servidor (Cloudflare) no
+> responde `HTTP Range/206`. La solución aplicada e implementada en `main`
+> (commit 8501709) consiste en **reproducir desde un Blob completo**
+> (`fetch`→`.blob()`→`URL.createObjectURL`) con cache FIFO y prefetch. El bug quedó
+> confirmado arreglado por el usuario. La instrumentación temporal (eruda/logAudio)
+> fue **removida** del código. Este documento queda como registro histórico del
+> diagnóstico; el mapa breve y actual está en **`A_MEMO.md`**.
+
 > **Para:** IA / desarrollador que se encargará de resolver el bug de una vez.
 > **Rol:** este informe es EL punto de partida. Contiene el estado real del repo, TODAS las
 > pruebas hechas (con resultado), los datos de diagnóstico, lo DESCARTADO, y la dirección

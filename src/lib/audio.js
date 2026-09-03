@@ -1,8 +1,14 @@
 /* =====================================================================
    LIB / AUDIO — motor de audio con rutas estáticas /sounds/
    =====================================================================
-   Eliminado IndexedDB/blobs: todas las rutas apuntan a /sounds/*.mp3
-   que se sirven desde la carpeta pública del proyecto.
+   ⚠️ DECISIÓN CLAVE DE HISTORIAL (no cambiar sin leer A_MEMO.md):
+   En Chrome/Android móvil, reproducir un .mp3 por streaming directo hacía
+   fallar el SEEK (volvía a 0) porque el servidor (Cloudflare assets) NO
+   responde HTTP Range/206 (entrega el archivo completo en 200, ignora el
+   header "Range") → el <audio> no armaba `seekable`. La solución aplicada
+   en App.jsx es DESCARGAR el audio completo y reproducirlo desde un Blob
+   (URL.createObjectURL), con cache FIFO y prefetch en paralelo.
+   Ver A_MEMO.md (raíz) para el mapa completo del proyecto.
    ===================================================================== */
 
 let audioCtxShared = null;
