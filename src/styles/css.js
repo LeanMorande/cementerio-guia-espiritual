@@ -119,9 +119,12 @@ img{display:block}
 .cdring span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--gold-ink);font-weight:600}
 .options{display:flex;flex-direction:column;justify-content:space-between;gap:12px;flex:1;min-height:0}
 .opt{position:relative;display:block;width:100%;flex:1 1 0;min-height:0;border-radius:18px;overflow:hidden;background:var(--white);cursor:pointer;text-align:left;border:1px solid var(--line);transition:transform .15s,box-shadow .2s}
-.opt:active{transform:scale(.98)}
 .opt.enabled{border-color:var(--gold2);box-shadow:0 8px 20px -14px rgba(140,100,30,.5)}
 .opt.disabled{opacity:.72}
+.opt.picking,.opt.enabled.picking{transform:scale(.985);border-color:var(--gold2);animation:optPulse .55s ease-in-out 2}
+.opt.picking .thumb,.opt.enabled.picking .thumb{filter:brightness(1.08)}
+@keyframes optPulse{0%,100%{box-shadow:0 0 0 3px var(--gold2),0 12px 22px -12px rgba(20,15,5,.5)}50%{box-shadow:0 0 0 6px rgba(196,150,46,.5),0 12px 22px -12px rgba(20,15,5,.5)}}
+.opt:active{transform:scale(.98)}
 .opt .thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 22%;pointer-events:none}
 .optmeta{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:30px 14px 12px;color:#fff;background:linear-gradient(to top, rgba(12,11,9,.86), rgba(12,11,9,0))}
 .optmeta b{display:block;font-family:'Cormorant Garamond',serif;font-size:clamp(18px,4.6vh,26px);font-weight:600;line-height:1.05;text-shadow:0 1px 2px rgba(0,0,0,.55)}

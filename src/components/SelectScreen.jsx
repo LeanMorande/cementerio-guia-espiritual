@@ -12,6 +12,7 @@ export default function SelectScreen({ cfg, eng, introDone, onSkip, onSelect }) 
   const speaking = eng.playing && hasIntro && !introDone;
   const total = cfg.countdown || 20;
   const [secs, setSecs] = useState(total);
+  const [picking, setPicking] = useState(null);
   const firedRef = useRef(false);
 
   useEffect(() => {
@@ -27,6 +28,18 @@ export default function SelectScreen({ cfg, eng, introDone, onSkip, onSelect }) 
       if (enabled.length) onSelect(enabled[Math.floor(Math.random() * enabled.length)].id, true);
     }
   }, [secs, introDone, cfg.opciones, onSelect]);
+
+  // Feedback visual de selección: resalta la tarjeta elegida ~600 ms y luego
+  // navega al camino (evita toques dobles mientras tanto).
+  const pick = (o) => {
+    if (picking) return;
+    if (!o.habilitado) { onSelect(o.id, false); return; }
+    setPicking(o.id);
+    window.setTimeout(() => {
+      setPicking(null);
+      onSelect(o.id, false);
+    }, 600);
+  };
 
   const C = 2 * Math.PI * 14;
 
@@ -79,10 +92,11 @@ export default function SelectScreen({ cfg, eng, introDone, onSkip, onSelect }) 
       <section className="sel-bottom">
         <div className="options">
           {cfg.opciones.map((o) => (
-            <button
+                        <button
               key={o.id}
-              className={"opt" + (o.habilitado ? " enabled" : " disabled")}
-              onClick={() => onSelect(o.id, false)}
+              className={"opt" + (o.habilitado ? " enabled" : " disabled") + (picking === o.id ? " picking" : "")}
+              onClick={() => pick(o)}
+              aria-pressed={picking === o.id}
             >
               <SmartImg className="thumb" src={o.img} alt="" />
               <span className="optmeta">
