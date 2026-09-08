@@ -27,6 +27,8 @@ export const IMG_ANGEL_GUARDA_2 = "angel_guarda_2.jpg";
 export const IMG_CRUZ_CIELO = "cruz_cielo.jpg";
 export const IMG_REZO_FINAL = "rezo_final.jpg";
 export const IMG_LUZ_MUNDO = "luz_mundo.jpg";
+/* Imagen propia del paso p2_canto (Camino Padre, invocacion inicial). En webp. */
+export const IMG_PASO2_PADRE = "paso2_padre_img.webp";
 
 /* ------------------------------------------------ */
 /* Imágenes de ESCENA por cada paso (nombres únicos)  */
@@ -289,7 +291,7 @@ export function buildDefaults() {
        que cambies textos, imágenes o estructura en defaults.js para que el
        navegador NO restaure una copia vieja guardada en localStorage y muestre
           siempre la última versión. */
-         version: 15,
+         version: 16,
   };
 }
 
@@ -351,7 +353,7 @@ export function buildCaminoPadre() {
           { t: 29.5, sub: "Amén." },
         ],
       },
-      imagen: IMG_MANOS_ORANTES, caption: "",
+      imagen: IMG_PASO2_PADRE, caption: "",
     },
     /* PASO 3 — Reflexión en el cementerio (Modelo 3: Voz larga)
        Voz del Ángel de la Guarda, texto extenso. */
