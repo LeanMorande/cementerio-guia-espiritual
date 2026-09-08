@@ -17,10 +17,11 @@ export const IMG_MARIA_AV = "avatar_virgen.jpg";
 /* ------------------------------------------------ */
 export const IMG_ANGEL_GUARDA_1 = "angel_guarda_1.jpg";
 export const IMG_PANTEONES_CEMENTERIO = "panteones_cementerio.jpg";
-export const IMG_PRODIGO_1 = "prodigo_1.jpg";
-export const IMG_PRODIGO_2 = "prodigo_2.jpg";
-export const IMG_PRODIGO_3 = "prodigo_3.jpg";
-export const IMG_PRODIGO_4 = "prodigo_4.jpg";
+export const IMG_PRODIGO_1 = "prodigo_1.avif";
+export const IMG_PRODIGO_2 = "prodigo_2.avif";
+export const IMG_PRODIGO_3 = "prodigo_3.avif";
+export const IMG_PRODIGO_4 = "prodigo_4.avif";
+export const IMG_PRODIGO_5 = "prodigo_5.avif";
 export const IMG_ABRAZO_PADRE = "abrazo_padre.jpg";
 export const IMG_DAVID_SALMO = "david_salmo.jpg";
 export const IMG_ANGEL_GUARDA_2 = "angel_guarda_2.jpg";
@@ -291,7 +292,7 @@ export function buildDefaults() {
        que cambies textos, imágenes o estructura en defaults.js para que el
        navegador NO restaure una copia vieja guardada en localStorage y muestre
           siempre la última versión. */
-         version: 17,
+         version: 18,
   };
 }
 
@@ -383,12 +384,13 @@ export function buildCaminoPadre() {
       texto: "(Canto del Hijo Pródigo - momento de contemplación con imágenes rotativas)",
       imagen: IMG_PRODIGO_1, caption: "",
       /* Transición de 4 imágenes rotativas. Coloca los archivos en /public/:
-         prodigo_1.jpg, prodigo_2.jpg, prodigo_3.jpg y prodigo_4.jpg. */
+         prodigo_1.avif, prodigo_2.avif, prodigo_3.avif y prodigo_4.avif. */
       imagenes: [
         IMG_PRODIGO_1,
         IMG_PRODIGO_2,
         IMG_PRODIGO_3,
         IMG_PRODIGO_4,
+        IMG_PRODIGO_5,
       ],
       contain: true,
     },
