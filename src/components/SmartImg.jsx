@@ -8,8 +8,6 @@
    También acepta el nombre ya con extensión ("manos_orantes.jpg"): en ese
    caso lo usa directo si existe, y solo prueba otras extensiones si no.
    ===================================================================== */
-import { useEffect } from "react";
-
 // Convierte un nombre de asset a ruta absoluta desde la raíz ("avatar_x.jpg"
 // -> "/avatar_x.jpg"), para que el <img> cargue bien en cualquier ruta de la
 // SPA (raíz o anidada). URLs completas o ya absolutas se pasan tal cual.
@@ -24,12 +22,6 @@ export default function SmartImg({ src, alt = "", ...rest }) {
   // Renderizamos la ruta absoluta directamente para que el archivo se pida y
   // visualice de inmediato, igual en la raíz que en rutas anidadas.
   const shown = asRoot(src);
-
-  // DEBUG temporal (solo en desarrollo). Se retira tras confirmar el fix.
-  useEffect(() => {
-    if (import.meta.env.DEV) console.log("[SmartImg] src =", src, "=>", shown, typeof src);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [src]);
 
   return <img src={shown} alt={alt} {...rest} />;
 }

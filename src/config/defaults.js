@@ -144,9 +144,9 @@ export function buildDefaults() {
       canto: { nombre: "Canto", img: null },
     },
     opciones: [
-      { id: "padre", titulo: "Orar con el Padre", desc: "Dios, tu Padre que tanto te ama", img: IMG_PADRE_CARD, habilitado: true },
-      { id: "jesus", titulo: "Orar con Jesús", desc: "Quien muriendo en la cruz te redimió", img: IMG_JESUS_CARD, habilitado: false },
-      { id: "maria", titulo: "Orar con la Virgen María", desc: "Tu madre siempre está a tu lado", img: IMG_MARIA_CARD, habilitado: true },
+      { id: "padre", titulo: "Orar con el Padre", desc: "Dios, tu Padre que tanto te ama", img: IMG_PADRE_AV, habilitado: true },
+      { id: "jesus", titulo: "Orar con Jesús", desc: "Quien muriendo en la cruz te redimió", img: IMG_JESUS_AV, habilitado: false },
+      { id: "maria", titulo: "Orar con la Virgen María", desc: "Tu madre siempre está a tu lado", img: IMG_MARIA_AV, habilitado: true },
     ],
     camino: [
       // Paso 1 — Ángel (apertura del camino)
