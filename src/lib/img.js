@@ -17,7 +17,9 @@
 export const IMG_EXT_ORDER = ["webp", "avif", "jpg", "jpeg", "png", "gif"];
 
 // Base path donde se sirven los assets estáticos (carpeta /public).
-export const IMG_BASE = ""; // rutas relativas, como hoy ("" => archivo en la raíz servida)
+// Se usa absoluta (empieza con "/") para que las pruebas de extensiones y el
+// <img> funcionen igual estés en la raíz o en una ruta anidada de la SPA.
+export const IMG_BASE = "/"; // rutas absolutas desde la raíz del sitio
 
 const cache = new Map(); // nombreBase -> urlResuelta (o "" si ninguna existe)
 
@@ -25,6 +27,18 @@ const cache = new Map(); // nombreBase -> urlResuelta (o "" si ninguna existe)
 export function stripExt(name) {
   if (!name) return "";
   return String(name).replace(/\.[a-zA-Z0-9]+$/, "");
+}
+
+// True si la cadena ya empieza con "/".
+function hasLeadingSlash(name) {
+  return /^\/+/.test(String(name || ""));
+}
+
+// Devuelve la ruta absoluta (con raíz) de un nombre base cualquiera sin
+// producir dobles barras ("//x").
+function rootUrl(name) {
+  const bare = String(name || "").replace(/^\/+/, "");
+  return IMG_BASE + bare;
 }
 
 // Prueba si una URL responde HTTP 200 (HEAD). Devuelve true/false.
@@ -57,7 +71,7 @@ export async function resolveImg(name) {
   // Probamos siempre en orden webp→avif→jpg→... así, si existe tanto el
   // .jpg como el .webp del mismo nombre, gana el más moderno/ligero.
   for (const ext of IMG_EXT_ORDER) {
-    const candidate = "" + base + "." + ext;
+    const candidate = rootUrl(base) + "." + ext;
     if (await exists(candidate)) {
       cache.set(base, candidate);
       return candidate;
@@ -65,9 +79,10 @@ export async function resolveImg(name) {
   }
 
   // Ninguna extensión corresponde: cacheamos vacío para no repetir la
-  // búsqueda en cada render y devolvemos el nombre original como fallback.
+  // búsqueda en cada render y devolvemos una ruta absoluta como fallback (el
+  // <img> mostrará el archivo si eventualmente existe, o quedará en blanco).
   cache.set(base, "");
-  return String(name);
+  return hasLeadingSlash(name) ? String(name) : "/" + String(name);
 }
 
 export function getImgCache() {
