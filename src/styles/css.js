@@ -117,17 +117,17 @@ img{display:block}
 .cdtrack{fill:none;stroke:#dcD9cf;stroke-width:3}
 .cdprog{fill:none;stroke:var(--gold2);stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset 1s linear}
 .cdring span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--gold-ink);font-weight:600}
-.options{display:flex;flex-direction:column;justify-content:center;gap:12px;flex:1}
-.opt{display:flex;align-items:center;gap:14px;width:100%;flex:1;min-height:88px;border-radius:16px;border:1px solid var(--line);background:var(--white);overflow:hidden;cursor:pointer;text-align:left;transition:transform .15s,box-shadow .2s;padding:0 14px 0 10px}
+.options{display:flex;flex-direction:column;justify-content:space-between;gap:12px;flex:1;min-height:0}
+.opt{position:relative;display:block;width:100%;flex:1 1 0;min-height:0;border-radius:18px;overflow:hidden;background:var(--white);cursor:pointer;text-align:left;border:1px solid var(--line);transition:transform .15s,box-shadow .2s}
 .opt:active{transform:scale(.98)}
 .opt.enabled{border-color:var(--gold2);box-shadow:0 8px 20px -14px rgba(140,100,30,.5)}
-.opt.disabled{opacity:.62}
-.opt .thumb{width:86px;height:86px;border-radius:14px;object-fit:cover;flex-shrink:0}
-.optmeta{flex:1;min-width:0}
-.optmeta b{display:block;font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;line-height:1.15}
-.optmeta i{font-style:normal;font-size:13.5px;color:var(--ink-soft)}
-.pronto{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a887e;border:1px solid #cfcbc0;border-radius:99px;padding:4px 9px;font-weight:600}
-.opt > svg{color:var(--gold)}
+.opt.disabled{opacity:.72}
+.opt .thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 22%;pointer-events:none}
+.optmeta{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:30px 14px 12px;color:#fff;background:linear-gradient(to top, rgba(12,11,9,.86), rgba(12,11,9,0))}
+.optmeta b{display:block;font-family:'Cormorant Garamond',serif;font-size:clamp(18px,4.6vh,26px);font-weight:600;line-height:1.05;text-shadow:0 1px 2px rgba(0,0,0,.55)}
+.optmeta i{display:block;font-style:normal;font-size:clamp(11px,2.4vh,13.5px);color:#ece3cd;margin-top:4px;text-shadow:0 1px 2px rgba(0,0,0,.55)}
+.pronto{position:absolute;top:10px;right:10px;z-index:3;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#3a362c;border:1px solid rgba(255,255,255,.6);background:rgba(255,252,245,.85);border-radius:99px;padding:4px 9px;font-weight:600}
+.opt > svg{position:absolute;top:12px;left:12px;z-index:3;color:var(--gold);filter:drop-shadow(0 0 2px rgba(0,0,0,.4));background:rgba(255,252,245,.85);border-radius:50%;padding:4px;box-sizing:content-box}
 
 /* ---------- camino ---------- */
 .phead{display:flex;align-items:center;justify-content:space-between;padding:8px 10px 0;gap:6px;flex-shrink:0}
