@@ -8,13 +8,11 @@
    También acepta el nombre ya con extensión ("manos_orantes.jpg"): en ese
    caso lo usa directo si existe, y solo prueba otras extensiones si no.
    ===================================================================== */
-import { useEffect, useState } from "react";
-import { resolveImg } from "../lib/img.js";
+import { useEffect } from "react";
 
 // Convierte un nombre de asset a ruta absoluta desde la raíz ("avatar_x.jpg"
-// -> "/avatar_x.jpg"), para que el <img> carga bien en cualquier ruta de la
-// SPA antes/después de la resolución. URLs completas o ya absolutas se pasan
-// tal cual.
+// -> "/avatar_x.jpg"), para que el <img> cargue bien en cualquier ruta de la
+// SPA (raíz o anidada). URLs completas o ya absolutas se pasan tal cual.
 function asRoot(p) {
   const s = String(p || "");
   if (!s || /^(https?:|data:|blob:|\/)/i.test(s)) return s;
@@ -22,26 +20,16 @@ function asRoot(p) {
 }
 
 export default function SmartImg({ src, alt = "", ...rest }) {
-  const [resolved, setResolved] = useState(null);
+  // Las imágenes ya llevan su extensión real en los datos (.jpg, .webp…).
+  // Renderizamos la ruta absoluta directamente para que el archivo se pida y
+  // visualice de inmediato, igual en la raíz que en rutas anidadas.
+  const shown = asRoot(src);
 
+  // DEBUG temporal (solo en desarrollo). Se retira tras confirmar el fix.
   useEffect(() => {
-    let active = true;
-    setResolved(null);
-    if (!src) {
-      if (active) setResolved("");
-      return;
-    }
-    resolveImg(src).then((r) => {
-      if (active) setResolved(r || asRoot(src));
-    });
-    return () => {
-      active = false;
-    };
+    if (import.meta.env.DEV) console.log("[SmartImg] src =", src, "=>", shown, typeof src);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [src]);
-
-  // Mientras resolvemos, mostramos `src` en formato absoluto (para no romper
-  // en rutas anidadas). Cuando llega la URL real, la usamos.
-  const shown = resolved === null ? asRoot(src) : resolved;
 
   return <img src={shown} alt={alt} {...rest} />;
 }
