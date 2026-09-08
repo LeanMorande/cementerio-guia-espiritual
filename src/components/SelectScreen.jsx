@@ -5,6 +5,7 @@
 import { useEffect, useRef, useState } from "react";
 import Teleprompter from "./Teleprompter.jsx";
 import { Ic } from "./icons.jsx";
+import SmartImg from "./SmartImg.jsx";
 
 export default function SelectScreen({ cfg, eng, introDone, onSkip, onSelect }) {
   const hasIntro = !!cfg.bienvenida.introAudioUrl;
@@ -35,7 +36,7 @@ export default function SelectScreen({ cfg, eng, introDone, onSkip, onSelect }) 
       <section className="sel-top">
         <div className="sdial">
           <div className={"savatar" + (speaking ? " speaking" : "")}>
-            <img src={cfg.voces.angel.img} alt={cfg.voces.angel.nombre} />
+            <SmartImg src={cfg.voces.angel.img} alt={cfg.voces.angel.nombre} />
             <b>{cfg.voces.angel.nombre}</b>
           </div>
           <div className="sballoon">
@@ -83,7 +84,7 @@ export default function SelectScreen({ cfg, eng, introDone, onSkip, onSelect }) 
               className={"opt" + (o.habilitado ? " enabled" : " disabled")}
               onClick={() => onSelect(o.id, false)}
             >
-              <img className="thumb" src={o.img} alt="" />
+              <SmartImg className="thumb" src={o.img} alt="" />
               <span className="optmeta">
                 <b>{o.titulo}</b>
                 <i>{o.desc}</i>

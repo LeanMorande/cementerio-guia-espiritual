@@ -5,6 +5,7 @@
    ===================================================================== */
 import { useState } from "react";
 import { Ic } from "./icons.jsx";
+import SmartImg from "./SmartImg.jsx";
 import { fmtTime } from "../lib/utils.js";
 
 export default function ConfigScreen(props) {
@@ -93,7 +94,7 @@ export default function ConfigScreen(props) {
             <div className="field" key={o.id}>
               <span className="lbl">{o.titulo}</span>
               <div className="imgprev sm2prev">
-                <img src={o.img} alt="" />
+                <SmartImg src={o.img} alt="" />
               </div>
               <div className="row2 field2">
                 <input className="inp" value={o.titulo} onChange={(e) => props.setOpc(i, { titulo: e.target.value })} aria-label="Título de la opción" />
@@ -178,7 +179,7 @@ export default function ConfigScreen(props) {
                 ) : (
                   <>
                     <div className="imgprev sm2prev">
-                      <img src={sg.imagen} alt="" />
+                      <SmartImg src={sg.imagen} alt="" />
                     </div>
                     <input
                       className="inp field2"

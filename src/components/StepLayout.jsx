@@ -9,6 +9,7 @@ import { useRef } from "react";
 import { Ic } from "./icons.jsx";
 import { fmtTime } from "../lib/utils.js";
 import Teleprompter from "./Teleprompter.jsx";
+import SmartImg from "./SmartImg.jsx";
 
 const FIRMA = "† CEMENTERIO CATÓLICO DE COLONIA CRESPO";
 
@@ -179,7 +180,7 @@ export default function StepLayout({
         <div className="sdial">
           <div className={"savatar" + (isCanto ? " canto" : "") + (speaking ? " speaking" : "")}>
             {!isCanto ? (
-              <img src={speaker.img} alt={nombre} />
+              <SmartImg src={speaker.img} alt={nombre} />
             ) : (
               <span className="cantoic">♫</span>
             )}
@@ -225,13 +226,12 @@ export default function StepLayout({
         <section className={"sstep sstep-mid" + (contain && slides.length > 1 ? " slides-contain" : "")}>
           {slides.length > 1 && !admin ? (
             <figure className={"sscene slides" + (contain ? " contain-box" : "")}>
-              {slides.map((im, i) => (
-                <img
+                            {slides.map((im, i) => (
+                <SmartImg
                   key={i}
                   src={im}
                   alt=""
                   className={(i === slideIndex ? "on" : "") + (contain ? " contain" : "")}
-                  onError={(e) => (e.currentTarget.style.display = "none")}
                 />
               ))}
               {caption && <figcaption className="ccap">{caption}</figcaption>}
@@ -246,7 +246,7 @@ export default function StepLayout({
             <figure className="sscene">
               {slides.length === 1 && !admin ? (
                 <>
-                  <img src={slides[0]} alt="" onError={(e) => (e.currentTarget.style.display = "none")} />
+                  <SmartImg src={slides[0]} alt="" />
                   {caption && <figcaption className="ccap">{caption}</figcaption>}
                 </>
               ) : (

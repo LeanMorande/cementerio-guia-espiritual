@@ -1,6 +1,7 @@
 /* =====================================================================
    COMPONENTS / SpeakerPanel.jsx — avatar parlante (Ángel / María / canto).
    ===================================================================== */
+import SmartImg from "./SmartImg.jsx";
 export default function SpeakerPanel({ img, nombre, speaking, canto }) {
   return (
     <header className="selhead">
@@ -10,7 +11,7 @@ export default function SpeakerPanel({ img, nombre, speaking, canto }) {
         </div>
       ) : (
         <div className={"avatar" + (speaking ? " speaking" : "")}>
-          <img src={img} alt={nombre} />
+          <SmartImg src={img} alt={nombre} />
         </div>
       )}
       <div className="avatar-meta">
