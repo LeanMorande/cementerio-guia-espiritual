@@ -28,6 +28,7 @@ export const IMG_ANGEL_GUARDA_2 = "angel_guarda_2.jpg";
 export const IMG_CRUZ_CIELO = "cruz_cielo.jpg";
 export const IMG_REZO_FINAL = "rezo_final.jpg";
 export const IMG_LUZ_MUNDO = "luz_mundo.jpg";
+export const IMG_LUZ_MUNDO1 = "luz_mundo1.jpg";
 /* Imagen propia del paso p2_canto (Camino Padre, invocacion inicial). En webp. */
 export const IMG_PASO2_PADRE = "paso2_padre_img.webp";
 
@@ -228,10 +229,34 @@ export function buildDefaults() {
            /public/: miserere_1.jpg, miserere_2.jpg, miserere_3.jpg y
            miserere_4.jpg. La caja se ajusta a la proporción de cada imagen. */
         imagenes: [
-          IMG_MISERERE_1,
-          IMG_MISERERE_2,
-          IMG_MISERERE_3,
-          IMG_MISERERE_4,
+          "miserere_fotos/%input_filename%_00001.avif",
+          "miserere_fotos/%input_filename%_00002.avif",
+          "miserere_fotos/%input_filename%_00003.avif",
+          "miserere_fotos/%input_filename%_00004.avif",
+          "miserere_fotos/%input_filename%_00005.avif",
+          "miserere_fotos/%input_filename%_00006.avif",
+          "miserere_fotos/%input_filename%_00007.avif",
+          "miserere_fotos/%input_filename%_00008.avif",
+          "miserere_fotos/%input_filename%_00009.avif",
+          "miserere_fotos/%input_filename%_00010.avif",
+          "miserere_fotos/%input_filename%_00011.avif",
+          "miserere_fotos/%input_filename%_00012.avif",
+          "miserere_fotos/%input_filename%_00013.avif",
+          "miserere_fotos/%input_filename%_00014.avif",
+          "miserere_fotos/%input_filename%_00015.avif",
+          "miserere_fotos/%input_filename%_00016.avif",
+          "miserere_fotos/%input_filename%_00017.avif",
+          "miserere_fotos/%input_filename%_00018.avif",
+          "miserere_fotos/%input_filename%_00019.avif",
+          "miserere_fotos/%input_filename%_00020.avif",
+          "miserere_fotos/%input_filename%_00021.avif",
+          "miserere_fotos/%input_filename%_00022.avif",
+          "miserere_fotos/%input_filename%_00023.jpg",
+          "miserere_fotos/%input_filename%_00024.avif",
+          "miserere_fotos/%input_filename%_00025.avif",
+          "miserere_fotos/%input_filename%_00026.jpg",
+          "miserere_fotos/%input_filename%_00027.avif",
+          "miserere_fotos/%input_filename%_00028.jpg",
         ],
         contain: true,
       },
@@ -292,7 +317,7 @@ export function buildDefaults() {
        que cambies textos, imágenes o estructura en defaults.js para que el
        navegador NO restaure una copia vieja guardada en localStorage y muestre
           siempre la última versión. */
-         version: 18,
+         version: 20,
   };
 }
 
@@ -524,6 +549,10 @@ export function buildCaminoPadre() {
         ],
       },
       imagen: IMG_LUZ_MUNDO, caption: "",
+      imagenes: [
+        IMG_LUZ_MUNDO,
+        IMG_LUZ_MUNDO1,
+      ],
     },
   ];
 }
