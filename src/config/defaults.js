@@ -23,7 +23,7 @@ export const IMG_PRODIGO_3 = "prodigo_3.avif";
 export const IMG_PRODIGO_4 = "prodigo_4.avif";
 export const IMG_PRODIGO_5 = "prodigo_5.avif";
 export const IMG_ABRAZO_PADRE = "abrazo_padre.jpg";
-export const IMG_DAVID_SALMO = "david_salmo.jpg";
+export const IMG_DAVID_SALMO = "david_salmo1.jpg";
 export const IMG_ANGEL_GUARDA_2 = "angel_guarda_2.jpg";
 export const IMG_CRUZ_CIELO = "cruz_cielo.jpg";
 export const IMG_REZO_FINAL = "rezo_final.jpg";
@@ -35,16 +35,8 @@ export const IMG_PASO2_PADRE = "paso2_padre_img.webp";
 /* ------------------------------------------------ */
 /* Imágenes de ESCENA por cada paso (nombres únicos)  */
 /* ------------------------------------------------ */
-export const IMG_ESCENA_1 = "escena_1.jpg";
-export const IMG_ESCENA_2 = "escena_2.jpg";
-export const IMG_ESCENA_3 = "escena_3.jpg";
-export const IMG_ESCENA_4 = "escena_4.jpg";
-export const IMG_ESCENA_5 = "escena_5.jpg";
-export const IMG_ESCENA_6 = "escena_6.jpg";
-export const IMG_TRINIDAD = "escena_trinidad.jpg";
-export const IMG_MANOS_ORANTES = "manos_orantes.jpg";
+export const IMG_MANOS_ORANTES = "paso2_padre_img.webp";
 export const IMG_CALVARIO = "calvario.jpeg";
-export const IMG_GLORIA_CIELO = "gloria_cielo.jpg";
 
 /* Imágenes del bloque Padre Nuestro → 3 Ave María → Gloria (audio nuevo).
    Fases del audio padre_nuestro_ave_gloria.mp3 (4:21 total):
@@ -54,7 +46,7 @@ export const IMG_GLORIA_CIELO = "gloria_cielo.jpg";
    Coloca estos archivos en /public/ (o reemplaza por las que quieras). */
 export const IMG_PADRE_NUESTRO = "padre_nuestro.jpg";
 export const IMG_AVE_MARIA = "ave_maria.jpg";
-export const IMG_GLORIA = "gloria.jpg";
+export const IMG_GLORIA = "paso2_padre_img.webp";
 /*
   TRANSICIÓN DE MÚLTIPLES IMÁGENES (slides) en un paso:
   Para que un paso muestre varias imágenes que cambian en el tiempo,
@@ -91,9 +83,6 @@ export const IMG_MISERERE_4 = "miserere_4.jpg";
 /* ------------------------------------------------ */
 /* Imágenes de las OPIONES del selector de camino     */
 /* ------------------------------------------------ */
-export const IMG_PADRE_CARD = "opcion_padre.jpg";
-export const IMG_JESUS_CARD = "opcion_jesus.jpg";
-export const IMG_MARIA_CARD = "opcion_virgen.jpg";
 
 /* ------------------------------------------------ */
 /* Fondos                                           */
@@ -157,7 +146,6 @@ export function buildDefaults() {
         speaker: "Ángel de la Guarda",
         audio: true, audioUrl: "/sounds/paso_1_angel.mp3", audioName: "paso_1_angel.mp3", dur: 0,
         texto: "Busca un lugar tranquilo, en silencio, si deseas siéntate y empecemos a orar juntos, serán pocos minutos, veras como tu corazón experimentara una paz muy grande y tus queridos difuntos te lo agradecerán. Pongámonos en presencia de la Santísima Trinidad para que nos acompañen en este momento de oración, hagamos juntos la señal de la cruz: en el nombre del Padre y del Hijo y del Espíritu Santo. Amen.",
-        imagen: IMG_ESCENA_1, caption: "",
       },
       // Paso 2 — Canto Trinidad (nuevo)
       {
@@ -174,7 +162,6 @@ export function buildDefaults() {
         speaker: "Ángel de la Guarda",
         audio: true, audioUrl: "/sounds/paso_2_angel.mp3", audioName: "paso_2_angel.mp3", dur: 0,
         texto: "Tú elegiste compartir este momento de oración con tu Madre, la Virgen María. Te propongo que le cuentes a ella lo que siente tu corazón, es muy sencillo, consiste en decirle con palabras simples: cuáles son tus alegrías, y qué es lo que te da tristeza, cuéntale lo que estás viviendo con tu familia, en el trabajo, o con tu salud, sabiendo que tu Madre te ama y te está escuchando en este momento.",
-        imagen: IMG_ESCENA_2, caption: "",
       },
       // Paso 4 — María
       {
@@ -182,7 +169,6 @@ export function buildDefaults() {
         speaker: "Virgen María",
         audio: true, audioUrl: "/sounds/paso_3_virgen.mp3", audioName: "paso_3_virgen.mp3", dur: 0,
         texto: "Yo soy tu Madre, la Virgen María, y te confieso que ahora me estás dando una alegría inmensa con esta visita. Tú sabes cómo somos las mamás, no vemos la hora de poder estar a solas un rato con nuestros hijos para hablar de nuestras cosas. Si supieras cuánto tiempo llevo esperándote en este lugar santo para poder abrazarte, para poder consolar la tristeza que te ha dejado la muerte de tus seres queridos, para llenar la soledad de su partida, para cubrir tu alma con la paz que sólo mi hijo Jesús puede darte. Yo sé cuánto extrañas a quienes aquí están sepultados. Comprendo que darías todo lo que tienes para sentarte junto a ellos unos pocos minutos y por última vez abrazarlos y decirles ¡gracias, los quiero mucho! o tal vez decirles que los perdonas porque en vida te han hecho sufrir. Como yo estoy día y noche junto a ti, sé muy bien que, desde el instante de su partida de este mundo, tu casa ya no es la misma sin ellos, veo que a la ramada del patio le falta algo sin el eco de sus risas, siento que la cocina te parece vacía sin el olor a la comida que te preparaban y que hay momentos en tu vida que todo se te hace cuesta arriba porque no los tienes cerca para pedirles un consejo. Todo esto lo comprendo muy bien porque yo soy mamá y también pasé por un dolor semejante al tuyo. Te voy a contar un secreto que guardo en mi alma desde hace muchos años y estaba esperando el momento justo para decírtelo. El viernes santo, la muerte llamó a la puerta de mi corazón y me arrancó de un tirón lo que yo más amaba, a mi Hijo Jesús. Aquella tarde, sentí la tristeza que tú sientes, esa misma soledad que ahoga tu alma, yo también añoré un abrazo, un último beso, pero la muerte me lo arrebató. En ese momento, desde lo profundo de mi corazón dolido, me brotó esta oración como si fuera un lamento, que deposité en las manos de Dios Padre, y eso me trajo una profunda paz, que me dio fuerzas para seguir adelante con la vida.",
-        imagen: IMG_ESCENA_3, caption: "",
       },
       // Paso 5 — Canto Calvario (nuevo)
       {
@@ -213,7 +199,6 @@ export function buildDefaults() {
         speaker: "Virgen María",
         audio: true, audioUrl: "/sounds/paso_4_virgen.mp3", audioName: "paso_4_virgen.mp3", dur: 0,
         texto: "En el momento más difícil de mi vida, cuando tuve que enfrentar la muerte de mi Hijo, me dio mucho alivio el poder contarle a Dios con mis palabras, mi dolor, mi soledad y mi tristeza. Te propongo que hagas lo mismo que hice yo en aquel terrible momento: cuéntale a Dios y a tu ser querido difunto, en una charla mano a mano, ¿qué es lo que más extrañas de su ausencia? Si te quedó una cuenta pendiente, habla de ello con su alma, ofrécele tu perdón, no guardes rencor, aprovecha este momento para que Dios Padre te sane esas heridas viejas, y aquellos problemas que no pudiste arreglar en vida. Si necesitas un consejo, cuéntale tu dificultad y pide ayuda. Es muy bueno que hables con el alma de tus seres queridos en la presencia de Dios Padre, él te traerá paz y salud al corazón. Ahora yo me voy a quedar un momento en silencio para escucharte a ti. ¡Vamos, sin miedo! Saca todo lo que tengas en el corazón a través de una charla simple con Dios y con el alma de tu ser querido, yo estaré junto a ti porque sé que no es fácil.",
-        imagen: IMG_ESCENA_4, caption: "",
       },
       // Paso 7 — Meditación / Miserere (nuevo)
       {
@@ -266,7 +251,6 @@ export function buildDefaults() {
         speaker: "Virgen María",
         audio: true, audioUrl: "/sounds/paso_5_virgen.mp3", audioName: "paso_5_virgen.mp3", dur: 0,
         texto: "Todo esto que me has dicho, lo depositamos ahora en las manos de Dios Padre, para que sea El quien te traiga paz y consuelo. Con la esperanza cierta que las almas de tus difuntos un día resucitaran, y nos volveremos a encontrar. Por eso pedimos el eterno descanso para ellas.",
-        imagen: IMG_ESCENA_5, caption: "",
       },
             // Paso 9 — Canto Padre Nuestro + 3 Ave María + Gloria (nuevo)
       {
@@ -306,7 +290,6 @@ export function buildDefaults() {
         speaker: "Ángel de la Guarda",
         audio: true, audioUrl: "/sounds/paso_6_cierre.mp3", audioName: "paso_6_cierre.mp3", dur: 0,
         texto: "Quédate en paz luego de este momento de oración, y ya sabes aquí te estamos esperando para que vengas a encontrarte con Dios y con el alma de tus seres queridos.",
-        imagen: IMG_ESCENA_6, caption: "",
       },
     ],
     /* Camino con Dios Padre (reutiliza los modelos del camino de María).
@@ -317,7 +300,7 @@ export function buildDefaults() {
        que cambies textos, imágenes o estructura en defaults.js para que el
        navegador NO restaure una copia vieja guardada en localStorage y muestre
           siempre la última versión. */
-         version: 20,
+         version: 23,
   };
 }
 
@@ -448,6 +431,12 @@ export function buildCaminoPadre() {
       accion: "Salmo 51",
       texto: "Misericordia, Dios mío, por tu bondad, por tu inmensa compasión borra mi culpa; lava del todo mi delito, limpia mi pecado. (Meditación del Salmo 51)",
             imagen: IMG_DAVID_SALMO, caption: "",
+      imagenes: [
+        "david_salmo1.jpg",
+        "david_salmo2.jpg",
+        "david_salmo3.jpg",
+        "david_salmo4.jpg",
+      ],
     },
     /* PASO 7 — Preparación Padre Nuestro (Modelo 6: Voz de transición)
        Voz del Ángel de la Guarda, imagen estática. */
