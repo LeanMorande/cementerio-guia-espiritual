@@ -163,7 +163,7 @@ img{display:block}
    descripción debajo). El fondo oscuro va en el <span class="hl"> interno, que
    es inline + box-decoration-break:clone: sigue a la tinta y NO rellena el hueco
    al final de cada línea (así no tapa la cara de María). */
-.optmeta b{display:block;white-space:pre-line;font-family:'Cormorant Garamond',serif;font-size:clamp(22px,5.6vh,32px);font-weight:800;line-height:1.3;color:#fff;margin:0}
+.optmeta b{display:block;white-space:pre-line;font-family:'Cormorant Garamond',serif;font-size:clamp(18px,4.5vh,26px);font-weight:800;line-height:1.3;color:#fff;margin:0}
 .optmeta i{display:block;white-space:pre-line;font-style:normal;font-size:clamp(11px,2.4vh,13.5px);color:#fdfdf8;line-height:1.5;margin-top:2px}
 .optmeta .hl{background:rgba(10,9,7,.85);color:inherit;padding:1px 7px;border-radius:5px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .pronto{position:absolute;top:10px;right:10px;z-index:3;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#3a362c;border:1px solid rgba(255,255,255,.6);background:rgba(255,252,245,.85);border-radius:99px;padding:4px 9px;font-weight:600}
