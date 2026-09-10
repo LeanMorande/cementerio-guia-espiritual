@@ -125,10 +125,44 @@ img{display:block}
 .opt.picking .thumb,.opt.enabled.picking .thumb{filter:brightness(1.08)}
 @keyframes optPulse{0%,100%{box-shadow:0 0 0 3px var(--gold2),0 12px 22px -12px rgba(20,15,5,.5)}50%{box-shadow:0 0 0 6px rgba(196,150,46,.5),0 12px 22px -12px rgba(20,15,5,.5)}}
 .opt:active{transform:scale(.98)}
+
+/* ===== Intro cinematográfico (click en "Iniciar la visita") =====
+   Fases sobre el propio welcome (.splash.wfx-<fase>):
+     wfx-pick   (2s) botón presionado; el fondo sigue difuminado
+     wfx-reveal (2s) el fondo pasa de difuminado a nítido (100%) y el velo desaparece
+     wfx-zoom   (2s) la imagen se agranda 40% centrada (sensación de entrar)
+     wfx-flash  (1s) implosión de luz blanca que da paso al selector
+   Nomenclatura para depurar: F1-PICK, F2-REVEAL, F3-ZOOM, F4-FLASH. */
+.splash.wfx-pick .btn.start{animation:none;transform:scale(.96);box-shadow:0 0 0 6px rgba(196,150,46,.5),0 10px 18px -10px rgba(20,15,5,.6);transition:transform .35s ease,box-shadow .35s ease}
+/* Imagen de fondo: transiciones base para el efecto (anulan el ken-burns) */
+/* Punto de ampliación: centrado en horizontal, más abajo del centro
+   (donde está el halo de luz de fondo.avif). Bajá/súbé el "78%" para mover el
+   foco del zoom (valores más altos = más abajo). */
+.splash.wfx-pick .sbg,.splash.wfx-reveal .sbg,.splash.wfx-zoom .sbg,.splash.wfx-flash .sbg{animation:none;transform-origin:center 78%;will-change:transform,filter}
+/* F1-PICK: fondo difuminado, velo visible */
+.splash.wfx-pick .sbg{filter:blur(16px) brightness(.5) saturate(.75);transform:scale(1);transition:filter 2s ease,transform 2s ease}
+.splash.wfx-pick .sveil{opacity:1;transition:opacity 2s ease}
+/* F2-REVEAL: fondo nítido al 100% y velo desaparece */
+.splash.wfx-reveal .sbg{filter:blur(0) brightness(1) saturate(1);transform:scale(1);transition:filter 2s ease,transform 2s ease}
+.splash.wfx-reveal .sveil{opacity:0;transition:opacity 2s ease}
+.splash.wfx-reveal .scontent{opacity:0;transition:opacity .6s ease}
+/* F3-ZOOM: la imagen crece 40% centrada */
+.splash.wfx-zoom .sbg{filter:blur(0) brightness(1) saturate(1);transform:scale(1.4);transition:transform 2s ease-in-out}
+.splash.wfx-zoom .sveil{opacity:0}
+.splash.wfx-zoom .scontent{opacity:0}
+/* F4-FLASH: la imagen termina de acercar y entra la luz blanca */
+.splash.wfx-flash .sbg{filter:blur(0) brightness(1) saturate(1);transform:scale(1.42);transition:transform 1s ease-out}
+.splash.wfx-flash .sveil{opacity:0}
+.splash.wfx-flash .scontent{opacity:0}
+/* Capa de luz blanca (F4-FLASH) montada por IntroFlash */
+.introfx-flashover{position:fixed;inset:0;z-index:70;background:#fff;pointer-events:none;animation:implodeFlash 1s ease-in forwards}
+@keyframes implodeFlash{0%{opacity:0;transform:scale(1.25)}60%{opacity:.92}100%{opacity:1;transform:scale(1)}}
 .opt .thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 22%;pointer-events:none}
-.optmeta{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:30px 14px 12px;color:#fff;background:linear-gradient(to top, rgba(12,11,9,.86), rgba(12,11,9,0))}
-.optmeta b{display:block;font-family:'Cormorant Garamond',serif;font-size:clamp(18px,4.6vh,26px);font-weight:600;line-height:1.05;text-shadow:0 1px 2px rgba(0,0,0,.55)}
-.optmeta i{display:block;font-style:normal;font-size:clamp(11px,2.4vh,13.5px);color:#ece3cd;margin-top:4px;text-shadow:0 1px 2px rgba(0,0,0,.55)}
+.optmeta{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:22px 12px 12px;color:#fff;background:none;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+/* La "placa" oscura se aplica SOLO detrás de las palabras (no a toda la franja),
+   ajustándose al ancho del texto (display:inline-block). */
+.optmeta b{display:inline-block;max-width:100%;white-space:pre-line;font-family:'Cormorant Garamond',serif;font-size:clamp(22px,5.6vh,32px);font-weight:800;line-height:1.15;color:#fff;background:rgba(10,9,7,.85);padding:1px 9px;border-radius:5px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.optmeta i{display:inline-block;max-width:100%;font-style:normal;font-size:clamp(11px,2.4vh,13.5px);color:#fdfdf8;line-height:1.4;background:rgba(10,9,7,.85);padding:2px 8px;border-radius:5px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .pronto{position:absolute;top:10px;right:10px;z-index:3;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#3a362c;border:1px solid rgba(255,255,255,.6);background:rgba(255,252,245,.85);border-radius:99px;padding:4px 9px;font-weight:600}
 .opt > svg{position:absolute;top:12px;left:12px;z-index:3;color:var(--gold);filter:drop-shadow(0 0 2px rgba(0,0,0,.4));background:rgba(255,252,245,.85);border-radius:50%;padding:4px;box-sizing:content-box}
 

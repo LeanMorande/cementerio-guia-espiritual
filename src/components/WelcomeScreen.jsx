@@ -3,9 +3,11 @@
    ===================================================================== */
 import { Ic } from "./icons.jsx";
 
-export default function WelcomeScreen({ cfg, onStart, admin, onToggleAdmin }) {
+export default function WelcomeScreen({ cfg, onStart, admin, onToggleAdmin, fxPhase }) {
+  // fxPhase: "" | "PICK" | "REVEAL" | "ZOOM" | "FLASH"  (efecto de inicio)
+  const fxClass = fxPhase ? " wfx-" + fxPhase.toLowerCase() : "";
   return (
-    <div className="splash">
+    <div className={"splash" + fxClass}>
       <div className="sbg" style={{ backgroundImage: "url(" + cfg.bienvenida.fondo + ")" }} />
       <div className="sveil" />
       <button

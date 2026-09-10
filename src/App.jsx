@@ -1,6 +1,7 @@
 
 
 /* =====================================================================
+
    APP / App.jsx — orquestador principal.
    =====================================================================
    Refactorizado: sin IndexedDB, rutas /sounds/, defaults incrustados.
@@ -9,6 +10,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { buildDefaults } from "./config/defaults.js";
 import { unlockAudio } from "./lib/audio.js";
 import WelcomeScreen from "./components/WelcomeScreen.jsx";
+import { useIntroFx, IntroFlash } from "./components/IntroFx.jsx";
 import SelectScreen from "./components/SelectScreen.jsx";
 import PathScreen from "./components/PathScreen.jsx";
 import FinScreen from "./components/FinScreen.jsx";
@@ -28,6 +30,7 @@ export default function App() {
     const [introDone, setIntroDone] = useState(false);
   const [pathIdx, setPathIdx] = useState(0);
   const [transition, setTransition] = useState(null); // {tipo:"select", id, titulo}
+  const [introFx, setIntroFx] = useState(false); // efecto cinematográfico de inicio (click en Iniciar la visita)
   const toastTimer = useRef(null);
 
     const audioRef = useRef(null);
@@ -565,13 +568,32 @@ export default function App() {
   }, [route, pathIdx, getPath]);
 
   /* ---------- navegación ---------- */
-  const iniciarVisita = () => {
-    unlockAudio();
-    cancelGap();
-    setIntroDone(false);
-    setPathIdx(0);
-    setRoute("select");
+    const iniciarVisita = () => {
+    // Desbloquea el audio con el toque y arranca el efecto cinematográfico.
+    // La navegación real a "select" ocurre en finishIntroFx (al terminar el efecto).
+        unlockAudio();
+        cancelGap();
+        setIntroDone(false);
+        setPathIdx(0);
+        setIntroFx(true);
+        // Aprovechamos el efecto (6s) para PRECARGAR contenido (sin reproducir):
+        // el audio de bienvenida suena recién al aparecer el selector, pero ya
+        // queda descargado durante la transición para que arranque sin demora.
+        if (cfg.bienvenida.introAudioUrl) prefetchBlob(cfg.bienvenida.introAudioUrl);
+        // Pre-carga los primeros audios del camino (los que suenan apenas se elige),
+        // para que al llegar al selector/pasos ya estén descargados.
+        (cfg.camino || [])
+          .slice(0, 3)
+          .forEach((s) => { if (s && s.audioUrl) prefetchBlob(s.audioUrl); });
   };
+  const finishIntroFx = useCallback(() => {
+        setIntroFx(false);
+        // No forzamos introDone: así el audio de bienvenida arranca al entrar al
+        // selector (route === "select"), es decir cuando aparece la selección de caminos.
+        setRoute("select");
+  }, []);
+  // Efecto cinematográfico de inicio: devuelve la fase actual ("PICK"|"REVEAL"|"ZOOM"|"FLASH"|"").
+  const introPhase = useIntroFx(introFx, finishIntroFx);
   const skipIntro = () => {
     const a = audioRef.current;
     if (a) a.pause();
@@ -744,8 +766,8 @@ export default function App() {
         />
       )}
 
-      {route === "welcome" && ready && (
-        <WelcomeScreen cfg={cfg} onStart={iniciarVisita} admin={admin} onToggleAdmin={toggleAdmin} />
+            {route === "welcome" && ready && (
+        <WelcomeScreen cfg={cfg} onStart={iniciarVisita} admin={admin} onToggleAdmin={toggleAdmin} fxPhase={introPhase} />
       )}
 
       {route === "select" && ready && (
@@ -767,7 +789,8 @@ export default function App() {
 
       {route === "fin" && ready && <FinScreen onHome={goHome} />}
 
-      {(route === "welcome" || route === "fin") && <Watermark dark />}
+            {(route === "welcome" || route === "fin") && <Watermark dark />}
+      <IntroFlash phase={introPhase} />
             {transition && (
         <div className={"veil2 " + transition.tipo}>
           <div className="veil2-cross">

@@ -87,8 +87,8 @@ export const IMG_MISERERE_4 = "miserere_4.jpg";
 /* ------------------------------------------------ */
 /* Fondos                                           */
 /* ------------------------------------------------ */
-export const IMG_FONDO = "fondo.jpg";
-export const IMG_FIN = "fondo.jpg";
+export const IMG_FONDO = "fondo.avif";
+export const IMG_FIN = "fondo.avif";
 
 /* Identificador único para pasos (solo para estructura de datos) */
 export function uid() {
@@ -103,7 +103,7 @@ export function buildDefaults() {
     /* -------- Configuración general -------- */
     title: "Cementerio Católico de Colonia Crespo",
     subtitle: "Reza por tus difuntos",
-    bgImage: "fondo.jpg",
+    bgImage: "fondo.avif",
     bgMusic: "miserere_allegri.mp3",
 
     bienvenida: {
@@ -135,9 +135,9 @@ export function buildDefaults() {
       canto: { nombre: "Canto", img: null },
     },
     opciones: [
-      { id: "padre", titulo: "Orar con el Padre", desc: "Dios, tu Padre que tanto te ama", img: IMG_PADRE_AV, habilitado: true },
-      { id: "jesus", titulo: "Orar con Jesús", desc: "Quien muriendo en la cruz te redimió", img: IMG_JESUS_AV, habilitado: false },
-      { id: "maria", titulo: "Orar con la Virgen María", desc: "Tu madre siempre está a tu lado", img: IMG_MARIA_AV, habilitado: true },
+      { id: "padre", titulo: "Orar con\nel Padre", desc: "Dios, tu Padre que tanto te ama", img: IMG_PADRE_AV, habilitado: true },
+      { id: "jesus", titulo: "Orar con\nJesús", desc: "Quien muriendo en la cruz te redimió", img: IMG_JESUS_AV, habilitado: false },
+      { id: "maria", titulo: "Orar con\nla Virgen María", desc: "Tu madre siempre está a tu lado", img: IMG_MARIA_AV, habilitado: true },
     ],
     camino: [
       // Paso 1 — Ángel (apertura del camino)
@@ -300,7 +300,7 @@ export function buildDefaults() {
        que cambies textos, imágenes o estructura en defaults.js para que el
        navegador NO restaure una copia vieja guardada en localStorage y muestre
           siempre la última versión. */
-         version: 23,
+         version: 29,
   };
 }
 
