@@ -99,9 +99,9 @@ export default function SelectScreen({ cfg, eng, introDone, onSkip, onSelect }) 
               aria-pressed={picking === o.id}
             >
               <SmartImg className="thumb" src={o.img} alt="" />
-              <span className="optmeta">
-                <b>{o.titulo}</b>
-                <i>{o.desc}</i>
+                            <span className="optmeta">
+                <b><span className="hl">{o.titulo}</span></b>
+                <i><span className="hl">{o.desc}</span></i>
               </span>
               {!o.habilitado ? <span className="pronto">Pronto</span> : <Ic.ChR />}
             </button>

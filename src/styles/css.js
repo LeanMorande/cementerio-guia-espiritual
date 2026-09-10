@@ -158,11 +158,14 @@ img{display:block}
 .introfx-flashover{position:fixed;inset:0;z-index:70;background:#fff;pointer-events:none;animation:implodeFlash 1s ease-in forwards}
 @keyframes implodeFlash{0%{opacity:0;transform:scale(1.25)}60%{opacity:.92}100%{opacity:1;transform:scale(1)}}
 .opt .thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 22%;pointer-events:none}
-.optmeta{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:22px 12px 12px;color:#fff;background:none;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
-/* La "placa" oscura se aplica SOLO detrás de las palabras (no a toda la franja),
-   ajustándose al ancho del texto (display:inline-block). */
-.optmeta b{display:inline-block;max-width:100%;white-space:pre-line;font-family:'Cormorant Garamond',serif;font-size:clamp(22px,5.6vh,32px);font-weight:800;line-height:1.15;color:#fff;background:rgba(10,9,7,.85);padding:1px 9px;border-radius:5px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
-.optmeta i{display:inline-block;max-width:100%;font-style:normal;font-size:clamp(11px,2.4vh,13.5px);color:#fdfdf8;line-height:1.4;background:rgba(10,9,7,.85);padding:2px 8px;border-radius:5px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.optmeta{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:22px 12px 12px;color:#fff;background:none;display:block;text-align:left}
+/* .optmeta b / i son BLOQUES: cada uno ocupa su propia línea (título arriba,
+   descripción debajo). El fondo oscuro va en el <span class="hl"> interno, que
+   es inline + box-decoration-break:clone: sigue a la tinta y NO rellena el hueco
+   al final de cada línea (así no tapa la cara de María). */
+.optmeta b{display:block;white-space:pre-line;font-family:'Cormorant Garamond',serif;font-size:clamp(22px,5.6vh,32px);font-weight:800;line-height:1.3;color:#fff;margin:0}
+.optmeta i{display:block;white-space:pre-line;font-style:normal;font-size:clamp(11px,2.4vh,13.5px);color:#fdfdf8;line-height:1.5;margin-top:2px}
+.optmeta .hl{background:rgba(10,9,7,.85);color:inherit;padding:1px 7px;border-radius:5px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .pronto{position:absolute;top:10px;right:10px;z-index:3;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#3a362c;border:1px solid rgba(255,255,255,.6);background:rgba(255,252,245,.85);border-radius:99px;padding:4px 9px;font-weight:600}
 .opt > svg{position:absolute;top:12px;left:12px;z-index:3;color:var(--gold);filter:drop-shadow(0 0 2px rgba(0,0,0,.4));background:rgba(255,252,245,.85);border-radius:50%;padding:4px;box-sizing:content-box}
 
