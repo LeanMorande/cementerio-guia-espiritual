@@ -15,6 +15,7 @@ const FIRMA = "† CEMENTERIO CATÓLICO DE COLONIA CRESPO";
 
 export default function StepLayout({
   id,
+  fromFx,
     speaker,
   speaking,
     texto,
@@ -138,7 +139,7 @@ export default function StepLayout({
 
   return (
     <div
-      className={"steplayout" + (isVoice ? " voice" : " canto")}
+      className={"steplayout" + (isVoice ? " voice" : " canto") + (fromFx ? " no-fade" : "")}
       key={idx}
       style={{ animationDelay: idx === 0 ? "1.9s" : "0s" }}
     >

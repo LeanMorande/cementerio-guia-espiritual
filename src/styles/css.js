@@ -1,3 +1,7 @@
+
+
+
+
 /* =====================================================================
    STYLES / css.js — estilos globales (plantilla string inyectada).
    ===================================================================== */
@@ -85,6 +89,9 @@ img{display:block}
 
 /* ---------- pantalla clara base ---------- */
 .screen{flex:1;display:flex;flex-direction:column;min-height:0;animation:fadeUp .45s ease}
+/* El .screen que viene del efecto de selección no hace fade: lo revela el
+   overlay blanco, así el avatar y el texto del paso 1 aparecen de inmediato. */
+.screen.no-fade{animation:none}
 
 /* ---------- avatar parlante ---------- */
 .selhead{display:flex;align-items:center;gap:12px;padding:12px 16px 4px;flex-shrink:0}
@@ -157,6 +164,33 @@ img{display:block}
 /* Capa de luz blanca (F4-FLASH) montada por IntroFlash */
 .introfx-flashover{position:fixed;inset:0;z-index:70;background:#fff;pointer-events:none;animation:implodeFlash 1s ease-in forwards}
 @keyframes implodeFlash{0%{opacity:0;transform:scale(1.25)}60%{opacity:.92}100%{opacity:1;transform:scale(1)}}
+
+/* ===== Efecto de inicio de CAMINO (al elegir una tarjeta del selector) =====
+   Fases nombradas para depurar: S1-PICK, S2-TEXT, S3-IMAGE, S4-FLASH. */
+.selectfx{position:fixed;inset:0;z-index:76;display:flex;align-items:center;justify-content:center;overflow:hidden}
+/* S2-TEXT: fondo negro con el texto (reusa .veil2-* ) */
+.selectfx.s-text{background:#141416;animation:fadeIn .18s ease}
+/* S3-IMAGE: fondo negro + imagen centrada a escala máxima (sin deformar) */
+.selectfx.s-image{background:#0b0b0d;padding:8vh 8vw;box-sizing:border-box}
+
+
+.selectfx-img{width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;object-position:center;display:block;border-radius:10px}
+/* Entrada de la imagen (solo S3-IMAGE): fade sutil. No incluye escala para que
+   al pasar a FLASH no se reinicie ni "salte" de tamaño. */
+.selectfx.s-image .selectfx-img{animation:selectfxImgIn 1s ease both}
+@keyframes selectfxImgIn{from{opacity:0}to{opacity:1}}
+/* S4-FLASH: la luz SALE de la imagen. La imagen sigue visible y se aclara
+   (brillo creciente hacia blanco); encima, una capa blanca sube de opacidad.
+   El fondo oscuro del s-image se mantiene para que la aclaración se note. */
+.selectfx.s-flash{background:#0b0b0d;padding:8vh 8vw;box-sizing:border-box}
+.selectfx-img-flash{animation:selectfxImgWash 1s ease-in both}
+@keyframes selectfxImgWash{0%{filter:brightness(1)}100%{filter:brightness(2.4)}}
+.selectfx-flash{position:absolute;inset:0;background:#fff;animation:selectfxFlashIn 1s ease-in forwards}
+@keyframes selectfxFlashIn{0%{opacity:0}100%{opacity:1}}
+/* Fase de salida: el blanco ya llenó la pantalla y se DESVANECE suavemente sobre
+   el paso 1 (que ya está montado debajo). Así la luz no "corta" en seco. */
+.selectfx.s-out{background:#fff;animation:selectfxOut .45s ease forwards}
+@keyframes selectfxOut{0%{opacity:1}100%{opacity:0}}
 .opt .thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 22%;pointer-events:none}
 .optmeta{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:22px 12px 12px;color:#fff;background:none;display:block;text-align:left}
 /* .optmeta b / i son BLOQUES: cada uno ocupa su propia línea (título arriba,
@@ -235,7 +269,10 @@ img{display:block}
 }
 
 /* ---------- maquetación reutilizable del paso (30/50/20) ---------- */
-.steplayout{flex:1;position:relative;display:flex;flex-direction:column;min-height:0;gap:8px;padding:4px 14px 12px;overflow-y:auto;overflow-x:hidden;animation:fadeAppear 2s ease both}
+.steplayout{flex:1;position:relative;display:flex;flex-direction:column;min-height:0;gap:8px;padding:4px 14px 12px;overflow-y:auto;overflow-x:hidden;animation:fadeAppear .5s ease both}
+/* El paso 1 que viene del efecto de selección NO hace su propio fade: lo revela
+   el overlay blanco (.selectfx.s-out). Evita dos fades en paralelo. */
+.steplayout.no-fade{animation:none}
 .sstep{min-height:0}
 .sstep-top{flex:0 0 auto;flex-basis:30%;flex-shrink:0;display:flex;align-items:center}
 .sstep-mid{flex:1 1 0%;position:relative;min-height:0}

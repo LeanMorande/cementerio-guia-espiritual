@@ -2,6 +2,21 @@
 
 /* =====================================================================
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
    APP / App.jsx — orquestador principal.
    =====================================================================
    Refactorizado: sin IndexedDB, rutas /sounds/, defaults incrustados.
@@ -10,8 +25,9 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { buildDefaults } from "./config/defaults.js";
 import { unlockAudio } from "./lib/audio.js";
 import WelcomeScreen from "./components/WelcomeScreen.jsx";
-import { useIntroFx, IntroFlash } from "./components/IntroFx.jsx";
+import { useIntroFx, IntroFlash, useSelectFx } from "./components/IntroFx.jsx";
 import SelectScreen from "./components/SelectScreen.jsx";
+import SelectFx from "./components/SelectFx.jsx";
 import PathScreen from "./components/PathScreen.jsx";
 import FinScreen from "./components/FinScreen.jsx";
 import ConfigScreen from "./components/ConfigScreen.jsx";
@@ -29,7 +45,9 @@ export default function App() {
   const [toastMsg, setToastMsg] = useState(null);
     const [introDone, setIntroDone] = useState(false);
   const [pathIdx, setPathIdx] = useState(0);
-  const [transition, setTransition] = useState(null); // {tipo:"select", id, titulo}
+
+    const [selectFx, setSelectFx] = useState(null); // efecto de inicio de camino: {id, titulo, img}
+  const [pathFromFx, setPathFromFx] = useState(false); // primer paso tras el efecto: sin fade propio
   const [introFx, setIntroFx] = useState(false); // efecto cinematográfico de inicio (click en Iniciar la visita)
   const toastTimer = useRef(null);
 
@@ -586,25 +604,54 @@ export default function App() {
           .slice(0, 3)
           .forEach((s) => { if (s && s.audioUrl) prefetchBlob(s.audioUrl); });
   };
-  const finishIntroFx = useCallback(() => {
+    const finishIntroFx = useCallback(() => {
         setIntroFx(false);
         // No forzamos introDone: así el audio de bienvenida arranca al entrar al
         // selector (route === "select"), es decir cuando aparece la selección de caminos.
         setRoute("select");
   }, []);
-  // Efecto cinematográfico de inicio: devuelve la fase actual ("PICK"|"REVEAL"|"ZOOM"|"FLASH"|"").
-  const introPhase = useIntroFx(introFx, finishIntroFx);
+    // Al terminar el efecto de camino (fin del FLASH, con la luz ya blanca):
+    // monta el paso 1 (route="path") y arranca su audio AL MISMO TIEMPO, para que
+    // la aparición del paso y su audio queden SINCRONIZADOS. El overlay queda
+    // blanco (s-out) y se desvanece encima del paso 1, de modo que nunca se ve el
+    // selector y la luz no corta en seco.
+    // (Debe declararse ANTES de useSelectFx, que lo recibe como callback.)
+    const finishSelectFx = useCallback(() => {
+      const caminoElegido = getPath(activePathRef.current) || [];
+      const first = caminoElegido[0];
+      playIsFromGestureRef.current = true;
+      setPathIdx(0);
+      setPathFromFx(true); // el paso 1 no debe hacer su propio fade (lo revela el overlay blanco)
+      setRoute("path");
+      if (first && first.audioUrl) playUrl(first.audioUrl);
+      else stopAudio();
+      // Mantiene el blanco opaco y lo desvanece suavemente sobre el paso 1.
+      setSelectFx((s) => (s ? { ...s, out: true } : s));
+      window.setTimeout(() => setSelectFx(null), 450);
+    }, [getPath, playUrl, stopAudio]);
+      // Efecto cinematográfico de inicio: devuelve la fase actual ("PICK"|"REVEAL"|"ZOOM"|"FLASH"|"").
+    const introPhase = useIntroFx(introFx, finishIntroFx);
+    // Efecto de inicio de camino (al elegir tarjeta): "PICK"|"TEXT"|"IMAGE"|"FLASH"|"".
+    const selectPhase = useSelectFx(!!selectFx, finishSelectFx);
+
+    // El flag `pathFromFx` suprime el fade propio del paso 1 para que lo revele
+    // el overlay blanco. IMPORTANTE: no se limpia por tiempo (quitar la clase
+    // `no-fade` REINICIARÍA la animación fadeUp). Se limpia cuando se avanza/
+    // retrocede de paso (idx != 0), de modo que la navegación normal entre pasos
+    // conserva su animación y el paso 1 se mantiene revelado sin fade.
+    useEffect(() => {
+      if (pathIdx !== 0 && pathFromFx) setPathFromFx(false);
+    }, [pathIdx, pathFromFx]);
   const skipIntro = () => {
     const a = audioRef.current;
     if (a) a.pause();
     setIntroDone(true);
   };
-    const cancelGap = () => {
+        const cancelGap = () => {
     if (gapTimerRef.current) {
       clearTimeout(gapTimerRef.current);
       gapTimerRef.current = null;
     }
-    setTransition(null);
   };
 
         const onSelect = (id, auto) => {
@@ -614,7 +661,7 @@ export default function App() {
       toast("«" + o.titulo + "» estará disponible muy pronto");
       return;
     }
-        if (auto) toast("Elegimos por ti: " + o.titulo);
+                if (auto) toast("Elegimos por ti: " + o.titulo);
     // Programación defensiva: valida que el camino tenga al menos 1 paso
     // antes de intentar entrar; si no, no cambia de pantalla.
     const caminoElegido = getPath(id) || [];
@@ -627,35 +674,19 @@ export default function App() {
     // la transición de entrada al camino transcurra en silencio y el paso 1
     // no llegue "encima" del audio anterior (cambio menos brusco).
     stopAudio();
-    // Preparamos el paso 1. Hay un silencio de 2 s (transición) antes de
-    // que comience el audio: la reproducción se retrasa con un timer. Como
-    // el audio ya quedó desbloqueado por el gesto del usuario (la bienvenida
-    // y el clic), el navegador permite reproducir unos segundos después.
-        playIsFromGestureRef.current = true;
     // Establece el camino activo según la opción elegida.
     activePathRef.current = id;
-    const first = caminoElegido[0];
     setPathIdx(0);
-    setRoute("path");
-    // Transición visual al elegir: fundido con el nombre de la opción.
-    setTransition({ tipo: "select", id: o.id, titulo: o.titulo });
-    // Preacarga inmediata del inicio del camino (aprovechando los 2 s del
-    // fundido) para que al sonar el paso la descarga Blob ya esté lista.
-    caminoElegido.slice(0, 4).forEach((s) => { if (s.audioUrl) prefetchBlob(s.audioUrl); });
-    if (first && first.audioUrl) {
-      // El audio del paso 1 arranca a los 2 s (silencio de transición).
-      const tid = window.setTimeout(() => {
-        setTransition(null);
-        gapTimerRef.current = null;
-        if (routeRef.current === "path" && pathIdxRef.current === 0) {
-          playUrl(first.audioUrl);
-        }
-      }, 2000);
-      gapTimerRef.current = tid;
-    } else {
-      window.setTimeout(() => setTransition(null), 1000);
-      stopAudio();
-    }
+    // Arranca la secuencia del efecto de camino (S2-TEXT → S3-IMAGE → S4-FLASH).
+    // La navegación a "path" y el audio del paso 1 ocurren SOLO al terminar
+    // (finishSelectFx): nada de multimedia antes de que el paso esté visible.
+        // La navegacion a "path" y el audio del paso 1 ocurren al ENTRAR la fase
+    // FLASH (ver efecto de selectPhase), asi el paso 1 se monta detras del
+    // flash blanco y nunca se ve el selector.
+    setSelectFx({ id: o.id, titulo: o.titulo, img: o.img });
+    // Preacarga (sin reproducir) los primeros audios del camino elegido
+    // aprovechando los ~8 s del efecto, para que al entrar ya estén listos.
+        caminoElegido.slice(0, 4).forEach((s) => { if (s.audioUrl) prefetchBlob(s.audioUrl); });
   };
   const exitPath = () => {
     cancelGap();
@@ -771,14 +802,22 @@ export default function App() {
       )}
 
       {route === "select" && ready && (
-        <SelectScreen cfg={cfg} eng={eng} introDone={introDone} onSkip={skipIntro} onSelect={onSelect} />
+        <SelectScreen
+          cfg={cfg}
+          eng={eng}
+          introDone={introDone}
+          onSkip={skipIntro}
+          onSelect={onSelect}
+          fxActive={!!selectFx}
+        />
       )}
 
                         {route === "path" && ready && (getPath(activePathRef.current) || []).length > 0 && (
-        <PathScreen
+                <PathScreen
           camino={getPath(activePathRef.current)}
           voces={cfg.voces}
           idx={pathIdx}
+          fromFx={pathFromFx}
           onExit={exitPath}
           onNext={nextStep}
           onPrev={prevStep}
@@ -790,22 +829,9 @@ export default function App() {
       {route === "fin" && ready && <FinScreen onHome={goHome} />}
 
             {(route === "welcome" || route === "fin") && <Watermark dark />}
-      <IntroFlash phase={introPhase} />
-            {transition && (
-        <div className={"veil2 " + transition.tipo}>
-          <div className="veil2-cross">
-            <Ic.Cross s={34} />
-          </div>
-          <div className="veil2-inner">
-                        {transition.titulo && (
-                          <p className="veil2-txt">
-                            <span className="veil2-l1">Comenzando:</span>
-                            <span className="veil2-l2">El camino de la</span>
-                            <span className="veil2-l3">{transition.id === "padre" ? "Piedad del Padre" : transition.id === "jesus" ? "Redención de Jesús" : "Virgen María"}</span>
-                          </p>
-                        )}
-          </div>
-        </div>
+            <IntroFlash phase={introPhase} />
+            {selectFx && (
+        <SelectFx phase={selectPhase} id={selectFx.id} img={selectFx.img} out={selectFx.out} />
       )}
       {toastMsg && <div className="toast" key={toastMsg}>{toastMsg}</div>}
       {!ready && (

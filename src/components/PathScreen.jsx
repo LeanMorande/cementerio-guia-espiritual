@@ -3,7 +3,7 @@
    ===================================================================== */
 import StepLayout from "./StepLayout.jsx";
 import { Ic } from "./icons.jsx";
-export default function PathScreen({ camino = [], voces = {}, idx, onExit, onNext, onPrev, eng, admin }) {
+export default function PathScreen({ camino = [], voces = {}, idx, onExit, onNext, onPrev, eng, admin, fromFx }) {
   const seg = camino[idx];
   const last = idx === camino.length - 1;
   if (!seg) return null;
@@ -13,8 +13,8 @@ export default function PathScreen({ camino = [], voces = {}, idx, onExit, onNex
 
   const audioName = seg.audioUrl ? seg.audioUrl.split("/").pop() : null;
   const hasAudio = !!seg.audioUrl;
-  return (
-    <div className="screen">
+    return (
+    <div className={"screen" + (fromFx ? " no-fade" : "")}>
       <div className="phead">
         <button className="iconbtn" onClick={onExit} aria-label="Salir del camino">
           <Ic.Close s={20} />
@@ -28,8 +28,9 @@ export default function PathScreen({ camino = [], voces = {}, idx, onExit, onNex
         <span className="phead-sp" />
       </div>
 
-      <StepLayout
+            <StepLayout
         id={seg.id}
+        fromFx={fromFx}
         speaker={speaker}
                 speaking={speaking}
                 texto={seg.texto}

@@ -1,3 +1,7 @@
+
+
+
+
 /* =====================================================================
    COMPONENTS / SelectScreen.jsx — presentación del Ángel + opciones
    (30% diálogo + 70% opciones).
@@ -7,7 +11,7 @@ import Teleprompter from "./Teleprompter.jsx";
 import { Ic } from "./icons.jsx";
 import SmartImg from "./SmartImg.jsx";
 
-export default function SelectScreen({ cfg, eng, introDone, onSkip, onSelect }) {
+export default function SelectScreen({ cfg, eng, introDone, onSkip, onSelect, fxActive }) {
   const hasIntro = !!cfg.bienvenida.introAudioUrl;
   const speaking = eng.playing && hasIntro && !introDone;
   const total = cfg.countdown || 20;
@@ -29,16 +33,20 @@ export default function SelectScreen({ cfg, eng, introDone, onSkip, onSelect }) 
     }
   }, [secs, introDone, cfg.opciones, onSelect]);
 
-  // Feedback visual de selección: resalta la tarjeta elegida ~600 ms y luego
-  // navega al camino (evita toques dobles mientras tanto).
+        // S1-PICK: la tarjeta elegida queda "presionada" 500 ms y luego se dispara
+  // la secuencia del efecto de camino (App: S2-TEXT → S3-IMAGE → S4-FLASH).
   const pick = (o) => {
     if (picking) return;
     if (!o.habilitado) { onSelect(o.id, false); return; }
+    // Pausa el audio de bienvenida AL INSTANTE (sin resetear): el teleprompter
+    // se queda quieto en su línea actual y no "salta" al inicio.
+    const a = eng.audioRef && eng.audioRef.current;
+    if (a && !a.paused) a.pause();
     setPicking(o.id);
     window.setTimeout(() => {
       setPicking(null);
       onSelect(o.id, false);
-    }, 600);
+    }, 500);
   };
 
   const C = 2 * Math.PI * 14;
@@ -52,8 +60,15 @@ export default function SelectScreen({ cfg, eng, introDone, onSkip, onSelect }) 
             <SmartImg src={cfg.voces.angel.img} alt={cfg.voces.angel.nombre} />
             <b>{cfg.voces.angel.nombre}</b>
           </div>
-          <div className="sballoon">
-            {!introDone && hasIntro && eng.dur > 0 ? (
+                                        <div className="sballoon">
+                                          {picking || fxActive ? (
+                                            /* Al elegir: se OCULTA por completo el texto (ni teleprompter ni
+                                               texto estático) para que no se vea nada "justificándose".
+                                               Se combinan ambas ventanas: `picking` cubre los primeros 500ms
+                                               (antes de que onSelect active selectFx) y `fxActive` cubre toda
+                                               la secuencia del efecto (TEXT + IMAGE + FLASH). */
+                                            null
+                                          ) : !introDone && hasIntro && eng.dur > 0 ? (
               <Teleprompter text={cfg.bienvenida.introTexto} audioRef={eng.audioRef} duration={eng.dur} />
             ) : !introDone && hasIntro ? (
               /* La duración del audio de la bienvenida aún no está disponible

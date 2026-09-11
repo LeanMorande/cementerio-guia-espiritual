@@ -8,6 +8,10 @@ dist/
 *.log
 npm-debug.log*
 
+# Temporales locales
+vite_out.txt
+.continue/
+
 # Sistema
 .DS_Store
 Thumbs.db
