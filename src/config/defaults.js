@@ -123,8 +123,15 @@ export function buildDefaults() {
       introAudio: true,
       introAudioUrl: "/sounds/bienvenida_angel.mp3",
       introAudioName: "bienvenida_angel.mp3",
-      introDur: 0,
+            introDur: 0,
       fondo: IMG_FONDO,
+    },
+    /* Despedida (pantalla final del recorrido). */
+    despedida: {
+      titulo: "Quédate en paz",
+      texto: "Aquí te estamos esperando, para que vengas a encontrarte con Dios y con el alma de tus seres queridos.",
+      boton: "Volver al inicio",
+      fondo: IMG_FIN,
     },
     /* Voces / avatares reutilizables del componente */
     voces: {
@@ -300,7 +307,7 @@ export function buildDefaults() {
        que cambies textos, imágenes o estructura en defaults.js para que el
        navegador NO restaure una copia vieja guardada en localStorage y muestre
           siempre la última versión. */
-         version: 39,
+         version: 40,
   };
 }
 

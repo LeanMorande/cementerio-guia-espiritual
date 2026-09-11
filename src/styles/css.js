@@ -74,7 +74,59 @@ img{display:block}
 /* ---------- pantallas oscuras ---------- */
 .splash{position:absolute;inset:0;background:#141416;color:#f0ece2;display:flex;align-items:center;justify-content:center;overflow:hidden;animation:fadeIn .5s ease}
 .sbg{position:absolute;inset:-8%;background-size:cover;background-position:center;filter:blur(16px) brightness(.4) saturate(.75);animation:kb 26s ease-in-out infinite alternate}
+/* Fondo de la pantalla FINAL (despedida): nítido, fijo y sin ken-burns.
+   A diferencia de .sbg, cubre todo el contenedor sin el inset negativo del
+   ken-burns, y NO lleva blur ni animación. */
+.sbg-fin{position:absolute;inset:0;background-size:cover;background-position:center}
 .sveil{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 42%,rgba(20,20,22,.15),rgba(12,12,14,.82) 78%)}
+/* Velo de la pantalla final: un poco más oscuro para asegurar legibilidad
+   del texto blanco sobre la foto nítida. */
+.sveil-fin{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 42%,rgba(20,20,22,.28),rgba(10,10,12,.86) 78%)}
+/* ===== Pantalla FINAL en 2 fases (FinScreen) =====
+   Fase 1 (meditación, 0→6 s): fondo oscuro difuminado + velo; solo texto + cuenta.
+   Fase 2 (tras 6 s): el fondo pasa a nítido (.sbg-fin imagen), velo se aclara un
+   poco, aparece la cruz/texto con un fade suave y el footer con feedback + botón.
+   La transición suave la dan las propiedades transition de .fin-bg / .fin-veil. */
+
+/* Fondo: arranca como .sbg (blur + ken-burns) y, con .listo, queda nítido y fijo
+   (equivalente visual a .sbg-fin): sin blur ni animación. */
+.sbg.fin-bg{transition:filter 1.1s ease,transform 1.1s ease,inset 1.1s ease}
+.sbg.fin-bg.listo{inset:0;filter:none;animation:none;transform:none}
+
+/* Velo: un poco más oscuro en Fase 1 (foto difuminada) y más legible en Fase 2. */
+.sveil.fin-veil{transition:background 1.1s ease}
+.sveil.fin-veil.listo{background:radial-gradient(ellipse at 50% 42%,rgba(20,20,22,.28),rgba(10,10,12,.86) 78%)}
+
+/* Bloque de paz (cruz + título + texto + cuenta). Al pasar a Fase 2 se desvanece. */
+.fin-paz{display:flex;flex-direction:column;align-items:center;transition:opacity .6s ease,transform .6s ease}
+.fin-paz.salir{opacity:0;transform:translateY(-6px);pointer-events:none;position:absolute}
+
+/* Anillo de cuenta regresiva sobre fondo oscuro (reusa .cdring del selector,
+   pero adapta los colores al splash). */
+.fin-count{margin-top:26px;font-size:15px;letter-spacing:.04em;color:rgba(245,241,232,.8);text-align:center}
+
+/* Footer de Fase 2 (feedback + botón). Aparece con un fade subiendo. */
+.fin-footer{width:100%;display:flex;flex-direction:column;align-items:center;animation:fadeUp .6s ease both}
+
+/* Tarjeta de feedback: fondo oscuro semitransparente con desenfoque para que el
+   texto e insumos se lean nitidos sobre la foto (sbg-fin) de la Fase 2. */
+.feedback-card{background:rgba(0,0,0,.7);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);padding:20px;border-radius:16px;margin:20px 0;display:flex;flex-direction:column;align-items:center;gap:15px;width:100%;max-width:450px;box-sizing:border-box;border:1px solid rgba(255,255,255,.15);animation:fadeUp .5s ease both}
+/* Formulario en columna: pregunta -> textarea -> boton. */
+.feedback-instruccion{font-size:15px;font-weight:600;line-height:1.4;text-align:center;color:#fff;margin-bottom:15px}
+.feedback-form{display:flex;flex-direction:column;width:100%;gap:10px}
+.feedback-label{font-size:13px;font-weight:600;letter-spacing:.02em;color:rgba(245,241,232,.9);text-align:center}
+.feedback-ta{width:100%;min-height:78px;resize:vertical;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(20,19,17,.55);color:#f5f1e8;font-family:inherit;font-size:14px;line-height:1.45;padding:10px 12px;outline:none;transition:border-color .2s,box-shadow .2s;box-sizing:border-box}
+.feedback-ta::placeholder{color:rgba(245,241,232,.4)}
+.feedback-ta:focus{border-color:#d4af37;box-shadow:0 0 0 3px rgba(212,175,55,.18)}
+.fin-stars{display:flex;gap:6px;justify-content:center;align-items:center}
+.fin-star-btn{appearance:none;background:transparent;border:0;padding:2px;line-height:0;cursor:pointer;border-radius:6px;color:rgba(245,241,232,.26);transition:color .25s ease,transform .18s ease}
+.fin-star-btn:hover,.fin-star-btn:focus-visible{transform:scale(1.14)}
+.fin-star-btn.on{color:#d4af37} /* dorado sutil para estrellas activas */
+.fin-star-btn svg{display:block}
+.fin-thanks{margin:0;font-size:13px;letter-spacing:.3px;color:rgba(245,241,232,.72);text-align:center;animation:fadeIn .4s ease}
+
+/* Desplegable de sugerencia (1–4 estrellas). */
+
 .scontent{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:28px;max-width:380px;animation:fadeUp .7s ease;width:100%}
 .semb{width:86px;height:86px;border-radius:50%;border:1px solid rgba(201,169,97,.5);display:flex;align-items:center;justify-content:center;color:var(--gold2);animation:emb 3.4s ease-in-out infinite;margin-bottom:18px}
 .stitle{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(30px,8vw,42px);line-height:1.08}

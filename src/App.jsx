@@ -826,7 +826,7 @@ export default function App() {
         />
       )}
 
-      {route === "fin" && ready && <FinScreen onHome={goHome} />}
+      {route === "fin" && ready && <FinScreen cfg={cfg} onHome={goHome} />}
 
             {(route === "welcome" || route === "fin") && <Watermark dark />}
             <IntroFlash phase={introPhase} />

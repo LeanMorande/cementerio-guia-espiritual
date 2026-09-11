@@ -56,9 +56,16 @@ export const Ic = {
       <path d="m5 19 5.5-5.5 3 3L17 13l4 4" />
     </svg>
   ),
-  Cross: (p) => (
+    Cross: (p) => (
     <svg {...base(p)} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
       <path d="M12 3v18M7 8.5h10" />
+    </svg>
+  ),
+    /* Estrella rellena (feedback). Usa currentColor: el color lo controla el CSS
+     (.fin-star-btn / .on), así relleno y vacío comparten el mismo path. */
+  Star: (p) => (
+    <svg {...base(p)}>
+      <path d="M12 2.6l2.9 5.88 6.49.94-4.7 4.58 1.11 6.46L12 17.42l-5.8 3.04 1.11-6.46-4.7-4.58 6.49-.94L12 2.6z" />
     </svg>
   ),
   Qr: (p) => (
@@ -76,3 +83,4 @@ export const Ic = {
     </svg>
   ),
 };
+
