@@ -34,7 +34,7 @@ export default function FinScreen({ cfg, onHome }) {
   // Envía el feedback al Cloudflare Worker. Lee `rating` y `comment` del estado.
   const handleSendFeedback = async () => {
     try {
-      await fetch("https://ccc.camposanto.workers.dev/", {
+      await fetch("https://ccc.camposanto.workers.dev/api/feedback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -61,7 +61,7 @@ export default function FinScreen({ cfg, onHome }) {
         className={fase === 2 ? "sbg-fin" : "sbg"}
         style={{ backgroundImage: "url('/fondo.avif')" }}
       />
-      <div className="sveil" />
+      <div className={fase === 2 ? "sveil sveil-fin" : "sveil"} />
 
       <div className="scontent">
         {/* FASE 1: cruz + título + texto + cuenta regresiva.
@@ -80,14 +80,15 @@ export default function FinScreen({ cfg, onHome }) {
 
         {/* FASE 2: tarjeta de feedback. */}
         {fase === 2 && (
-          <div className="feedback-card">
-            {/* Instrucción clara para adultos mayores. */}
-            <p
-              className="feedback-instruccion"
-              style={{ color: "#fff", marginBottom: "15px" }}
-            >
-              ¿Qué te pareció el recorrido? Toca una estrella para calificar.
-            </p>
+                    <div className="feedback-card">
+            {/* Pregunta general: visible SOLO antes de elegir una estrella.
+                Al seleccionar una valoración desaparece y deja paso a la
+                pregunta correspondiente a esa puntuación. */}
+            {rating === 0 && !submitted && (
+              <p className="feedback-instruccion">
+                ¿Qué te pareció el recorrido? Toca una estrella para calificar.
+              </p>
+            )}
 
             {/* Estrellas interactuables. */}
             <div
@@ -111,7 +112,7 @@ export default function FinScreen({ cfg, onHome }) {
                     onBlur={() => setHover(0)}
                     onClick={() => setRating(n)}
                   >
-                    <Ic.Star s={24} />
+                    <Ic.Star s={32} />
                   </button>
                 );
               })}
@@ -127,9 +128,10 @@ export default function FinScreen({ cfg, onHome }) {
                 </label>
                 <textarea
                   id="fin-comment"
-                  className="feedback-ta"
+                                    className="feedback-ta"
                   rows={3}
                   maxLength={500}
+                  placeholder="Escribe aquí tu opinión… cuéntanos qué te gustó o qué podríamos mejorar."
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                 />

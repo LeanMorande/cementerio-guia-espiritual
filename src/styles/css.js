@@ -81,7 +81,7 @@ img{display:block}
 .sveil{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 42%,rgba(20,20,22,.15),rgba(12,12,14,.82) 78%)}
 /* Velo de la pantalla final: un poco más oscuro para asegurar legibilidad
    del texto blanco sobre la foto nítida. */
-.sveil-fin{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 42%,rgba(20,20,22,.28),rgba(10,10,12,.86) 78%)}
+.sveil-fin{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,rgba(14,14,16,.62),rgba(8,8,10,.9) 82%)}
 /* ===== Pantalla FINAL en 2 fases (FinScreen) =====
    Fase 1 (meditación, 0→6 s): fondo oscuro difuminado + velo; solo texto + cuenta.
    Fase 2 (tras 6 s): el fondo pasa a nítido (.sbg-fin imagen), velo se aclara un
@@ -110,18 +110,18 @@ img{display:block}
 
 /* Tarjeta de feedback: fondo oscuro semitransparente con desenfoque para que el
    texto e insumos se lean nitidos sobre la foto (sbg-fin) de la Fase 2. */
-.feedback-card{background:rgba(0,0,0,.7);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);padding:20px;border-radius:16px;margin:20px 0;display:flex;flex-direction:column;align-items:center;gap:15px;width:100%;max-width:450px;box-sizing:border-box;border:1px solid rgba(255,255,255,.15);animation:fadeUp .5s ease both}
+.feedback-card{background:rgba(0,0,0,.78);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);padding:26px 22px;border-radius:18px;margin:20px 0;display:flex;flex-direction:column;align-items:center;gap:18px;width:100%;max-width:420px;box-sizing:border-box;border:1px solid rgba(255,255,255,.12);animation:fadeUp .5s ease both}
 /* Formulario en columna: pregunta -> textarea -> boton. */
-.feedback-instruccion{font-size:15px;font-weight:600;line-height:1.4;text-align:center;color:#fff;margin-bottom:15px}
-.feedback-form{display:flex;flex-direction:column;width:100%;gap:10px}
-.feedback-label{font-size:13px;font-weight:600;letter-spacing:.02em;color:rgba(245,241,232,.9);text-align:center}
-.feedback-ta{width:100%;min-height:78px;resize:vertical;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(20,19,17,.55);color:#f5f1e8;font-family:inherit;font-size:14px;line-height:1.45;padding:10px 12px;outline:none;transition:border-color .2s,box-shadow .2s;box-sizing:border-box}
-.feedback-ta::placeholder{color:rgba(245,241,232,.4)}
+.feedback-instruccion{font-size:15px;font-weight:600;line-height:1.4;text-align:center;color:#fff;margin:0}
+.feedback-form{display:flex;flex-direction:column;width:100%;gap:12px}
+.feedback-label{font-size:14px;font-weight:600;letter-spacing:.02em;color:rgba(245,241,232,.94);text-align:center;line-height:1.4}
+.feedback-ta{width:100%;min-height:78px;resize:vertical;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(20,19,17,.45);color:#f5f1e8;font-family:inherit;font-size:14px;line-height:1.45;padding:10px 12px;outline:none;transition:border-color .2s,box-shadow .2s;box-sizing:border-box}
+.feedback-ta::placeholder{color:rgba(245,241,232,.42)}
 .feedback-ta:focus{border-color:#d4af37;box-shadow:0 0 0 3px rgba(212,175,55,.18)}
-.fin-stars{display:flex;gap:6px;justify-content:center;align-items:center}
-.fin-star-btn{appearance:none;background:transparent;border:0;padding:2px;line-height:0;cursor:pointer;border-radius:6px;color:rgba(245,241,232,.26);transition:color .25s ease,transform .18s ease}
-.fin-star-btn:hover,.fin-star-btn:focus-visible{transform:scale(1.14)}
-.fin-star-btn.on{color:#d4af37} /* dorado sutil para estrellas activas */
+.fin-stars{display:flex;gap:12px;justify-content:center;align-items:center}
+.fin-star-btn{appearance:none;background:transparent;border:0;padding:2px;line-height:0;cursor:pointer;border-radius:8px;color:rgba(245,241,232,.24);transition:color .2s ease,transform .18s ease}
+.fin-star-btn:hover,.fin-star-btn:focus-visible{transform:scale(1.1);color:rgba(230,194,90,.7)}
+.fin-star-btn.on{color:#e6c25a} /* dorado sólido para estrellas activas */
 .fin-star-btn svg{display:block}
 .fin-thanks{margin:0;font-size:13px;letter-spacing:.3px;color:rgba(245,241,232,.72);text-align:center;animation:fadeIn .4s ease}
 
