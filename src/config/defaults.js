@@ -24,6 +24,10 @@ export const IMG_PRODIGO_4 = "prodigo_4.avif";
 export const IMG_PRODIGO_5 = "prodigo_5.avif";
 export const IMG_ABRAZO_PADRE = "abrazo_padre.jpg";
 export const IMG_DAVID_SALMO = "david_salmo1.jpg";
+/* Imágenes del CAMINO DE JESÚS (public/). Coloca estos archivos en /public/. */
+export const IMG_JESUS_CRUZ = "jesus_cruz.jpg";
+export const IMG_JESUS_HUERTO = "jesus_huerto.jpg";
+export const IMG_JESUS_ALMA = "jesus_alma.jpg";
 export const IMG_ANGEL_GUARDA_2 = "angel_guarda_2.jpg";
 export const IMG_CRUZ_CIELO = "cruz_cielo.jpg";
 export const IMG_REZO_FINAL = "rezo_final.jpg";
@@ -143,7 +147,7 @@ export function buildDefaults() {
     },
     opciones: [
       { id: "padre", titulo: "Orar con\nel Padre", desc: "Dios, tu Padre que tanto te ama", img: IMG_PADRE_AV, habilitado: true },
-      { id: "jesus", titulo: "Orar con\nJesús", desc: "Quien muriendo en la cruz te redimió", img: IMG_JESUS_AV, habilitado: false },
+      { id: "jesus", titulo: "Orar con\nJesús", desc: "Quien muriendo en la cruz te redimió", img: IMG_JESUS_AV, habilitado: true },
       { id: "maria", titulo: "Orar con\nla Virgen María", desc: "Tu madre siempre está a tu lado", img: IMG_MARIA_AV, habilitado: true },
     ],
     camino: [
@@ -302,12 +306,14 @@ export function buildDefaults() {
     /* Camino con Dios Padre (reutiliza los modelos del camino de María).
        Se completa por separado para poder activarlo en Configuración. */
     caminoPadre: buildCaminoPadre(),
+    /* Camino con Jesús (reutiliza los modelos del camino de María). */
+    caminoJesus: buildCaminoJesus(),
         countdown: 20,
     /* Versión de contenido del desarrollador. Incluyelo/incrémentalo cada vez
        que cambies textos, imágenes o estructura en defaults.js para que el
        navegador NO restaure una copia vieja guardada en localStorage y muestre
           siempre la última versión. */
-         version: 40,
+         version: 43,
   };
 }
 
@@ -544,11 +550,141 @@ export function buildCaminoPadre() {
           { t: 118, sub: "Amén." },
         ],
       },
-      imagen: IMG_LUZ_MUNDO, caption: "",
+            imagen: IMG_LUZ_MUNDO, caption: "",
       imagenes: [
         IMG_LUZ_MUNDO,
         IMG_LUZ_MUNDO1,
       ],
+    },
+  ];
+}
+
+/* =====================================================================
+   CAMINO CON JESÚS
+   =====================================================================
+   Reutiliza los modelos del "Camino de María". Se irá completando por
+   pasos. El Paso 2 reutiliza el canto de Trinidad (modelo 2: canto con
+   imagen estática) del camino de María.
+   ===================================================================== */
+export function buildCaminoJesus() {
+  return [
+    /* PASO 1 — Apertura (Modelo 1: Apertura voz)
+       Voz del Ángel, sin imagen central (modo-voz). */
+    {
+      uid: uid(), id: "j1_voz", voz: "angel", tipo: "modo-voz",
+      speaker: "Ángel",
+      audio: true, audioUrl: "/sounds/j1_angel.mp3", audioName: "j1_angel.mp3", dur: 0,
+      texto: "Escogiste a Jesús para que te acompañe en esta visita al cementerio. Pero antes de empezar la oración, te pido que mires a tu alrededor y te hagas una pregunta. ¿Por qué todos ellos están muertos y tú estás vivo? ¿Por qué no es al revés? Déjame que te diga una verdad que necesitas saber ahora mismo. Si hoy todavía tú estás vivo, es porque todavía hay una misión que tienes que cumplir en esta tierra, antes de morir. ¡No te asustes! Es la pura realidad. Y las cosas importantes de la vida es mejor conocerlas a tiempo. Dios Padre te ha creado para que lo conozcas, conociéndolo lo ames y amándolo puedas servirlo en los hermanos necesitados, cumpliendo su voluntad. Todo el sentido de tu vida se resume en: conocer, amar y servir a Dios. Dios Padre sabe que esto te puede resultar complicado. Es por eso que mando a Jesús al mundo para que, con su vida, pasión, muerte y resurrección, te enseñara el camino para llegar al cielo. Perdóname por ser tan reiterativo, pero vuelvo a mi pregunta inicial. ¿Por qué hoy tú estás vivo? ¿Por qué no te has muerto aún? Te respondo: porque Dios Padre te está dando la posibilidad de completar con éxito tu misión en la tierra. ¿Y cuál es esa misión? Conocer a Dios, amarlo y servirlo en las personas más necesitadas, cumpliendo su santa voluntad. Dicho esto, iniciemos la oración.",
+    },
+    /* PASO 2 — Canto Trinidad (Modelo 2: Canto con imagen estática)
+       Copiado del Paso 2 del Camino de María (m2_canto), con nuevo uid/id. */
+    {
+      uid: uid(), id: "j2_copia_maria", voz: "canto", tipo: "modo-canto",
+      speaker: "Canto",
+      audio: true, audioUrl: "/sounds/canto_trinidad.mp3", audioName: "canto_trinidad.mp3", dur: 0,
+      accion: "¡A Ti la Alabanza y la Gloria,\nOh Santa Trinidad!",
+      texto: "¡A Ti la Alabanza y la Gloria,\nOh Santa Trinidad!",
+      imagen: IMG_MANOS_ORANTES, caption: "",
+    },
+    /* PASO 3 — Continuación (Modelo 1: Voz, sin imagen central) */
+    {
+      uid: uid(), id: "j3_voz", voz: "angel", tipo: "modo-voz",
+      speaker: "Ángel",
+      audio: true, audioUrl: "/sounds/j3_angel.mp3", audioName: "j3_angel.mp3", dur: 0,
+            texto: "Ahora ya estás en oración, te has puesto bajo la mirada de Dios Padre para visitar a tus difuntos, acompañado por Jesús. El cementerio, que a primera vista es un lugar de muerte, puede convertirse para ti, en este momento, en un lugar de vida y de esperanza en la resurrección. A medida que tú recorres el camposanto, reconoces las tumbas de parientes, amigos y vecinos, de entre los cuales algunos murieron en paz, otros odiando hasta el final de sus días. Algunos fueron buena gente, otros ladrones y asesinos. La muerte los igualo a todos. Pero en el más allá, no todo da igual. Tú tienes tiempo para cambiar mientras estas vivo, cuando llega la muerte ya no hay nada más que hacer. Esta visita puede ser para ti una buena ocasión para dejar que Jesús toque tu alma y puedas arrepentirte de los males cometidos e iniciar una nueva vida. Jesús con su pasión, muerte y resurrección, te ha liberado de las garras del demonio y ahora te abre la puerta para transitar un camino de santidad que podría terminar en la gloria del cielo. Depende de ti. Te invito a que entregues tu corazón al Señor que tanto te ama y que muriendo en cruz destruyo la muerte y abrió la puerta para tu resurrección final.",
+    },
+    /* PASO 4 — Canto (Modelo 2: Canto con imagen estática) */
+    {
+      uid: uid(), id: "j4_canto", voz: "canto", tipo: "modo-canto",
+      speaker: "Canto",
+      accion: "Jesús murió por amor a ti",
+      audio: true, audioUrl: "/sounds/j4_canto.mp3", audioName: "j4_canto.mp3", dur: 0,
+      imagen: IMG_JESUS_CRUZ, contain: true,
+    },
+    /* PASO 5 — Voz de Jesús (Modelo 1: Voz, sin imagen central) */
+    {
+      uid: uid(), id: "j5_voz", voz: "jesus", tipo: "modo-voz",
+      speaker: "Jesús",
+      audio: true, audioUrl: "/sounds/j5_jesus.mp3", audioName: "j5_jesus.mp3", dur: 0,
+      texto: "Toda mi vida fue una constante obediencia a la voluntad de mi Padre. Cuando Él me pidió que abrazara la cruz, para que a través de mi muerte y resurrección tú pudieras tener la oportunidad de llegar al cielo, lo hice por amor a ti, porque tú vales mucho para mí. Yo estoy junto a ti en cada momento de tu historia y conozco todos tus sacrificios, tus problemas, tus desilusiones. Sé cuánto te cuesta sobreponerte a la muerte de tus seres queridos, a la enfermedad que está dañando tu cuerpo y tu alma. Conozco la soledad en la que te encuentras y la desesperación que asfixia tu corazón. Yo soy quien junta tus lágrimas amargas antes que toquen la almohada. Déjame contarte algo importante. Aquella noche del jueves santo, cuando fui a orar al huerto de los olivos, en medio de la agonía, clamé a mi Padre para que me ayudara a soportar el peso de la cruz, que fue el precio de tu redención. Como seguramente tú también lo haces, yo le pedí a Dios Padre que apartara de mí la prueba y el dolor que me hacían temblar. En aquella noche terrible, experimenté que sólo rezando se pueden soportar las pruebas y los dolores en la vida. Por eso escúchame bien. Nunca enfrentes las cruces con tus fuerzas solas, siempre hazlo de la mano del Padre. Reza insistentemente hasta llegar al momento de la mayor libertad y amor, cuando tu corazón cede, y le dice a Dios Padre, que se cumpla tu voluntad y no la mía. Te propongo que hagas tuyas estas palabras que en medio de mi agonía le entregué a mi amado Padre.",
+    },
+    /* PASO 6 — Canto (Modelo 2: Canto con imagen estática)
+       El audio real dura hasta ~5:07, pero `dur: 0` lo autodetecta. */
+    {
+      uid: uid(), id: "j6_canto", voz: "canto", tipo: "modo-canto",
+      speaker: "Canto",
+      accion: "Jesús reza en el Huerto",
+      audio: true, audioUrl: "/sounds/j6_canto.mp3", audioName: "j6_canto.mp3", dur: 0,
+      imagen: IMG_JESUS_HUERTO, contain: true,
+    },
+    /* PASO 7 — Voz de Jesús (Modelo 1: Voz, sin imagen central) */
+    {
+      uid: uid(), id: "j7_voz", voz: "jesus", tipo: "modo-voz",
+      speaker: "Jesús",
+      audio: true, audioUrl: "/sounds/j7_jesus.mp3", audioName: "j7_jesus.mp3", dur: 0,
+      texto: "Todos mis sufrimientos los entregué por ti, por eso ahora siento sed de tu oración, de tu cercanía y de tu amistad. Este cementerio, que en apariencia es un lugar de muerte, se está convirtiendo para ti en un jardín de gracia y de esperanza en la resurrección. Tú puedes cambiar de vida. Anímate a dejar tu corazón en mis manos. Yo te ayudaré a llevar la cruz. Con toda la fuerza de tu corazón, pide la gracia de una sincera conversión, a través de este canto.",
+    },
+    /* PASO 8 — Canto (Modelo 2: Canto con imagen estática) */
+    {
+      uid: uid(), id: "j8_canto", voz: "canto", tipo: "modo-canto",
+      speaker: "Canto",
+            accion: "Hazme igual a ti Jesús",
+      audio: true, audioUrl: "/sounds/j8_canto.mp3", audioName: "j8_canto.mp3", dur: 0,
+            imagen: IMG_JESUS_CRUZ, contain: true,
+    },
+    /* PASO 9 — Ángel (Modelo 1: Voz, sin imagen central) */
+    {
+      uid: uid(), id: "j9_voz", voz: "angel", tipo: "modo-voz",
+      speaker: "Ángel",
+      audio: true, audioUrl: "/sounds/j9_angel.mp3", audioName: "j9_angel.mp3", dur: 0,
+      texto: "Estás iniciando un nuevo camino de libertad en tu vida, lejos del pecado y cerca de Jesús. Como al comienzo de la oración, te pregunto nuevamente. ¿Por qué aún estás vivo? Estás vivo porque tienes una misión que completar antes de morir. Tienes que ser mejor persona. Una gran esperanza nace delante de ti en este momento, una vida nueva puedes iniciar con la ayuda del Señor. No pienses que es imposible, reza, confiésate, comulga, pide a Dios con insistencia que te ayude a cambiar. Prepara bien tu corazón con obras de caridad, porque ya está llegando el día en el que tendrás que venir a morar en este cementerio. Que ese día te encuentre bien dispuesto para que el paso a la eternidad sea con mucha paz. Ahora reza por tu alma, para que llegue bien preparada al momento de la muerte. Y también reza por las almas de tus seres queridos, aquí sepultados, en particular, por los que hoy todavía se hallan en el purgatorio esperando el encuentro definitivo con Dios.",
+    },
+    /* PASO 10 — Copia del Paso 8 del Camino del Padre (Padre Nuestro · 3 Ave María · Gloria)
+       Copiado del Paso 8 (p8_canto) de buildCaminoPadre(), con nuevo uid/id. */
+    {
+      uid: uid(), id: "j10_copia_padre", voz: "canto", tipo: "modo-canto",
+      speaker: "Canto",
+      audio: true, audioUrl: "/sounds/padre_nuestro_ave_gloria.mp3", audioName: "padre_nuestro_ave_gloria.mp3", dur: 261,
+      texto: "Padre Nuestro\nAve María (3)\nGloria",
+      imagen: IMG_PADRE_NUESTRO, caption: "",
+      /* Transición de 3 imágenes. El audio padre_nuestro_ave_gloria.mp3
+         dura 4:21 (261 s). Las imágenes cambian en los instantes exactos en
+         que cambia cada oración (se usa `slideTimes`):
+           0:00–1:04  Padre Nuestro → IMG_PADRE_NUESTRO  (inicio 0s)
+           1:04–3:48  3 Ave María    → IMG_AVE_MARIA     (64s, se mantiene)
+           3:48–4:21  Gloria         → IMG_GLORIA        (228s)
+         Coloca estos archivos en /public/. */
+      imagenes: [
+        IMG_PADRE_NUESTRO,
+        IMG_AVE_MARIA,
+        IMG_GLORIA,
+      ],
+      /* Segundos en que inicia cada imagen (debe coincidir con `imagenes`). */
+      slideTimes: [0, 64, 228],
+      /* Teleprompter de secciones: cada línea se ilumina mientras se canta
+         esa parte del audio (efecto "pasado / activo / futuro"). */
+      teleprompter: {
+        keyframes: [
+          { t: 0, sub: "Padre Nuestro" },
+          { t: 64, sub: "Ave María" },
+          { t: 228, sub: "Gloria" },
+        ],
+      },
+      contain: true,
+    },
+    /* PASO 11 — Ángel (Modelo 1: Voz, sin imagen central) */
+    {
+      uid: uid(), id: "j11_voz", voz: "angel", tipo: "modo-voz",
+      speaker: "Ángel",
+      audio: true, audioUrl: "/sounds/j11_angel.mp3", audioName: "j11_angel.mp3", dur: 0,
+      texto: "Has llegado al final de este camino acompañado por Jesús, te propongo que te consagres a Él con la oración del Alma de Cristo. Y regresa pronto al cementerio, para rezar por tus difuntos y por tu alma.",
+    },
+    /* PASO 12 — Canto (Modelo 2: Canto con imagen estática) */
+    {
+      uid: uid(), id: "j12_canto", voz: "canto", tipo: "modo-canto",
+      speaker: "Canto", accion: "Alma de Cristo",
+      audio: true, audioUrl: "/sounds/j12_canto.mp3", audioName: "j12_canto.mp3", dur: 0,
+      imagen: IMG_JESUS_ALMA, contain: true,
     },
   ];
 }
