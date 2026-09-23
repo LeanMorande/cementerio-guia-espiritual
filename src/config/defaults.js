@@ -33,7 +33,54 @@ export const IMG_CRUZ_CIELO = "cruz_cielo.jpg";
 export const IMG_REZO_FINAL = "rezo_final.jpg";
 export const IMG_LUZ_MUNDO = "luz_mundo.jpg";
 export const IMG_LUZ_MUNDO1 = "luz_mundo1.jpg";
-/* Imagen propia del paso p2_canto (Camino Padre, invocacion inicial). En webp. */
+/* Slides del paso j4_canto (Camino de Jesús): 14 imágenes .webp en /public/.
+   El audio j4_canto.mp3 se reparte en partes iguales entre las 14 imágenes. */
+export const IMG_VJ_1 = "vj1.webp";
+export const IMG_VJ_2 = "vj2.webp";
+export const IMG_VJ_3 = "vj3.webp";
+export const IMG_VJ_4 = "vj4.webp";
+export const IMG_VJ_5 = "vj5.webp";
+export const IMG_VJ_6 = "vj6.webp";
+export const IMG_VJ_7 = "vj7.webp";
+export const IMG_VJ_8 = "vj8.webp";
+export const IMG_VJ_9 = "vj9.webp";
+export const IMG_VJ_10 = "vj10.webp";
+export const IMG_VJ_11 = "vj11.webp";
+export const IMG_VJ_12 = "vj12.webp";
+export const IMG_VJ_13 = "vj13.webp";
+export const IMG_VJ_14 = "vj14.webp";
+/* Slides del paso j6_canto (Camino de Jesús): 7 imágenes .webp en /public/.
+   El audio j6_canto.mp3 se reparte en partes iguales entre las 7 imágenes. */
+export const IMG_JESUS_HUERTO_1 = "jesus_huerto1.webp";
+export const IMG_JESUS_HUERTO_2 = "jesus_huerto2.webp";
+export const IMG_JESUS_HUERTO_3 = "jesus_huerto3.webp";
+export const IMG_JESUS_HUERTO_4 = "jesus_huerto4.webp";
+export const IMG_JESUS_HUERTO_5 = "jesus_huerto5.webp";
+export const IMG_JESUS_HUERTO_6 = "jesus_huerto6.webp";
+export const IMG_JESUS_HUERTO_7 = "jesus_huerto7.webp";
+/* Slides del paso j12_canto (Camino de Jesús, Alma de Cristo): 3 imágenes
+   .webp en /public/. El audio j12_canto.mp3 se reparte en partes iguales. */
+export const IMG_AJ_1 = "AJ1.webp";
+export const IMG_AJ_2 = "AJ2.webp";
+export const IMG_AJ_3 = "AJ3.webp";
+/* Slides del paso j8_canto (Camino de Jesús, "Hazme igual a ti Jesús"):
+   14 imágenes .webp en /public/, con los cambios sincronizados al audio
+   j8_canto.mp3 mediante `slideTimes` (los archivos traen el rango en el
+   nombre; se renombraron a j8_1.webp … j8_14.webp). */
+export const IMG_J8_1 = "j8_1.webp";
+export const IMG_J8_2 = "j8_2.webp";
+export const IMG_J8_3 = "j8_3.webp";
+export const IMG_J8_4 = "j8_4.webp";
+export const IMG_J8_5 = "j8_5.webp";
+export const IMG_J8_6 = "j8_6.webp";
+export const IMG_J8_7 = "j8_7.webp";
+export const IMG_J8_8 = "j8_8.webp";
+export const IMG_J8_9 = "j8_9.webp";
+export const IMG_J8_10 = "j8_10.webp";
+export const IMG_J8_11 = "j8_11.webp";
+export const IMG_J8_12 = "j8_12.webp";
+export const IMG_J8_13 = "j8_13.webp";
+export const IMG_J8_14 = "j8_14.webp";
 export const IMG_PASO2_PADRE = "paso2_padre_img.webp";
 
 /* ------------------------------------------------ */
@@ -313,7 +360,7 @@ export function buildDefaults() {
        que cambies textos, imágenes o estructura en defaults.js para que el
        navegador NO restaure una copia vieja guardada en localStorage y muestre
           siempre la última versión. */
-         version: 43,
+         version: 47,
   };
 }
 
@@ -593,13 +640,33 @@ export function buildCaminoJesus() {
       audio: true, audioUrl: "/sounds/j3_angel.mp3", audioName: "j3_angel.mp3", dur: 0,
             texto: "Ahora ya estás en oración, te has puesto bajo la mirada de Dios Padre para visitar a tus difuntos, acompañado por Jesús. El cementerio, que a primera vista es un lugar de muerte, puede convertirse para ti, en este momento, en un lugar de vida y de esperanza en la resurrección. A medida que tú recorres el camposanto, reconoces las tumbas de parientes, amigos y vecinos, de entre los cuales algunos murieron en paz, otros odiando hasta el final de sus días. Algunos fueron buena gente, otros ladrones y asesinos. La muerte los igualo a todos. Pero en el más allá, no todo da igual. Tú tienes tiempo para cambiar mientras estas vivo, cuando llega la muerte ya no hay nada más que hacer. Esta visita puede ser para ti una buena ocasión para dejar que Jesús toque tu alma y puedas arrepentirte de los males cometidos e iniciar una nueva vida. Jesús con su pasión, muerte y resurrección, te ha liberado de las garras del demonio y ahora te abre la puerta para transitar un camino de santidad que podría terminar en la gloria del cielo. Depende de ti. Te invito a que entregues tu corazón al Señor que tanto te ama y que muriendo en cruz destruyo la muerte y abrió la puerta para tu resurrección final.",
     },
-    /* PASO 4 — Canto (Modelo 2: Canto con imagen estática) */
+        /* PASO 4 — Canto (Modelo 4: Canto con slide)
+       Canto con transición de 14 imágenes (.webp). El audio j4_canto.mp3 se
+       reparte en partes iguales entre las 14 imágenes (dur: 0 → autodetecta). */
     {
       uid: uid(), id: "j4_canto", voz: "canto", tipo: "modo-canto",
       speaker: "Canto",
       accion: "Jesús murió por amor a ti",
       audio: true, audioUrl: "/sounds/j4_canto.mp3", audioName: "j4_canto.mp3", dur: 0,
       imagen: IMG_JESUS_CRUZ, contain: true,
+      /* Transición de 14 imágenes. Coloca estos archivos en /public/:
+         vj1.webp, vj2.webp, vj3.webp … vj14.webp. */
+      imagenes: [
+        IMG_VJ_1,
+        IMG_VJ_2,
+        IMG_VJ_3,
+        IMG_VJ_4,
+        IMG_VJ_5,
+        IMG_VJ_6,
+        IMG_VJ_7,
+        IMG_VJ_8,
+        IMG_VJ_9,
+        IMG_VJ_10,
+        IMG_VJ_11,
+        IMG_VJ_12,
+        IMG_VJ_13,
+        IMG_VJ_14,
+      ],
     },
     /* PASO 5 — Voz de Jesús (Modelo 1: Voz, sin imagen central) */
     {
@@ -608,14 +675,26 @@ export function buildCaminoJesus() {
       audio: true, audioUrl: "/sounds/j5_jesus.mp3", audioName: "j5_jesus.mp3", dur: 0,
       texto: "Toda mi vida fue una constante obediencia a la voluntad de mi Padre. Cuando Él me pidió que abrazara la cruz, para que a través de mi muerte y resurrección tú pudieras tener la oportunidad de llegar al cielo, lo hice por amor a ti, porque tú vales mucho para mí. Yo estoy junto a ti en cada momento de tu historia y conozco todos tus sacrificios, tus problemas, tus desilusiones. Sé cuánto te cuesta sobreponerte a la muerte de tus seres queridos, a la enfermedad que está dañando tu cuerpo y tu alma. Conozco la soledad en la que te encuentras y la desesperación que asfixia tu corazón. Yo soy quien junta tus lágrimas amargas antes que toquen la almohada. Déjame contarte algo importante. Aquella noche del jueves santo, cuando fui a orar al huerto de los olivos, en medio de la agonía, clamé a mi Padre para que me ayudara a soportar el peso de la cruz, que fue el precio de tu redención. Como seguramente tú también lo haces, yo le pedí a Dios Padre que apartara de mí la prueba y el dolor que me hacían temblar. En aquella noche terrible, experimenté que sólo rezando se pueden soportar las pruebas y los dolores en la vida. Por eso escúchame bien. Nunca enfrentes las cruces con tus fuerzas solas, siempre hazlo de la mano del Padre. Reza insistentemente hasta llegar al momento de la mayor libertad y amor, cuando tu corazón cede, y le dice a Dios Padre, que se cumpla tu voluntad y no la mía. Te propongo que hagas tuyas estas palabras que en medio de mi agonía le entregué a mi amado Padre.",
     },
-    /* PASO 6 — Canto (Modelo 2: Canto con imagen estática)
-       El audio real dura hasta ~5:07, pero `dur: 0` lo autodetecta. */
+        /* PASO 6 — Canto (Modelo 4: Canto con slide)
+       Canto con transición de 7 imágenes (.webp). El audio j6_canto.mp3 se
+       reparte en partes iguales entre las 7 imágenes (dur: 0 → autodetecta). */
     {
       uid: uid(), id: "j6_canto", voz: "canto", tipo: "modo-canto",
       speaker: "Canto",
       accion: "Jesús reza en el Huerto",
       audio: true, audioUrl: "/sounds/j6_canto.mp3", audioName: "j6_canto.mp3", dur: 0,
       imagen: IMG_JESUS_HUERTO, contain: true,
+      /* Transición de 7 imágenes. Coloca estos archivos en /public/:
+         jesus_huerto1.webp, jesus_huerto2.webp … jesus_huerto7.webp. */
+      imagenes: [
+        IMG_JESUS_HUERTO_1,
+        IMG_JESUS_HUERTO_2,
+        IMG_JESUS_HUERTO_3,
+        IMG_JESUS_HUERTO_4,
+        IMG_JESUS_HUERTO_5,
+        IMG_JESUS_HUERTO_6,
+        IMG_JESUS_HUERTO_7,
+      ],
     },
     /* PASO 7 — Voz de Jesús (Modelo 1: Voz, sin imagen central) */
     {
@@ -624,13 +703,51 @@ export function buildCaminoJesus() {
       audio: true, audioUrl: "/sounds/j7_jesus.mp3", audioName: "j7_jesus.mp3", dur: 0,
       texto: "Todos mis sufrimientos los entregué por ti, por eso ahora siento sed de tu oración, de tu cercanía y de tu amistad. Este cementerio, que en apariencia es un lugar de muerte, se está convirtiendo para ti en un jardín de gracia y de esperanza en la resurrección. Tú puedes cambiar de vida. Anímate a dejar tu corazón en mis manos. Yo te ayudaré a llevar la cruz. Con toda la fuerza de tu corazón, pide la gracia de una sincera conversión, a través de este canto.",
     },
-    /* PASO 8 — Canto (Modelo 2: Canto con imagen estática) */
+        /* PASO 8 — Canto (Modelo 4: Canto con slide)
+       Canto con transición de 14 imágenes (.webp) sincronizadas al audio y a
+       la letra mediante `slideTimes`. El audio j8_canto.mp3 es extenso
+       (dur: 0 → autodetecta). */
     {
       uid: uid(), id: "j8_canto", voz: "canto", tipo: "modo-canto",
       speaker: "Canto",
             accion: "Hazme igual a ti Jesús",
       audio: true, audioUrl: "/sounds/j8_canto.mp3", audioName: "j8_canto.mp3", dur: 0,
-            imagen: IMG_JESUS_CRUZ, contain: true,
+      imagen: IMG_J8_1, contain: true,
+      /* Transición de 14 imágenes, en /public/ con los nombres j8_1.webp …
+         j8_14.webp. Las imágenes cambian en el instante exacto (se usa
+         `slideTimes`) según los rangos detectados en el audio:
+           0:00  j8_1    (0.00–0.40)
+           0:40  j8_2    (0.40–1.27)
+           1:27  j8_3    (1.27–1.55)
+           1:55  j8_4    (1.55–2.25)
+           2:25  j8_5    (2.25–3.14)
+           3:14  j8_6    (3.14–3.56)
+           3:56  j8_7    (3.56–4.26)
+           4:26  j8_8    (4.26–4.55)
+           4:55  j8_9    (4.55–5.24)
+           5:24  j8_10   (5.24–6.08)
+           6:08  j8_11   (6.08–6.36)
+           6:36  j8_12   (6.36–7.03)
+           7:03  j8_13   (7.03–7.32)
+           7:32  j8_14   (7.32–final) */
+      imagenes: [
+        IMG_J8_1,
+        IMG_J8_2,
+        IMG_J8_3,
+        IMG_J8_4,
+        IMG_J8_5,
+        IMG_J8_6,
+        IMG_J8_7,
+        IMG_J8_8,
+        IMG_J8_9,
+        IMG_J8_10,
+        IMG_J8_11,
+        IMG_J8_12,
+        IMG_J8_13,
+        IMG_J8_14,
+      ],
+      /* Segundos en que inicia cada imagen (debe coincidir con `imagenes`). */
+      slideTimes: [0, 40, 87, 115, 145, 194, 236, 266, 295, 324, 368, 396, 423, 452],
     },
     /* PASO 9 — Ángel (Modelo 1: Voz, sin imagen central) */
     {
@@ -679,12 +796,21 @@ export function buildCaminoJesus() {
       audio: true, audioUrl: "/sounds/j11_angel.mp3", audioName: "j11_angel.mp3", dur: 0,
       texto: "Has llegado al final de este camino acompañado por Jesús, te propongo que te consagres a Él con la oración del Alma de Cristo. Y regresa pronto al cementerio, para rezar por tus difuntos y por tu alma.",
     },
-    /* PASO 12 — Canto (Modelo 2: Canto con imagen estática) */
+        /* PASO 12 — Canto (Modelo 4: Canto con slide)
+       Canto con transición de 3 imágenes (.webp). El audio j12_canto.mp3 se
+       reparte en partes iguales entre las 3 imágenes (dur: 0 → autodetecta). */
     {
       uid: uid(), id: "j12_canto", voz: "canto", tipo: "modo-canto",
       speaker: "Canto", accion: "Alma de Cristo",
       audio: true, audioUrl: "/sounds/j12_canto.mp3", audioName: "j12_canto.mp3", dur: 0,
       imagen: IMG_JESUS_ALMA, contain: true,
+      /* Transición de 3 imágenes. Coloca estos archivos en /public/:
+         AJ1.webp, AJ2.webp, AJ3.webp. */
+      imagenes: [
+        IMG_AJ_1,
+        IMG_AJ_2,
+        IMG_AJ_3,
+      ],
     },
   ];
 }
