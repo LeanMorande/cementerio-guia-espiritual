@@ -101,15 +101,15 @@ export function IntroFlash({ phase }) {
    Fases nombradas:
      [S1-PICK]  1000 ms  reacción al toque del botón (estado "presionado")
      [S2-TEXT]  3000 ms  pantalla negra con el texto "Comenzando: El camino de la…"
-     [S3-IMAGE] 3000 ms  la imagen de la tarjeta elegida (fade-in 1s), centrada y a escala máxima
+     [S3-IMAGE] 5000 ms  la imagen de la tarjeta elegida (fade-in 1s), enmarcada en el fondo sacro
      [S4-FLASH] 1000 ms  flash blanco → entra el primer paso del camino
-   Total: 8000 ms. Al terminar llama onDone() (recién ahí se muestra el paso 1
+   Total: 10000 ms. Al terminar llama onDone() (recién ahí se muestra el paso 1
    y se reproduce su audio: nada de multimedia antes).
    ===================================================================== */
 export const SELECT_FX = {
   PICK: 500, // S1-PICK
   TEXT: 3000, // S2-TEXT
-  IMAGE: 3000, // S3-IMAGE
+  IMAGE: 5000, // S3-IMAGE
   FLASH: 1000, // S4-FLASH
 };
 

@@ -258,22 +258,29 @@ img{display:block}
 .selectfx{position:fixed;inset:0;z-index:76;display:flex;align-items:center;justify-content:center;overflow:hidden}
 /* S2-TEXT: fondo negro con el texto (reusa .veil2-* ) */
 .selectfx.s-text{background:#141416;animation:fadeIn .18s ease}
-/* S3-IMAGE: fondo negro + imagen centrada a escala máxima (sin deformar) */
-.selectfx.s-image{background:#0b0b0d;padding:8vh 8vw;box-sizing:border-box}
-
-
-.selectfx-img{width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;object-position:center;display:block;border-radius:10px}
+/* S3-IMAGE: sin fondo negro — lo cubre el fondo sacro (.selectfx-bg) */
+.selectfx.s-image{background:transparent;animation:fadeIn .18s ease}
+/* Fondo sacro (SobreFondo.webp): cubre toda la fase y sirve de marco dorado.
+   z-index 1 queda por debajo de la imagen del camino (.selectfx-img, z-index 2). */
+.selectfx-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:1;display:block}
+/* S3-IMAGE: el fondo aparece junto con la imagen (mismo fade-in de 1s). */
+.selectfx.s-image .selectfx-bg{animation:selectfxImgIn 1s ease both}
+/* Imagen del camino/santo: enmarcada dentro del rectángulo dorado del fondo.
+   Dimensiones reducidas para que quede contenida en el marco y centrada. */
+.selectfx-img{position:relative;z-index:2;max-width:76%;max-height:70%;width:auto;height:auto;object-fit:contain;object-position:center;display:block;border-radius:12px}
 /* Entrada de la imagen (solo S3-IMAGE): fade sutil. No incluye escala para que
    al pasar a FLASH no se reinicie ni "salte" de tamaño. */
 .selectfx.s-image .selectfx-img{animation:selectfxImgIn 1s ease both}
 @keyframes selectfxImgIn{from{opacity:0}to{opacity:1}}
-/* S4-FLASH: la luz SALE de la imagen. La imagen sigue visible y se aclara
-   (brillo creciente hacia blanco); encima, una capa blanca sube de opacidad.
-   El fondo oscuro del s-image se mantiene para que la aclaración se note. */
-.selectfx.s-flash{background:#0b0b0d;padding:8vh 8vw;box-sizing:border-box}
+/* S4-FLASH: la luz SALE de la imagen y del fondo. Ambos siguen visibles y se
+   aclaran (brillo creciente hacia blanco); encima, una capa blanca sube de
+   opacidad. Sin fondo oscuro: el marco sacro se aclara junto a la imagen. */
+.selectfx.s-flash{background:transparent;animation:fadeIn .18s ease}
 .selectfx-img-flash{animation:selectfxImgWash 1s ease-in both}
+/* El fondo también se aclara durante el flash para que no quede estático. */
+.selectfx.s-flash .selectfx-bg{animation:selectfxImgWash 1s ease-in both}
 @keyframes selectfxImgWash{0%{filter:brightness(1)}100%{filter:brightness(2.4)}}
-.selectfx-flash{position:absolute;inset:0;background:#fff;animation:selectfxFlashIn 1s ease-in forwards}
+.selectfx-flash{position:absolute;inset:0;background:#fff;z-index:3;animation:selectfxFlashIn 1s ease-in forwards}
 @keyframes selectfxFlashIn{0%{opacity:0}100%{opacity:1}}
 /* Fase de salida: el blanco ya llenó la pantalla y se DESVANECE suavemente sobre
    el paso 1 (que ya está montado debajo). Así la luz no "corta" en seco. */
