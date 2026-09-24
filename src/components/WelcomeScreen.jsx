@@ -58,7 +58,7 @@ export default function WelcomeScreen({ cfg, onStart, admin, onToggleAdmin, fxPh
             </span>
             <span className="trust-title">Aplicación 100% Gratuita</span>
           </div>
-          <p className="trust-note">Nunca te pediremos que ingreses datos personales o bancarios.</p>
+          <p className="trust-note">Nunca te pediremos que ingreses<br />datos personales o bancarios.</p>
         </div>
       </div>
     </div>

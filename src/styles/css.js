@@ -100,33 +100,91 @@ img{display:block}
 .sveil.fin-veil{transition:background 1.1s ease}
 .sveil.fin-veil.listo{background:radial-gradient(ellipse at 50% 42%,rgba(20,20,22,.28),rgba(10,10,12,.86) 78%)}
 
-/* Bloque de paz (cruz + título + texto + cuenta). Al pasar a Fase 2 se desvanece. */
-.fin-paz{display:flex;flex-direction:column;align-items:center;transition:opacity .6s ease,transform .6s ease}
-.fin-paz.salir{opacity:0;transform:translateY(-6px);pointer-events:none;position:absolute}
+/* ===== Fase 1 (despedida): ÚNICO contenedor vertical centrado =====
+   Cruz + título + texto + conteo agrupados y cohesionados, con un gap
+   equilibrado (1.2rem–1.5rem) para evitar vacíos gigantescos. */
+.fin-paz{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.35rem;width:100%;height:100%;min-height:0;text-align:center;animation:fadeUp .7s ease}
+/* El divisor dorado no necesita tanto aire dentro del grupo cohesionado. */
+.fin-paz .sdiv{margin:.2rem 0}
+/* Conteo: +15% de tamaño y Semi-Bold, dentro del grupo centrado. */
+.fin-count{margin:0;font-size:17.5px;font-weight:600;letter-spacing:.04em;color:rgba(245,241,232,.9);text-align:center;text-shadow:0px 2px 8px rgba(0,0,0,.95),0px 0px 4px rgba(0,0,0,.8)}
+/* Texto descriptivo: +10% de tamaño. */
+.fin-paz .stext{font-size:17.6px}
 
-/* Anillo de cuenta regresiva sobre fondo oscuro (reusa .cdring del selector,
-   pero adapta los colores al splash). */
-.fin-count{margin-top:26px;font-size:15px;letter-spacing:.04em;color:rgba(245,241,232,.8);text-align:center}
+/* ===== Fase 2: evaluación integrada (sin tarjeta flotante) =====
+   Todo el contenido se coloca directamente sobre el fondo oscuro del splash,
+   con la misma estética de la portada (cruz dorada + jerarquía serif/sans).
+   Columna a pantalla completa: header (cruz + pregunta) arriba y, distribuidos
+   con un gap amplio, las estrellas al centro y el botón de salida en el tercio
+   inferior (alejado de las estrellas, con aire visual en el centro). */
+.fin-eval{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:clamp(20px,5vh,40px);width:100%;max-width:440px;height:100%;min-height:0;animation:fadeUp .6s ease both}
+/* Header superior (cruz + pregunta alineadas con la portada). */
+.fin-eval-head{display:flex;flex-direction:column;align-items:center;flex:0 1 auto;padding-top:max(6px,4vh)}
+/* Cruz dorada en el tercio superior, alineada con la portada. */
+.fin-semb{margin-bottom:10px}
+/* Título: serif, blanco, tamaño destacado (+15%) con sombra oscura permanente. */
+.fin-eval-title{font-family:'Cormorant Garamond',serif;font-weight:600;color:#fffefb;font-size:clamp(31px,8.5vw,41.4px);line-height:1.15;text-align:center;text-shadow:0px 2px 8px rgba(0,0,0,.95),0px 0px 4px rgba(0,0,0,.8);margin:0}
+/* Subtítulo: dorado suave/crema, sans-serif, legible (+15%) y con sombra oscura. */
+.fin-eval-sub{font-family:'Inter',system-ui,sans-serif;font-size:clamp(16.1px,4.14vw,17.8px);font-weight:500;line-height:1.4;letter-spacing:.01em;color:#e6d3a3;text-align:center;text-shadow:0px 2px 8px rgba(0,0,0,.95),0px 0px 4px rgba(0,0,0,.8);margin:6px 0 0}
 
-/* Footer de Fase 2 (feedback + botón). Aparece con un fade subiendo. */
-.fin-footer{width:100%;display:flex;flex-direction:column;align-items:center;animation:fadeUp .6s ease both}
-
-/* Tarjeta de feedback: fondo oscuro semitransparente con desenfoque para que el
-   texto e insumos se lean nitidos sobre la foto (sbg-fin) de la Fase 2. */
-.feedback-card{background:rgba(0,0,0,.78);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);padding:26px 22px;border-radius:18px;margin:20px 0;display:flex;flex-direction:column;align-items:center;gap:18px;width:100%;max-width:420px;box-sizing:border-box;border:1px solid rgba(255,255,255,.12);animation:fadeUp .5s ease both}
-/* Formulario en columna: pregunta -> textarea -> boton. */
-.feedback-instruccion{font-size:15px;font-weight:600;line-height:1.4;text-align:center;color:#fff;margin:0}
-.feedback-form{display:flex;flex-direction:column;width:100%;gap:12px}
-.feedback-label{font-size:14px;font-weight:600;letter-spacing:.02em;color:rgba(245,241,232,.94);text-align:center;line-height:1.4}
-.feedback-ta{width:100%;min-height:78px;resize:vertical;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(20,19,17,.45);color:#f5f1e8;font-family:inherit;font-size:14px;line-height:1.45;padding:10px 12px;outline:none;transition:border-color .2s,box-shadow .2s;box-sizing:border-box}
+.feedback-form{display:flex;flex-direction:column;width:100%;gap:14px;margin-top:4px}
+/* Pregunta del formulario: +10% y sombra oscura permanente. */
+.feedback-label{font-size:15.4px;font-weight:600;letter-spacing:.02em;color:rgba(245,241,232,.96);text-align:center;line-height:1.4;text-shadow:0px 2px 8px rgba(0,0,0,.95),0px 0px 4px rgba(0,0,0,.8)}
+.feedback-ta{width:100%;min-height:78px;resize:vertical;border-radius:10px;border:1px solid rgba(201,169,97,.45);background:rgba(20,19,17,.5);color:#f5f1e8;font-family:inherit;font-size:14px;line-height:1.45;padding:10px 12px;outline:none;transition:border-color .2s,box-shadow .2s;box-sizing:border-box}
 .feedback-ta::placeholder{color:rgba(245,241,232,.42)}
 .feedback-ta:focus{border-color:#d4af37;box-shadow:0 0 0 3px rgba(212,175,55,.18)}
-.fin-stars{display:flex;gap:12px;justify-content:center;align-items:center}
-.fin-star-btn{appearance:none;background:transparent;border:0;padding:2px;line-height:0;cursor:pointer;border-radius:8px;color:rgba(245,241,232,.24);transition:color .2s ease,transform .18s ease}
-.fin-star-btn:hover,.fin-star-btn:focus-visible{transform:scale(1.1);color:rgba(230,194,90,.7)}
-.fin-star-btn.on{color:#e6c25a} /* dorado sólido para estrellas activas */
-.fin-star-btn svg{display:block}
-.fin-thanks{margin:0;font-size:13px;letter-spacing:.3px;color:rgba(245,241,232,.72);text-align:center;animation:fadeIn .4s ease}
+
+/* ---- Estrellas de calificación (UX para adultos mayores) ----
+   Cada estrella ocupa un área táctil mínima de 44px. Las inactivas llevan
+   contorno dorado fino con centro semitransparente (no parecen deshabilitadas)
+   y al pasar/enfocar se encienden con un resplandor dorado (glow). */
+.fin-stars{display:flex;gap:clamp(4px,1.5vw,8px);justify-content:center;align-items:center;flex-wrap:nowrap;margin:2px 0}
+/* Pulso secuencial 1→5 mientras no hay selección (simula interactividad en
+   móviles sin hover). Cada estrella arranca su ciclo con un retardo --i. */
+@keyframes starPulse{
+  0%,100%{color:rgba(230,194,90,.18);filter:drop-shadow(0 0 0 rgba(230,194,90,0))}
+  35%{color:#e6c25a;filter:drop-shadow(0 0 12px rgba(230,194,90,.95))}
+  50%{color:rgba(230,194,90,.35);filter:drop-shadow(0 0 3px rgba(230,194,90,.4))}
+}
+.fin-stars.idle .fin-star-btn{animation:starPulse 2.5s ease-in-out infinite;animation-delay:calc(var(--i,0) * .18s)}
+/* Al tocar/hover en estado idle, el resplandor manual manda sobre el pulso. */
+.fin-stars.idle .fin-star-btn:hover,.fin-stars.idle .fin-star-btn:focus-visible{animation:none}
+.fin-star-btn{appearance:none;background:transparent;border:0;padding:0;line-height:0;cursor:pointer;border-radius:12px;width:clamp(44px,12vw,56px);height:clamp(44px,12vw,56px);min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;
+  /* Estrella inactiva: contorno dorado fino + relleno semitransparente. */
+  color:rgba(230,194,90,.18);
+  filter:drop-shadow(0 0 0 rgba(230,194,90,0));
+  transition:color .2s ease,transform .18s ease,filter .25s ease}
+.fin-star-btn svg{display:block;overflow:visible}
+/* Estrella inactiva: dibuja el contorno dorado (stroke) sobre el relleno suave. */
+.fin-star-btn svg path{fill:currentColor;stroke:#e0c070;stroke-width:1.5;stroke-linejoin:round}
+/* Hover / focus: invita al toque con resplandor dorado. */
+.fin-star-btn:hover,.fin-star-btn:focus-visible{transform:scale(1.12);color:rgba(230,194,90,.5);filter:drop-shadow(0 0 10px rgba(230,194,90,.85))}
+/* Estrella activa: dorado sólido + glow. */
+.fin-star-btn.on{color:#e6c25a;filter:drop-shadow(0 0 8px rgba(230,194,90,.75))}
+.fin-star-btn.on svg path{fill:currentColor;stroke:#f2d78a;stroke-width:1.2}
+.fin-star-btn:active{transform:scale(1.02)}
+
+/* Confirmación dinámica de la selección (+10% y sombra oscura). */
+.fin-confirm{display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:4px;animation:fadeIn .35s ease;text-align:center}
+.fin-confirm-main{font-family:'Inter',system-ui,sans-serif;font-weight:700;font-size:clamp(16.5px,4.4vw,18.7px);color:#e6c25a;text-shadow:0px 2px 8px rgba(0,0,0,.95),0px 0px 4px rgba(0,0,0,.8);margin:0}
+.fin-confirm-sub{font-family:'Inter',system-ui,sans-serif;font-weight:400;font-size:clamp(13.75px,3.74vw,14.85px);color:rgba(245,241,232,.85);text-shadow:0px 2px 8px rgba(0,0,0,.95),0px 0px 4px rgba(0,0,0,.8);margin:0}
+
+/* Botón principal del formulario "Enviar opinión": dorado RELLENO de alto
+   contraste (#D4AF37) con texto carbón (#1A1A1A) en Bold, para que se
+   identifique como la acción principal del formulario (distinto del botón
+   de salida, que es un dorado brillante con texto claro). */
+.btn.gold-send{min-height:52px;padding:0 22px;border-radius:12px;border:1px solid #b8912c;background:#D4AF37;color:#1A1A1A;font-weight:700;font-size:16px;letter-spacing:.01em;cursor:pointer;box-shadow:0 8px 18px -10px rgba(0,0,0,.6);transition:background .2s,transform .15s,box-shadow .2s}
+.btn.gold-send:hover{background:#e0bd4a;box-shadow:0 10px 22px -10px rgba(0,0,0,.65)}
+.btn.gold-send:active{transform:scale(.97)}
+
+/* Botón "Volver al inicio": mismo estilo que el botón de la portada,
+   separado notablemente del formulario y empujado al pie de la interfaz
+   (evita clics accidentales entre ambos botones). El color del texto
+   (#1A1A1A, gris carbón oscuro) es exclusivo de este botón final. */
+.btn.start.fin-home{color:#1A1A1A;text-shadow:none;font-weight:700;margin-top:auto;align-self:stretch}
+.btn.start.fin-home:hover{transform:scale(1.02)}
+
+.fin-thanks{margin:0;font-size:15.4px;letter-spacing:.3px;color:rgba(245,241,232,.9);text-align:center;text-shadow:0px 2px 8px rgba(0,0,0,.95),0px 0px 4px rgba(0,0,0,.8);animation:fadeIn .4s ease}
 
 /* Desplegable de sugerencia (1–4 estrellas). */
 
@@ -136,21 +194,25 @@ img{display:block}
    centro cómodo y ficha de confianza abajo. Reparte el alto con pesos suaves
    para evitar el hueco negro excesivo entre el subtítulo y el botón. */
 .scontent.welcome{justify-content:space-between;padding:0;height:100%}
+/* Columna a pantalla completa en la pantalla FINAL (despedida y calificación):
+   permite distribuir header / centro / pie de cada fase sobre todo el alto. */
+.scontent.fin-content{height:100%;max-width:440px;padding:max(20px,5vh) 24px}
+/* El header de la bienvenida conserva su padding; en fin usamos clases propias. */
 /* ---------- HEADER (cruz + título + subtítulo) ---------- */
 .shead{display:flex;flex-direction:column;align-items:center;padding:max(26px,6vh) 28px 0;flex:0 1 auto}
-.semb{position:relative;width:clamp(90px,24vw,96px);height:clamp(90px,24vw,96px);border-radius:50%;border:1px solid rgba(201,169,97,.5);background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;color:var(--gold2);animation:emb 3.4s ease-in-out infinite;margin-bottom:18px}
-/* Gradiente radial dorado cálido detrás de la cruz para dar calidez visual. */
-.semb::before{content:"";position:absolute;inset:-70px;border-radius:50%;background:radial-gradient(circle,rgba(201,169,97,.32) 0%,rgba(201,169,97,.14) 38%,rgba(201,169,97,0) 70%);pointer-events:none;z-index:-1}
-/* Filtro de sombra paralela para despegar la cruz del fondo. */
-.semb svg{filter:drop-shadow(0 2px 5px rgba(0,0,0,.75))}
+/* Cruz: fondo circular oscuro semitransparente y sombra oscura sutil (sin halo
+   brillante), uniforme en portada y pantallas finales. */
+.semb{position:relative;width:clamp(90px,24vw,96px);height:clamp(90px,24vw,96px);border-radius:50%;border:1px solid rgba(201,169,97,.5);background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;color:var(--gold2);margin-bottom:18px}
+/* Sombra oscura sutil para despegar la cruz del fondo (sin resplandor). */
+.semb svg{filter:drop-shadow(0px 3px 6px rgba(0,0,0,.85))}
 /* Título en 3 líneas centradas. nowrap en las líneas para que cada renglón
    quede íntegro ("Cementerio Católico" y "Colonia Crespo" no se parten). */
-.stitle{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(28px,7.8vw,39px);line-height:1.12;display:flex;flex-direction:column;align-items:center;text-wrap:nowrap}
-.stitle-l1,.stitle-l3{display:block;white-space:nowrap}
+.stitle{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(28px,7.8vw,39px);line-height:1.12;display:flex;flex-direction:column;align-items:center;text-wrap:nowrap;text-shadow:0px 2px 5px rgba(0,0,0,.9)}
+.stitle-l1,.stitle-l3{display:block;white-space:nowrap;text-shadow:0px 2px 5px rgba(0,0,0,.9)}
 /* Línea 2 "de": más pequeña y elegantemente espaciada. */
-.stitle-l2{display:block;font-size:.62em;font-style:italic;font-weight:500;letter-spacing:.14em;color:var(--gold2);margin:.06em 0;white-space:nowrap}
+.stitle-l2{display:block;font-size:.62em;font-style:italic;font-weight:500;letter-spacing:.14em;color:var(--gold2);margin:.06em 0;white-space:nowrap;text-shadow:0px 2px 5px rgba(0,0,0,.9)}
 .sdiv{width:56px;height:1px;background:linear-gradient(90deg,transparent,var(--gold2),transparent);margin:16px 0}
-.stext{font-size:16px;line-height:1.55;color:rgba(245,241,232,.94)}
+.stext{font-size:16px;line-height:1.55;color:rgba(245,241,232,.94);text-shadow:0px 2px 5px rgba(0,0,0,.9)}
 /* ---------- CENTRO (botón principal en el centro cómodo de la pantalla) ---------- */
 .smid{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;padding:0 28px;min-height:0}
 .scontent .btn.gold{width:100%;margin-top:0}
@@ -163,17 +225,17 @@ img{display:block}
   50%{box-shadow:0 14px 28px -6px rgba(0,0,0,.55),0 8px 16px -4px rgba(90,60,15,.85),0 0 0 18px rgba(201,169,97,0)}
 }
 /* Aclaración bajo el botón: contraste/brillo subido para legibilidad. */
-.stap{font-size:13px;font-weight:500;color:rgba(248,244,236,.86);margin-top:16px;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.stap{font-size:13px;font-weight:500;color:rgba(248,244,236,.86);margin-top:16px;text-shadow:0px 2px 5px rgba(0,0,0,.9)}
 /* ---------- FICHA DE CONFIANZA (pie, 2 niveles) ---------- */
 /* Nivel A — Badge superior: cápsula sutil con SOLO el escudo + "Aplicación 100%
    Gratuita". Fondo semitransparente, bordes redondeados; no interactivo. */
 .trust-badge{display:flex;align-items:center;gap:10px;margin:0 auto;padding:10px 18px;border:1px solid rgba(255,255,255,.14);border-radius:999px;background:rgba(255,255,255,.05);pointer-events:none;box-shadow:0 2px 10px -4px rgba(0,0,0,.4);width:fit-content;max-width:340px}
 .trust-icon{flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--gold2)}
-.trust-title{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;letter-spacing:.02em;color:#fff}
+.trust-title{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;letter-spacing:.02em;color:#fff;text-shadow:0px 2px 5px rgba(0,0,0,.9)}
 /* Envoltura del pie: badge + nota, en columna centrada. */
 .trust-foot{display:flex;flex-direction:column;align-items:center;gap:8px;margin:0 24px max(26px,6vh)}
 /* Nivel B — Nota inferior: texto plano secundario, sin cajas ni bordes. */
-.trust-note{font-family:'Inter',sans-serif;font-size:11px;font-weight:400;letter-spacing:.01em;line-height:1.4;color:rgba(232,228,219,.72);text-align:center;max-width:300px}
+.trust-note{font-family:'Inter',sans-serif;font-size:13px;font-weight:400;letter-spacing:.01em;line-height:1.4;color:rgba(232,228,219,.72);text-align:center;max-width:340px;text-shadow:0px 2px 5px rgba(0,0,0,.9)}
 
 /* ---------- pantalla clara base ---------- */
 .screen{flex:1;display:flex;flex-direction:column;min-height:0;animation:fadeUp .45s ease}
