@@ -31,7 +31,6 @@ import SelectFx from "./components/SelectFx.jsx";
 import PathScreen from "./components/PathScreen.jsx";
 import FinScreen from "./components/FinScreen.jsx";
 import ConfigScreen from "./components/ConfigScreen.jsx";
-import Watermark from "./components/Watermark.jsx";
 import { Ic } from "./components/icons.jsx";
 import { CSS } from "./styles/css.js";
 
@@ -840,9 +839,10 @@ export default function App() {
         />
       )}
 
-      {route === "fin" && ready && <FinScreen cfg={cfg} onHome={goHome} />}
+            {route === "fin" && ready && <FinScreen cfg={cfg} onHome={goHome} />}
 
-            {route === "fin" && <Watermark dark />}
+            {/* Watermark retirado de la pantalla final: el botón "Volver al
+                inicio" quedaba muy cerca y podía tocar la marca de agua. */}
             <IntroFlash phase={introPhase} />
             {selectFx && (
         <SelectFx phase={selectPhase} id={selectFx.id} img={selectFx.img} out={selectFx.out} />
