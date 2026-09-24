@@ -117,7 +117,7 @@ img{display:block}
    Columna a pantalla completa: header (cruz + pregunta) arriba y, distribuidos
    con un gap amplio, las estrellas al centro y el botón de salida en el tercio
    inferior (alejado de las estrellas, con aire visual en el centro). */
-.fin-eval{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:clamp(20px,5vh,40px);width:100%;max-width:440px;height:100%;min-height:0;padding-bottom:2.25rem;animation:fadeUp .6s ease both}
+.fin-eval{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:clamp(20px,5vh,40px);width:100%;max-width:440px;min-height:0;padding-bottom:1rem;animation:fadeUp .6s ease both}
 /* Header superior (cruz + pregunta alineadas con la portada). */
 .fin-eval-head{display:flex;flex-direction:column;align-items:center;flex:0 1 auto;padding-top:max(6px,4vh)}
 /* Cruz dorada en el tercio superior, alineada con la portada. */
@@ -180,8 +180,10 @@ img{display:block}
 /* Botón "Volver al inicio": mismo estilo que el botón de la portada,
    separado notablemente del formulario y empujado al pie de la interfaz
    (evita clics accidentales entre ambos botones). El color del texto
-   (#1A1A1A, gris carbón oscuro) es exclusivo de este botón final. */
-.btn.start.fin-home{color:#1A1A1A;text-shadow:none;font-weight:700;margin-top:auto;align-self:stretch}
+   (#1A1A1A, gris carbón oscuro) es exclusivo de este botón final.
+   El margin-bottom deja un colchón que evita que el botón toque/solape la
+   marca de agua (footer) situada en la esquina inferior derecha. */
+.btn.start.fin-home{color:#1A1A1A;text-shadow:none;font-weight:700;margin-top:auto;margin-bottom:1.75rem;align-self:stretch}
 .btn.start.fin-home:hover{transform:scale(1.02)}
 
 .fin-thanks{margin:0;font-size:15.4px;letter-spacing:.3px;color:rgba(245,241,232,.9);text-align:center;text-shadow:0px 2px 8px rgba(0,0,0,.95),0px 0px 4px rgba(0,0,0,.8);animation:fadeIn .4s ease}
