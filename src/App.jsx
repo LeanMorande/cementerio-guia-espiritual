@@ -104,10 +104,24 @@ export default function App() {
     toastTimer.current = setTimeout(() => setToastMsg(null), 2600);
   }, []);
 
-  /* Modo administrador: se activa con la tecla 'A' estando en la
-     bienvenida (o con el clic en el botón disimulado 'A'). */
+    /* ==========================================================================
+     MODO ADMIN — DESACTIVADO EN LA VERSIÓN FUNCIONAL FINAL INICIAL (público).
+     ==========================================================================
+     El modo admin (para ver los IDs de los pasos y editar contenido) queda
+     DESHABILITADO: ya NO se activa ni por botón visible ni por tecla.
+
+     PARA EDITAR EN EL FUTURO, dos opciones:
+       1) Pantalla de configuración del desarrollador, ya disponible por URL:
+          añadir "#config" al final de la barra de direcciones.
+       2) Reactivar el disparador por teclado: descomentar el useEffect de
+          abajo (tecla "A" en la bienvenida) y, opcionalmente, el botón
+          comentado en src/components/WelcomeScreen.jsx.
+
+     Se conservan intactos `admin`/`setAdmin`, `toggleAdmin`, el chip "Modo
+     Admin ACTIVO" y el CSS (.admin-a / .admin-chip), listos para reutilizar.
+  */
   const toggleAdmin = useCallback(() => setAdmin((a) => !a), []);
-  useEffect(() => {
+  /* useEffect(() => {
     const onKey = (e) => {
       if ((e.key === "a" || e.key === "A") && routeRef.current === "welcome") {
         toggleAdmin();
@@ -115,7 +129,7 @@ export default function App() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [toggleAdmin]);
+  }, [toggleAdmin]); */
 
   /* Fuentes por CDN */
   useEffect(() => {
@@ -828,7 +842,7 @@ export default function App() {
 
       {route === "fin" && ready && <FinScreen cfg={cfg} onHome={goHome} />}
 
-            {(route === "welcome" || route === "fin") && <Watermark dark />}
+            {route === "fin" && <Watermark dark />}
             <IntroFlash phase={introPhase} />
             {selectFx && (
         <SelectFx phase={selectPhase} id={selectFx.id} img={selectFx.img} out={selectFx.out} />

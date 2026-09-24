@@ -79,6 +79,9 @@ img{display:block}
    ken-burns, y NO lleva blur ni animación. */
 .sbg-fin{position:absolute;inset:0;background-size:cover;background-position:center}
 .sveil{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 42%,rgba(20,20,22,.15),rgba(12,12,14,.82) 78%)}
+/* Velo de la BIENVENIDA: un poco más oscuro (~75-80%) para resaltar el texto
+   y los elementos dorados por encima del fondo. */
+.sveil.welcome-veil{background:radial-gradient(ellipse at 50% 42%,rgba(12,12,14,.55),rgba(8,8,10,.85) 80%)}
 /* Velo de la pantalla final: un poco más oscuro para asegurar legibilidad
    del texto blanco sobre la foto nítida. */
 .sveil-fin{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,rgba(14,14,16,.62),rgba(8,8,10,.9) 82%)}
@@ -127,17 +130,50 @@ img{display:block}
 
 /* Desplegable de sugerencia (1–4 estrellas). */
 
+/* Base (compartida por Welcome y Fin). */
 .scontent{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:28px;max-width:380px;animation:fadeUp .7s ease;width:100%}
-.semb{width:86px;height:86px;border-radius:50%;border:1px solid rgba(201,169,97,.5);display:flex;align-items:center;justify-content:center;color:var(--gold2);animation:emb 3.4s ease-in-out infinite;margin-bottom:18px}
-.stitle{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(30px,8vw,42px);line-height:1.08}
+/* Columna a pantalla completa SOLO en la bienvenida: header arriba, botón al
+   centro cómodo y ficha de confianza abajo. Reparte el alto con pesos suaves
+   para evitar el hueco negro excesivo entre el subtítulo y el botón. */
+.scontent.welcome{justify-content:space-between;padding:0;height:100%}
+/* ---------- HEADER (cruz + título + subtítulo) ---------- */
+.shead{display:flex;flex-direction:column;align-items:center;padding:max(26px,6vh) 28px 0;flex:0 1 auto}
+.semb{position:relative;width:clamp(90px,24vw,96px);height:clamp(90px,24vw,96px);border-radius:50%;border:1px solid rgba(201,169,97,.5);background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;color:var(--gold2);animation:emb 3.4s ease-in-out infinite;margin-bottom:18px}
+/* Gradiente radial dorado cálido detrás de la cruz para dar calidez visual. */
+.semb::before{content:"";position:absolute;inset:-70px;border-radius:50%;background:radial-gradient(circle,rgba(201,169,97,.32) 0%,rgba(201,169,97,.14) 38%,rgba(201,169,97,0) 70%);pointer-events:none;z-index:-1}
+/* Filtro de sombra paralela para despegar la cruz del fondo. */
+.semb svg{filter:drop-shadow(0 2px 5px rgba(0,0,0,.75))}
+/* Título en 3 líneas centradas. nowrap en las líneas para que cada renglón
+   quede íntegro ("Cementerio Católico" y "Colonia Crespo" no se parten). */
+.stitle{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(28px,7.8vw,39px);line-height:1.12;display:flex;flex-direction:column;align-items:center;text-wrap:nowrap}
+.stitle-l1,.stitle-l3{display:block;white-space:nowrap}
+/* Línea 2 "de": más pequeña y elegantemente espaciada. */
+.stitle-l2{display:block;font-size:.62em;font-style:italic;font-weight:500;letter-spacing:.14em;color:var(--gold2);margin:.06em 0;white-space:nowrap}
 .sdiv{width:56px;height:1px;background:linear-gradient(90deg,transparent,var(--gold2),transparent);margin:16px 0}
 .stext{font-size:16px;line-height:1.55;color:rgba(245,241,232,.94)}
-.scontent .btn.gold{width:100%;margin-top:26px}
-.btn.start{animation:ring 2.6s ease-out infinite}
-.stap{font-size:12px;color:rgba(240,236,226,.5);margin-top:12px}
-.sfooter{margin-top:14px;text-align:center;font-family:'Inter',sans-serif;font-size:9px;font-weight:500;letter-spacing:.03em;line-height:1.25;color:#d9c9a0;background:rgba(70,46,16,.85);border:1px solid rgba(176,144,84,.4);border-radius:7px;padding:5px 12px;box-shadow:0 2px 8px -2px rgba(0,0,0,.45)}
-.sfooter-t{display:block;font-size:13.5px;font-weight:600}
-.sfooter-s{display:block;font-size:9.2px;opacity:.92;margin-top:1px}
+/* ---------- CENTRO (botón principal en el centro cómodo de la pantalla) ---------- */
+.smid{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;padding:0 28px;min-height:0}
+.scontent .btn.gold{width:100%;margin-top:0}
+/* Botón principal: +5% de tamaño (padding/altura ≥52px), fondo dorado bronce
+   más oscuro para alto contraste y texto claro Bold, manteniendo sombras suaves. */
+.btn.start{font-weight:700;font-size:18px;letter-spacing:.01em;gap:12px;min-height:58px;padding:0 30px;background:linear-gradient(135deg,#9a6f24,#7a5416);color:#fff8ea;text-shadow:0 1px 2px rgba(0,0,0,.45);box-shadow:0 12px 24px -6px rgba(0,0,0,.55),0 6px 12px -4px rgba(90,60,15,.75);animation:goldPulse 2.2s ease-in-out infinite}
+.btn.start svg{flex-shrink:0}
+@keyframes goldPulse{
+  0%,100%{box-shadow:0 12px 24px -6px rgba(0,0,0,.55),0 6px 12px -4px rgba(90,60,15,.75),0 0 0 0 rgba(201,169,97,.6)}
+  50%{box-shadow:0 14px 28px -6px rgba(0,0,0,.55),0 8px 16px -4px rgba(90,60,15,.85),0 0 0 18px rgba(201,169,97,0)}
+}
+/* Aclaración bajo el botón: contraste/brillo subido para legibilidad. */
+.stap{font-size:13px;font-weight:500;color:rgba(248,244,236,.86);margin-top:16px;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+/* ---------- FICHA DE CONFIANZA (pie, 2 niveles) ---------- */
+/* Nivel A — Badge superior: cápsula sutil con SOLO el escudo + "Aplicación 100%
+   Gratuita". Fondo semitransparente, bordes redondeados; no interactivo. */
+.trust-badge{display:flex;align-items:center;gap:10px;margin:0 auto;padding:10px 18px;border:1px solid rgba(255,255,255,.14);border-radius:999px;background:rgba(255,255,255,.05);pointer-events:none;box-shadow:0 2px 10px -4px rgba(0,0,0,.4);width:fit-content;max-width:340px}
+.trust-icon{flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--gold2)}
+.trust-title{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;letter-spacing:.02em;color:#fff}
+/* Envoltura del pie: badge + nota, en columna centrada. */
+.trust-foot{display:flex;flex-direction:column;align-items:center;gap:8px;margin:0 24px max(26px,6vh)}
+/* Nivel B — Nota inferior: texto plano secundario, sin cajas ni bordes. */
+.trust-note{font-family:'Inter',sans-serif;font-size:11px;font-weight:400;letter-spacing:.01em;line-height:1.4;color:rgba(232,228,219,.72);text-align:center;max-width:300px}
 
 /* ---------- pantalla clara base ---------- */
 .screen{flex:1;display:flex;flex-direction:column;min-height:0;animation:fadeUp .45s ease}

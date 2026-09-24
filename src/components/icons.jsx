@@ -56,9 +56,24 @@ export const Ic = {
       <path d="m5 19 5.5-5.5 3 3L17 13l4 4" />
     </svg>
   ),
-    Cross: (p) => (
+      Cross: (p) => (
     <svg {...base(p)} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
       <path d="M12 3v18M7 8.5h10" />
+    </svg>
+  ),
+  /* Altavoz de sonido (para el botón de inicio): parlante + ondas. */
+  Speaker: (p) => (
+    <svg {...base(p)} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 9v6h3.5L12 19V5L7.5 9H4z" />
+      <path d="M16 8.5a5 5 0 0 1 0 7" />
+      <path d="M18.8 6a9 9 0 0 1 0 12" />
+    </svg>
+  ),
+  /* Escudo de seguridad (ficha de confianza del pie). */
+  Shield: (p) => (
+    <svg {...base(p)} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z" />
+      <path d="m9 12 2 2 4-4" />
     </svg>
   ),
         /* Estrella clásica de 5 puntas (feedback). Usa currentColor: el color lo
