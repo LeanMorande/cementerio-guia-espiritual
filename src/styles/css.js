@@ -117,7 +117,7 @@ img{display:block}
    Columna a pantalla completa: header (cruz + pregunta) arriba y, distribuidos
    con un gap amplio, las estrellas al centro y el botón de salida en el tercio
    inferior (alejado de las estrellas, con aire visual en el centro). */
-.fin-eval{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:clamp(20px,5vh,40px);width:100%;max-width:440px;height:100%;min-height:0;animation:fadeUp .6s ease both}
+.fin-eval{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:clamp(20px,5vh,40px);width:100%;max-width:440px;height:100%;min-height:0;padding-bottom:2.25rem;animation:fadeUp .6s ease both}
 /* Header superior (cruz + pregunta alineadas con la portada). */
 .fin-eval-head{display:flex;flex-direction:column;align-items:center;flex:0 1 auto;padding-top:max(6px,4vh)}
 /* Cruz dorada en el tercio superior, alineada con la portada. */
@@ -320,8 +320,12 @@ img{display:block}
 .selectfx{position:fixed;inset:0;z-index:76;display:flex;align-items:center;justify-content:center;overflow:hidden}
 /* S2-TEXT: fondo negro con el texto (reusa .veil2-* ) */
 .selectfx.s-text{background:#141416;animation:fadeIn .18s ease}
-/* S3-IMAGE: sin fondo negro — lo cubre el fondo sacro (.selectfx-bg) */
-.selectfx.s-image{background:transparent;animation:fadeIn .18s ease}
+/* S3-IMAGE: fondo oscuro base (igual que S2-TEXT) para que durante el fade-in
+   del marco sacro y de la imagen NUNCA se trasluzca el selector detrás. Antes
+   era transparente y, mientras SobreFondo.webp aparecía desde opacidad 0, se
+   veía un instante la pantalla de selección. Con esta base opaca el marco
+   dorado hace su fade-in sobre negro, sin fugas de UI. */
+.selectfx.s-image{background:#141416;animation:fadeIn .18s ease}
 /* Fondo sacro (SobreFondo.webp): cubre toda la fase y sirve de marco dorado.
    z-index 1 queda por debajo de la imagen del camino (.selectfx-img, z-index 2). */
 .selectfx-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:1;display:block}

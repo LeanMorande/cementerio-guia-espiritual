@@ -1,9 +1,9 @@
 ﻿/* =====================================================================
    COMPONENTS / FinScreen.jsx — cierre del recorrido en 2 fases.
    =====================================================================
-   FASE 1 (0 → 15 s): cruz + título + texto de paz + cuenta regresiva,
-                       sobre fondo oscuro difuminado (.sbg).
-                           FASE 2: evaluación integrada directamente sobre el fondo oscuro
+         FASE 1 (0 → 7 s): cruz + título + texto de paz + cuenta regresiva,
+                      sobre fondo oscuro difuminado (.sbg).
+   FASE 2: evaluación integrada directamente sobre el fondo oscuro
            (sin tarjeta flotante): cruz dorada + título/subtítulo + estrellas
            + confirmación dinámica + botón "Volver al inicio" unificado con
            el estilo de la portada.
@@ -11,19 +11,19 @@
 import { useEffect, useState } from "react";
 import { Ic } from "./icons.jsx";
 
-const FASE_1_MS = 15;        // segundos de la fase de meditación
+const FASE_1_MS = 7;        // segundos de la fase de meditación
 
 export default function FinScreen({ cfg, onHome }) {
   const d = cfg.despedida;
 
   const [fase, setFase] = useState(1);
-  const [timeLeft, setTimeLeft] = useState(15);
+  const [timeLeft, setTimeLeft] = useState(FASE_1_MS);
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [comment, setComment] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  // Cuenta regresiva de 15 s. Al llegar a 0 pasa a la Fase 2.
+  // Cuenta regresiva. Al llegar a 0 pasa a la Fase 2.
   useEffect(() => {
     if (timeLeft > 0) {
       const timer = setTimeout(() => setTimeLeft((prev) => prev - 1), 1000);
